@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- mapper DTD 선언 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- SQL Mapping -->
+<mapper namespace="home.example.board.repository.PostLikeMapper">
+    <insert id="insertPostLike"
+            parameterType="home.example.board.domain.PostLike">
+        INSERT INTO post_like (
+            post_seq,
+            user_seq,
+            like_type
+        ) VALUES (
+            #{post_seq},
+            #{user_seq},
+            #{like_type}
+        )
+    </insert>
+
+    <delete id="deletePostLike"
+            parameterType="home.example.board.domain.PostLike">
+        DELETE FROM post_like
+        WHERE post_seq = #{post_seq}
+        AND user_seq = #{user_seq}
+    </delete>
+
+    <select id="countPostLike"
+            parameterType="map"
+            resultType="int">
+        SELECT
+            count(*) as total_cnt
+        FROM
+            post_like
+        WHERE
+            post_seq = #{post_seq}
+            AND
+            like_type = #{like_type}
+    </select>
+
+    <select id="selectPostLike"
+            parameterType="home.example.board.domain.PostLike"
+            resultType="home.example.board.domain.PostLike">
+        SELECT
+            post_like_seq,
+            post_seq,
+            user_seq,
+            like_type,
+            insert_ts
+        FROM
+            post_like
+        WHERE
+            post_seq = #{post_seq}
+        AND user_seq = #{user_seq}
+    </select>
+</mapper>

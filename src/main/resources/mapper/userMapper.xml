@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- mapper DTD 선언 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- SQL Mapping -->
+<mapper namespace="home.example.board.repository.UserMapper">
+    <insert id="addUser" parameterType="home.example.board.domain.User">
+        INSERT INTO user
+            (user_name, user_pw, user_email, user_nickname)
+        VALUES
+            (#{user_name}, #{user_pw}, #{user_email}, #{user_nickname})
+    </insert>
+
+    <select id="getUser" parameterType="String"
+            resultType="home.example.board.domain.User">
+        select
+            user_seq,
+            user_name,
+            user_pw,
+            user_email,
+            user_nickname,
+            insert_ts,
+            role
+        from user
+        where user_name = #{user_name}
+    </select>
+</mapper>

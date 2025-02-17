@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- mapper DTD 선언 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- SQL Mapping -->
+<mapper namespace="home.example.board.repository.PostMapper">
+    <select id="getPostListPaging"
+            parameterType="map"
+            resultType="home.example.board.DTO.PostPagingDTO">
+        SELECT
+            post_seq,
+            title,
+            content,
+            insert_ts,
+            update_ts,
+            view_count,
+            user_seq,
+            (select subject_name from subject s where s.subject_seq = p.subject_seq) as category,
+            (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "LIKE") as like_count,
+            (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "DISLIKE") as dislike_count
+        FROM
+            post p
+        WHERE
+            delete_flag = 0
+        order by post_seq desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="getPost"
+            parameterType="long"
+            resultType="home.example.board.domain.Post">
+        SELECT
+            post_seq,
+            title,
+            content,
+            insert_ts,
+            update_ts,
+            view_count,
+            delete_ts,
+            delete_flag,
+            user_seq,
+            subject_seq
+        FROM
+            post
+        WHERE
+            post_seq = #{post_seq}
+    </select>
+
+    <insert id="insertPost"
+            parameterType="home.example.board.domain.Post">
+        INSERT INTO post (
+            title,
+            content,
+            view_count,
+            user_seq,
+            subject_seq
+        ) VALUES (
+            #{title},
+            #{content},
+            #{view_count},
+            #{user_seq},
+            #{subject_seq}
+        )
+    </insert>
+
+    <update id="updatePost"
+            parameterType="home.example.board.domain.Post">
+        UPDATE post
+        SET
+            title = #{title},
+            content = #{content}
+        WHERE
+            post_seq = #{post_seq}
+    </update>
+
+    <update id="deletePost"
+            parameterType="long">
+        UPDATE post
+        SET
+            delete_flag = 1,
+            delete_ts = now()
+        WHERE
+            post_seq = #{post_seq}
+    </update>
+
+    <update id="updateViewCount" parameterType="home.example.board.domain.Post">
+        UPDATE post
+        SET
+            view_count = view_count + 1
+        WHERE
+            post_seq = #{post_seq}
+    </update>
+</mapper>

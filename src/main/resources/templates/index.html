@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sky Board</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link th:href="@{/css/index.css}" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+<!-- Previous navbar remains the same -->
+<div th:replace="common/nav :: common_nav"></div>
+
+<!-- Main Content -->
+<div class="container mt-4">
+    <!-- Navigation -->
+    <ul class="nav nav-pills mb-4">
+        <li class="nav-item">
+            <a class="nav-link active" href="#">All Posts</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Popular</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Recent</a>
+        </li>
+    </ul>
+
+    <!-- Search Bar -->
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search posts...">
+                <button class="btn btn-sky">
+                    <i class="ri-search-line"></i> Search
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Posts Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Title</th>
+                    <th>Views</th>
+                    <th>Date</th>
+                    <th>Reactions</th>
+                </tr>
+                </thead>
+                <tbody id="rows">
+                <tr>
+                    <td><span class="badge bg-info">General</span></td>
+                    <td><a href="post.html" class="text-decoration-none text-dark">Welcome to Sky Board</a></td>
+                    <td><i class="ri-eye-line"></i> 1.2k</td>
+                    <td>2024-01-31</td>
+                    <td>
+                        <i class="ri-thumb-up-line text-primary"></i> 24
+                        <i class="ri-thumb-down-line text-secondary ms-2"></i> 3
+                    </td>
+                </tr>
+                <!-- More rows... -->
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination -->
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#"><i class="ri-arrow-left-s-line"></i></a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#"><i class="ri-arrow-right-s-line"></i></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Floating Write Button -->
+    <a th:if="${session.user_seq != null}" th:href="@{/write}" class="btn btn-sky btn-lg rounded-circle floating-button shadow">
+        <i class="ri-pencil-line"></i>
+    </a>
+
+    <!-- Previous pagination and modals remain the same -->
+    <!-- ... -->
+    <div th:replace="common/loginModal :: login_modal"></div>
+    <div th:replace="common/signupModal :: signup_modal"></div>
+</div>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript" th:src="@{/js/index.js}"></script>
+</body>
+
+</html>

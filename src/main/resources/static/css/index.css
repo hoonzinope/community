@@ -1,0 +1,40 @@
+/* Previous styles remain the same */
+:root {
+    --sky-primary: #4A90E2;
+    --sky-secondary: #5CA1E6;
+    --sky-light: #ECF4FC;
+}
+
+.navbar {
+    background-color: var(--sky-primary) !important;
+}
+
+.btn-sky {
+    background-color: var(--sky-primary);
+    color: white;
+}
+
+.btn-sky:hover {
+    background-color: var(--sky-secondary);
+    color: white;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--sky-light);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--sky-primary);
+    border-color: var(--sky-primary);
+}
+
+.page-link {
+    color: var(--sky-primary);
+}
+
+.floating-button {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+}

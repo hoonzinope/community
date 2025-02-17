@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+        <!-- Comments Section th:fragment="comment_section"-->
+        <!-- Comments Section -->
+        <div class="card shadow-sm" th:fragment="comment_section(post_seq, user_seq)">
+            <input type="hidden" id="post_seq" th:value="${post_seq}" style="display:none">
+            <input type="hidden" id="user_seq" th:value="${user_seq}" style="display:none">
+            <div class="card-header bg-white">
+                <h5 class="mb-0" id="comment_count">Comments (6)</h5>
+            </div>
+            <div class="card-body">
+                <!-- Comment Form -->
+                <div class="mb-4">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Add a comment...">
+                        <button class="btn btn-sky comment_post">
+                            <i class="ri-send-plane-line"></i> Post
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Comments List -->
+                <div class="comment-list">
+                </div>
+
+                <!-- Comments Pagination -->
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#"><i class="ri-arrow-left-s-line"></i></a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#"><i class="ri-arrow-right-s-line"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <script th:src="@{/js/comment.js}" ></script>
+        </div>
+</body>
+</html>

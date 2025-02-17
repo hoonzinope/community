@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- mapper DTD 선언 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- SQL Mapping -->
+<mapper namespace="home.example.board.repository.SubjectMapper">
+    <select id="getSubjectList" resultType="home.example.board.domain.Subject">
+        SELECT
+            subject_seq,
+            subject_name,
+            insert_ts
+        FROM
+            subject
+    </select>
+
+    <select id="getSubject"
+            parameterType="long"
+            resultType="home.example.board.domain.Subject">
+        SELECT
+            subject_seq,
+            subject_name,
+            insert_ts
+        FROM
+            subject
+        WHERE
+            id = #{id}
+    </select>
+</mapper>
