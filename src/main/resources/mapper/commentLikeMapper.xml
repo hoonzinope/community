@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- mapper DTD 선언 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- SQL Mapping -->
+<mapper namespace="home.example.board.repository.CommentLikeMapper">
+
+    <insert id="insertCommentLike"
+            parameterType="home.example.board.domain.CommentLike">
+        INSERT INTO comment_like
+            (comment_seq, user_seq, like_type)
+        VALUES
+            (#{comment_seq}, #{user_seq}, #{like_type})
+    </insert>
+
+    <delete id="deleteCommentLike"
+            parameterType="home.example.board.domain.CommentLike">
+        DELETE FROM comment_like
+        WHERE comment_seq = #{comment_seq} AND user_seq = #{user_seq}
+    </delete>
+
+</mapper>

@@ -27,10 +27,11 @@
             fetch(`/api/post/${post_seq}/comments`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
                     drawComments(data);
                     replyButton();
                     cancelReplyButton();
+                    userLike();
+                    userDislike();
                 });
         }
     }
@@ -88,9 +89,9 @@
                         </div>
                     </div>
                     <!-- 반응 아이콘 영역 (전체 너비 중 2/12): 항상 우측 고정 -->
-                    <div class="col-2 text-end">
-                        <i class="ri-thumb-up-line reaction-btn me-1"></i> 5
-                        <i class="ri-thumb-down-line reaction-btn ms-2"></i> 1
+                    <div class="col-2 text-end" comment_seq=${comment.comment_seq}>
+                        <i class="ri-thumb-up-line reaction-btn me-1 like_button"> ${comment.like_cnt}</i>
+                        <i class="ri-thumb-down-line reaction-btn ms-2 dislike_button"> ${comment.dislike_cnt}</i>
                     </div>
                 </div>
             </div>
@@ -158,5 +159,128 @@
                 }
             });
         });
+    }
+
+    // user like click
+    function userLike() {
+        const like_buttons = document.querySelectorAll('.like_button');
+        like_buttons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                let user_seq = document.getElementById("user_seq").value;
+                if(user_seq == null || user_seq === "") {
+                    alert("로그인이 필요한 서비스입니다.");
+                    return;
+                }
+
+                let comment_seq = this.parentElement.getAttribute('comment_seq');
+                console.log(comment_seq);
+                let like_cnt = this.innerText;
+                let dislike_cnt = this.nextElementSibling.innerText;
+                console.log(like_cnt, dislike_cnt);
+                if(this.classList.contains("ri-thumb-up-fill")) {
+                    this.classList.remove("ri-thumb-up-fill");
+                    deleteLikeType(comment_seq);
+                    like_cnt = parseInt(like_cnt) - 1;
+                    this.innerText = " "+like_cnt;
+                    this.classList.add("ri-thumb-up-line");
+                }
+                else {
+                    if(this.nextElementSibling.classList.contains("ri-thumb-down-fill")) {
+                        this.nextElementSibling.classList.remove("ri-thumb-down-fill");
+                        deleteLikeType(comment_seq);
+                        dislike_cnt = parseInt(dislike_cnt) - 1;
+                        this.nextElementSibling.innerText = " "+dislike_cnt;
+                        this.nextElementSibling.classList.add("ri-thumb-down-line");
+                    }
+
+                    this.classList.remove("ri-thumb-up-line");
+                    this.classList.add("ri-thumb-up-fill");
+                    insertLikeType("LIKE", comment_seq);
+                    like_cnt = parseInt(like_cnt) + 1;
+                    this.innerText = " "+like_cnt;
+                }
+            });
+        });
+    }
+
+    // user dislike click
+    function userDislike() {
+        const dislike_buttons = document.querySelectorAll('.dislike_button');
+        dislike_buttons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                let user_seq = document.getElementById("user_seq").value;
+                if(user_seq == null || user_seq === "") {
+                    alert("로그인이 필요한 서비스입니다.");
+                    return;
+                }
+
+                let comment_seq = this.parentElement.getAttribute('comment_seq');
+                console.log(comment_seq)
+                let like_cnt = this.previousElementSibling.innerText;
+                let dislike_cnt = this.innerText;
+                if(this.classList.contains("ri-thumb-down-fill")) {
+                    this.classList.remove("ri-thumb-down-fill");
+                    deleteLikeType(comment_seq);
+                    dislike_cnt = parseInt(dislike_cnt) - 1;
+                    this.innerText = " "+dislike_cnt;
+                    this.classList.add("ri-thumb-down-line");
+                }
+                else {
+                    if(this.previousElementSibling.classList.contains("ri-thumb-up-fill")) {
+                        this.previousElementSibling.classList.remove("ri-thumb-up-fill");
+                        deleteLikeType(comment_seq);
+                        like_cnt = parseInt(like_cnt) - 1;
+                        this.previousElementSibling.innerText = " "+like_cnt;
+                        this.previousElementSibling.classList.add("ri-thumb-up-line");
+                    }
+
+                    this.classList.remove("ri-thumb-down-line");
+                    this.classList.add("ri-thumb-down-fill");
+                    insertLikeType("DISLIKE", comment_seq);
+                    dislike_cnt = parseInt(dislike_cnt) + 1;
+                    this.innerText = " "+dislike_cnt;
+                }
+            });
+        });
+    }
+
+    function insertLikeType(type, comment_seq) {
+        let data = {
+            "comment_seq": comment_seq,
+            "user_seq": document.getElementById("user_seq").value,
+            "like_type": type
+        }
+        console.log(data);
+        fetch("/api/comment/like", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            });
+    }
+
+    function deleteLikeType(comment_seq) {
+
+        let data = {
+            "comment_seq": comment_seq,
+            "user_seq": document.getElementById("user_seq").value
+        }
+        console.log(data);
+        fetch("/api/comment/like/delete", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            });
     }
 })();

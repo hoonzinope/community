@@ -17,22 +17,37 @@
     <select id="selectComments" parameterType="int"
         resultType="home.example.board.DTO.CommentDTO">
         <![CDATA[
-        with recursive cte_comment
-                           as (
-                SELECT comment_seq, content, parent_comment_seq, insert_ts, user_seq,
-                       CAST(LEFT((SELECT user_nickname FROM user where user_seq = comment.user_seq) , 8) AS CHAR(8)) as user_name,
-                       CAST(LPAD(comment_seq, 5, '0') AS CHAR(1024)) AS sort_path,
-                       CAST('' as char(8)) as p_user_name
-                FROM comment
-                WHERE post_seq = 1 AND parent_comment_seq IS NULL
-                UNION ALL
-                SELECT c.comment_seq, c.content, c.parent_comment_seq, c.insert_ts, c.user_seq,
-                       CAST(LEFT((SELECT user_nickname FROM user where user_seq = c.user_seq) , 8) AS CHAR(8)) as user_name,
-                       CONCAT(cc.sort_path, '-', LPAD(c.comment_seq, 5, '0')) AS sort_path,
-                       CAST(LEFT((SELECT user_nickname FROM user where user_seq = cc.user_seq) , 8) AS CHAR(8)) as p_user_name
-                FROM comment c
-                         JOIN cte_comment cc ON c.parent_comment_seq = cc.comment_seq
-            )
+        WITH RECURSIVE cte_comment AS (
+            SELECT
+                c.comment_seq,
+                c.content,
+                c.parent_comment_seq,
+                c.insert_ts,
+                c.user_seq,
+                CAST(LEFT((SELECT user_nickname FROM user WHERE user_seq = c.user_seq), 8) AS CHAR(8)) AS user_name,
+                CAST(LPAD(c.comment_seq, 5, '0') AS CHAR(1024)) AS sort_path,
+                CAST('' AS CHAR(8)) AS p_user_name,
+                (SELECT count(*) FROM comment_like WHERE comment_like.comment_seq = c.comment_seq AND like_type = 1) AS like_cnt,
+                (SELECT count(*) FROM comment_like WHERE comment_like.comment_seq = c.comment_seq AND like_type = 0) AS dislike_cnt
+            FROM comment c
+            WHERE c.post_seq = 1 AND c.parent_comment_seq IS NULL
+
+            UNION ALL
+
+            SELECT
+                c.comment_seq,
+                c.content,
+                c.parent_comment_seq,
+                c.insert_ts,
+                c.user_seq,
+                CAST(LEFT((SELECT user_nickname FROM user WHERE user_seq = c.user_seq), 8) AS CHAR(8)) AS user_name,
+                CONCAT(cc.sort_path, '-', LPAD(c.comment_seq, 5, '0')) AS sort_path,
+                CAST(LEFT((SELECT user_nickname FROM user WHERE user_seq = cc.user_seq), 8) AS CHAR(8)) AS p_user_name,
+                (SELECT count(*) FROM comment_like WHERE comment_like.comment_seq = c.comment_seq AND like_type = 1) AS like_cnt,
+                (SELECT count(*) FROM comment_like WHERE comment_like.comment_seq = c.comment_seq AND like_type = 0) AS dislike_cnt
+            FROM comment c
+                     JOIN cte_comment cc ON c.parent_comment_seq = cc.comment_seq
+        )
         SELECT * FROM cte_comment
         ORDER BY sort_path;
         ]]>

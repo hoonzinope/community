@@ -14,5 +14,6 @@ public class CommentDTO {
     private String user_name;
     private String sort_path;
     private String p_user_name;
-
+    private int like_cnt;
+    private int dislike_cnt;
 }
