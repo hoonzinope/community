@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-public class CommentLikeController {
+public class CommentLikeAPI {
 
     @Autowired
     private CommentLikeService commentLikeService;

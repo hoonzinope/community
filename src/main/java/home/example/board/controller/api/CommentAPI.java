@@ -1,15 +1,18 @@
 package home.example.board.controller.api;
 
+import home.example.board.domain.CommentLike;
+import home.example.board.service.CommentLikeService;
 import home.example.board.service.CommentService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
-public class CommentController {
+public class CommentAPI {
     @Autowired
     private CommentService commentService;
 
@@ -41,9 +44,8 @@ public class CommentController {
 
     @GetMapping("/api/post/{post_seq}/comments")
     public ResponseEntity<JSONObject> getComments(
-            @PathVariable int post_seq) {
-
-        JSONObject jsonObject = commentService.selectComments(post_seq);
+            @PathVariable int post_seq, @RequestParam(value="user_seq", defaultValue = "-1") int user_seq) {
+        JSONObject jsonObject = commentService.selectComments(post_seq, user_seq);
         return ResponseEntity.ok().body(jsonObject);
     }
 }

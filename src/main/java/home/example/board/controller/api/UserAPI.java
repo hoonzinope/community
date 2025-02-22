@@ -1,20 +1,15 @@
 package home.example.board.controller.api;
 
-import home.example.board.domain.User;
 import home.example.board.service.UserService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @RestController
-public class UserController {
+public class UserAPI {
 
     @Autowired
     private UserService userService;

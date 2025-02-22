@@ -20,4 +20,23 @@
         WHERE comment_seq = #{comment_seq} AND user_seq = #{user_seq}
     </delete>
 
+    <select id="selectCommentLikes" parameterType="map"
+            resultType="home.example.board.domain.CommentLike">
+        SELECT
+            comment_like_seq,
+            comment_seq,
+            user_seq,
+            like_type,
+            insert_ts
+        FROM
+            comment_like
+        WHERE
+            comment_seq in
+                <foreach collection="commentSeqList" item="commentSeq" separator="," open="(" close=")">
+                    #{commentSeq}
+                </foreach>
+
+          AND
+            user_seq = #{user_seq}
+    </select>
 </mapper>

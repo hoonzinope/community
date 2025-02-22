@@ -23,8 +23,15 @@
         // 댓글 목록 조회
         const commentList = document.querySelector('.comment-list');
         let post_seq = document.getElementById("post_seq").value;
+        let user_seq = document.getElementById("user_seq").value;
+
+        let endpoint = `/api/post/${post_seq}/comments`;
+        if (user_seq != null && user_seq != "") {
+            endpoint += `?user_seq=${user_seq}`;
+        }
+
         if (commentList) {
-            fetch(`/api/post/${post_seq}/comments`)
+            fetch(endpoint)
                 .then(response => response.json())
                 .then(data => {
                     drawComments(data);
@@ -50,7 +57,8 @@
     }
 
     function drawCommentRow(comment) {
-
+        console.log(comment);
+        console.log(comment.click_like, comment.click_like_type);
         let p_user_name = comment.p_user_name != "" ? "@" + comment.p_user_name : "";
         let depth = "";
         if (comment.sort_path.split("-").length > 1) {
@@ -63,6 +71,16 @@
         } else {
             depth = '';
         }
+
+        let like_class = "ri-thumb-up-line";
+        if(comment.click_like == true && comment.click_like_type == 1) {
+            like_class = "ri-thumb-up-fill";
+        }
+        let dislike_class = "ri-thumb-down-line";
+        if(comment.click_like == true && comment.click_like_type == 0) {
+            dislike_class = "ri-thumb-down-fill";
+        }
+
         return `
             <div class="comment-item p-3 border-bottom">
                 <div class="row align-items-start">
@@ -90,8 +108,8 @@
                     </div>
                     <!-- 반응 아이콘 영역 (전체 너비 중 2/12): 항상 우측 고정 -->
                     <div class="col-2 text-end" comment_seq=${comment.comment_seq}>
-                        <i class="ri-thumb-up-line reaction-btn me-1 like_button"> ${comment.like_cnt}</i>
-                        <i class="ri-thumb-down-line reaction-btn ms-2 dislike_button"> ${comment.dislike_cnt}</i>
+                        <i class="${like_class} reaction-btn me-1 like_button"> ${comment.like_cnt}</i>
+                        <i class="${dislike_class} reaction-btn ms-2 dislike_button"> ${comment.dislike_cnt}</i>
                     </div>
                 </div>
             </div>
