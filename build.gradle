@@ -43,6 +43,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+//	// https://mvnrepository.com/artifact/com.jlefebure/spring-boot-starter-minio
+//	implementation group: 'com.jlefebure', name: 'spring-boot-starter-minio', version: '1.10'
+	// https://mvnrepository.com/artifact/io.minio/minio
+	implementation group: 'io.minio', name: 'minio', version: '8.5.17'
+	implementation 'org.jsoup:jsoup:1.18.3'
+
 }
 
 tasks.named('test') {

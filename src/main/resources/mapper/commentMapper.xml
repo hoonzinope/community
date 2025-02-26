@@ -30,7 +30,7 @@
                 (SELECT count(*) FROM comment_like WHERE comment_like.comment_seq = c.comment_seq AND like_type = 1) AS like_cnt,
                 (SELECT count(*) FROM comment_like WHERE comment_like.comment_seq = c.comment_seq AND like_type = 0) AS dislike_cnt
             FROM comment c
-            WHERE c.post_seq = 1 AND c.parent_comment_seq IS NULL
+            WHERE c.post_seq = #{post_seq} AND c.parent_comment_seq IS NULL
 
             UNION ALL
 

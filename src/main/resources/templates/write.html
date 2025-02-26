@@ -30,6 +30,10 @@
             color: white;
         }
     </style>
+
+    <script th:src="@{/summernote-0.9.0/summernote-lite.js}"></script>
+    <script th:src="@{/summernote-0.9.0/lang/summernote-ko-KR.js}"></script>
+    <link rel="stylesheet" th:href="@{/summernote-0.9.0/summernote-lite.css}"></link>
 </head>
 <body class="bg-light">
 <!-- Navbar -->
@@ -57,7 +61,7 @@
 
                 <div class="mb-3">
                     <label class="form-label">Content</label>
-                    <textarea id="content" class="form-control" rows="12" placeholder="Write your post content here..." required></textarea>
+                    <textarea id="content" name="editordata" class="form-control" rows="12" placeholder="Write your post content here..." required></textarea>
                 </div>
 
                 <div class="mb-3" style="display:none;">

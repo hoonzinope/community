@@ -24,7 +24,7 @@
         const commentList = document.querySelector('.comment-list');
         let post_seq = document.getElementById("post_seq").value;
         let user_seq = document.getElementById("user_seq").value;
-
+        console.log(post_seq, user_seq);
         let endpoint = `/api/post/${post_seq}/comments`;
         if (user_seq != null && user_seq != "") {
             endpoint += `?user_seq=${user_seq}`;

@@ -7,6 +7,8 @@ import home.example.board.repository.PostHistoryMapper;
 import home.example.board.repository.PostMapper;
 import home.example.board.repository.SubjectMapper;
 import org.json.simple.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -75,7 +77,7 @@ public class PostService {
         JSONObject postJson = new JSONObject();
         postJson.put("post_seq", post.getPost_seq());
         postJson.put("title", post.getTitle());
-        postJson.put("content", post.getContent());
+        postJson.put("content", Jsoup.clean(post.getContent(), Safelist.basicWithImages()));
         postJson.put("view_count", post.getView_count());
         postJson.put("insert_ts", post.getInsert_ts());
         postJson.put("update_ts", post.getUpdate_ts());
