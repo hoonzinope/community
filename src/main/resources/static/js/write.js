@@ -5,7 +5,8 @@
         callSubjects();
         writePost();
     });
-
+    // 현재 에디터에 존재하는 이미지 URL 목록을 저장하는 변수
+    let currentImages = [];
     function loadingSummerNote(){
         $('#content').summernote({
             height: 300,
@@ -19,6 +20,20 @@
                     for(let i = 0; i < files.length; i++) {
                         uploadSummernoteImageFile(files[i], this);
                     }
+                },
+                onChange: function(contents, $editable) {
+                    // 임시 컨테이너를 사용하여 변경된 HTML 내용 내 이미지 태그를 추출
+                    var tempDiv = $('<div>').html(contents);
+                    var newImages = [];
+                    tempDiv.find('img').each(function() {
+                        newImages.push($(this).attr('src'));
+                    });
+
+                    // 이전 이미지 목록에 있지만, 새 목록에는 없는 이미지가 삭제된 이미지임
+                    var deletedImages = currentImages.filter(url => newImages.indexOf(url) === -1);
+                    deletedImages.forEach(function(imageUrl){
+                        deleteSummernoteFile(imageUrl);
+                    });
                 }
             }
         });
@@ -36,21 +51,29 @@
                 // 서버에서 반환한 이미지 URL을 summernote 에디터에 삽입
                 const imageUrl = data.url;
                 $('#content').summernote('insertImage', imageUrl);
+                currentImages.push(imageUrl);
             })
             .catch(error => {
                 console.error("이미지 업로드 실패:", error);
             });
-        // .then(function(response) {
-        //     response.json().then(function(data) {
-        //         $(editor).summernote('insertImage', data, function($image) {
-        //             $image.attr('src', data);
-        //         });
-        //     });
-        // })
-        // .catch(function(err) {
-        //     console.log(err);
-        //     alert('이미지 업로드 실패');
-        // });
+    }
+
+    function deleteSummernoteFile(imageUrl) {
+        // 서버의 이미지 삭제 API 호출 (fetch를 사용한 예시)
+        fetch('/api/image/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'url=' + encodeURIComponent(imageUrl)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log("이미지 삭제 응답:", data);
+            })
+            .catch(error => {
+                console.error("이미지 삭제 실패:", error);
+            });
     }
 
     function callSubjects(){

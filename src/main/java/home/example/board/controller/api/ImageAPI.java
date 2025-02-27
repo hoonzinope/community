@@ -1,9 +1,6 @@
 package home.example.board.controller.api;
 
-import io.minio.BucketExistsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -82,9 +79,32 @@ public class ImageAPI {
     }
 
     @PostMapping("/api/image/delete")
-    public void deleteImage() {
+    public ResponseEntity<JSONObject> deleteImage(@RequestParam("url") String imageUrl) {
         // 이미지 삭제
+        JSONObject response = new JSONObject();
+
+        if(imageUrl == null || imageUrl.trim().isEmpty()){
+            response.put("error","유효하지 않은 이미지 URL");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        try {
+            // 이미지 URL에서 파일명 추출 (예: http://172.30.1.86:9001/uploads/uuid.jpg)
+            String basePath = minIOUrl + "/" + bucketName + "/";
+            if (!imageUrl.startsWith(basePath)) {
+                response.put("error", "올바른 이미지 URL이 아닙니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            String fileName = imageUrl.substring(basePath.length());
+
+            // minIO에서 객체 삭제
+            minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(fileName).build());
+            response.put("message", "이미지가 성공적으로 삭제되었습니다.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("error", "이미지 삭제 중 오류 발생");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
-
-
 }
