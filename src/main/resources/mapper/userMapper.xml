@@ -25,4 +25,29 @@
         from user
         where user_name = #{user_name}
     </select>
+
+    <select id="getUserAll"
+            resultType="home.example.board.domain.User">
+        select
+            user_seq,
+            user_name,
+            user_pw,
+            user_email,
+            user_nickname,
+            insert_ts,
+            role
+        from user
+    </select>
+
+    <update id="updateUserInfo"
+            parameterType="home.example.board.domain.User">
+        update user
+            set user_name = #{user_name},
+                user_pw = #{user_pw},
+                user_email = #{user_email},
+                user_nickname = #{user_nickname},
+                role = #{role}
+            where
+                user_seq = #{user_seq}
+    </update>
 </mapper>

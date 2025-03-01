@@ -50,6 +50,7 @@ dependencies {
 	implementation group: 'io.minio', name: 'minio', version: '8.5.17'
 	implementation 'org.jsoup:jsoup:1.18.3'
 
+	implementation 'org.springframework.boot:spring-boot-starter-security:2.7.5'
 }
 
 tasks.named('test') {
