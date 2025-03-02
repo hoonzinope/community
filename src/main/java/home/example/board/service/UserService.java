@@ -3,6 +3,7 @@ package home.example.board.service;
 import home.example.board.domain.User;
 import home.example.board.repository.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,9 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public User login(String user_name, String user_pw) {
         System.out.println("login");
@@ -29,12 +33,11 @@ public class UserService {
     }
 
     public void addUsers(String user_name, String user_pw, String user_email) {
-        System.out.println("addUsers");
         checkExceptionInput(user_name, user_pw, user_email);
         if(isValidate(user_name, user_pw, user_email)) {
             User newUser = User.builder()
                     .user_name(user_name)
-                    .user_pw(user_pw)
+                    .user_pw(passwordEncoder.encode(user_pw))
                     .user_email(user_email)
                     .user_nickname(UUID.randomUUID().toString())
                     .insert_ts(LocalDateTime.now())

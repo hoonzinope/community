@@ -4,8 +4,10 @@ import home.example.board.service.UserService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Map;
 
 @RestController
@@ -23,6 +25,7 @@ public class UserAPI {
         try{
             userService.addUsers(user_name, user_pw, user_email);
         } catch (IllegalArgumentException e) {
+            e.printStackTrace();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(jsonObject);

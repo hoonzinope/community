@@ -1,6 +1,7 @@
 package home.example.board.config;
 
 import home.example.board.handler.CustomAuthenticationSuccessHandler;
+import home.example.board.handler.CustomLogoutSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,7 +29,7 @@ public class SecurityConfig {
             // URL별 접근 제어 설정
             .authorizeHttpRequests(auth -> auth
                     // 게시판 목록이나 상세 페이지는 누구나 접근 가능
-                    .antMatchers("/**", "/posts/**").permitAll()
+                    .antMatchers("/**", "/posts/**","/addUser").permitAll()
                     // 그 외의 URL은 인증 필요
                     .anyRequest().authenticated()
             )
@@ -51,6 +52,7 @@ public class SecurityConfig {
             .logout(logout -> logout
                     .logoutUrl("/auth/logout")
                     .logoutSuccessUrl("/") ///login?logout
+                    .logoutSuccessHandler(new CustomLogoutSuccessHandler())
                     .permitAll()
             );
         return httpSecurity.build();
