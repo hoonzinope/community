@@ -3,6 +3,7 @@ package home.example.board.service;
 import home.example.board.DTO.CommentDTO;
 import home.example.board.domain.Comment;
 import home.example.board.domain.CommentLike;
+import home.example.board.repository.CommentHistoryMapper;
 import home.example.board.repository.CommentLikeMapper;
 import home.example.board.repository.CommentMapper;
 import org.json.simple.JSONObject;
@@ -21,6 +22,9 @@ public class CommentService {
 
     @Autowired
     private CommentLikeMapper commentLikeMapper;
+
+    @Autowired
+    private CommentHistoryMapper commentHistoryMapper;
 
     public void insertComment(long post_seq, String content, Integer parent_comment_seq, long user_seq) {
         Comment comment = Comment.builder()
@@ -65,6 +69,7 @@ public class CommentService {
         if(user_seq != comment.getUser_seq()) {
             throw new IllegalAccessException("user not matched");
         }
+        commentHistoryMapper.insertCommentHistory(comment);
         comment.setContent(content);
         commentMapper.updateComment(comment);
     }
@@ -74,6 +79,7 @@ public class CommentService {
         if(user_seq != comment.getUser_seq()) {
             throw new IllegalAccessException("user not matched");
         }
+        commentHistoryMapper.insertCommentHistory(comment);
         commentMapper.deleteComment(comment_seq);
     }
 }
