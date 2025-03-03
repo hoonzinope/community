@@ -20,7 +20,7 @@
         WITH RECURSIVE cte_comment AS (
             SELECT
                 c.comment_seq,
-                c.content,
+                IF(c.delete_flag > 0, 'delete comment', c.content ) as content,
                 c.parent_comment_seq,
                 c.insert_ts,
                 c.user_seq,
@@ -36,7 +36,7 @@
 
             SELECT
                 c.comment_seq,
-                c.content,
+                IF(c.delete_flag > 0, 'delete comment', c.content ) as content,
                 c.parent_comment_seq,
                 c.insert_ts,
                 c.user_seq,
@@ -52,4 +52,39 @@
         ORDER BY sort_path;
         ]]>
     </select>
+
+    <select id="selectComment"
+            parameterType="int"
+            resultType="home.example.board.domain.Comment">
+        select
+            comment_seq,
+            post_seq,
+            content,
+            insert_ts,
+            delete_ts,
+            delete_flag,
+            parent_comment_seq,
+            user_seq
+        from comment
+        where
+            comment_seq = #{comment_seq}
+    </select>
+
+    <update id="updateComment"
+            parameterType="home.example.board.domain.Comment">
+        update comment
+            set content = #{content}
+        where
+            comment_seq = #{comment_seq}
+    </update>
+
+    <update id="deleteComment"
+            parameterType="int">
+        update comment
+            set
+                delete_flag = 1,
+                delete_ts = now()
+        where
+            comment_seq = #{comment_seq}
+    </update>
 </mapper>

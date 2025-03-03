@@ -48,4 +48,47 @@ public class CommentAPI {
         JSONObject jsonObject = commentService.selectComments(post_seq, user_seq);
         return ResponseEntity.ok().body(jsonObject);
     }
+
+    @PostMapping("/api/comment/update/{comment_seq}")
+    public ResponseEntity<JSONObject> updateComment(
+            @PathVariable int comment_seq,
+            @RequestBody Map<String, Object> requestBody
+    ){
+        String content = (String) requestBody.get("content");
+        long user_seq = Long.parseLong(requestBody.get("user_seq").toString());
+
+        JSONObject jsonObject = new JSONObject();
+        try{
+            if(content == null || content.isEmpty()){
+               throw new IllegalArgumentException("댓글내용이 비어 있습니다.");
+            }
+            commentService.updateComment(comment_seq, content, user_seq);
+            jsonObject.put("success", true);
+            return ResponseEntity.ok().body(jsonObject);
+        } catch (Exception e){
+            e.printStackTrace();
+            jsonObject.put("message", e.getMessage());
+            jsonObject.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(jsonObject);
+        }
+    }
+
+    @DeleteMapping("/api/comment/delete/{comment_seq}")
+    public ResponseEntity<JSONObject> deleteComment(
+            @PathVariable int comment_seq,
+            @RequestBody Map<String, Object> requestBody
+    ){
+        long user_seq = Long.parseLong(requestBody.get("user_seq").toString());
+        JSONObject jsonObject = new JSONObject();
+        try{
+            commentService.deleteComment(comment_seq, user_seq);
+            jsonObject.put("success", true);
+            return ResponseEntity.ok().body(jsonObject);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            jsonObject.put("message", e.getMessage());
+            jsonObject.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(jsonObject);
+        }
+    }
 }

@@ -60,4 +60,20 @@ public class CommentService {
         return jsonObject;
     }
 
+    public void updateComment(int comment_seq, String content, long user_seq) throws IllegalAccessException {
+        Comment comment = commentMapper.selectComment(comment_seq);
+        if(user_seq != comment.getUser_seq()) {
+            throw new IllegalAccessException("user not matched");
+        }
+        comment.setContent(content);
+        commentMapper.updateComment(comment);
+    }
+
+    public void deleteComment(int comment_seq, long user_seq) throws IllegalAccessException {
+        Comment comment = commentMapper.selectComment(comment_seq);
+        if(user_seq != comment.getUser_seq()) {
+            throw new IllegalAccessException("user not matched");
+        }
+        commentMapper.deleteComment(comment_seq);
+    }
 }

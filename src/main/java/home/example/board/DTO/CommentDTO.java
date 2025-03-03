@@ -18,4 +18,5 @@ public class CommentDTO {
     private int dislike_cnt;
     private boolean click_like;
     private int click_like_type;
+    private long user_seq;
 }
