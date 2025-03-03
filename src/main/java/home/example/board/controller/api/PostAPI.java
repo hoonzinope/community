@@ -71,11 +71,13 @@ public class PostAPI {
     public ResponseEntity<JSONObject> removePost(
             @PathVariable long post_seq
     ) {
+
+        JSONObject jsonObject = new JSONObject();
         try{
             postService.removePost(post_seq);
-            return ResponseEntity.ok().body(null);
+            jsonObject.put("success", "true");
+            return ResponseEntity.ok().body(jsonObject);
         } catch (IllegalArgumentException e) {
-            JSONObject jsonObject = new JSONObject();
             jsonObject.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(jsonObject);
         }

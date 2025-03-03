@@ -5,6 +5,7 @@
         getLikeType();
         like();
         dislike();
+        deletePost();
     });
 
     function getLikeType() {
@@ -131,6 +132,24 @@
             }).catch(function(err) {
             console.log(err);
             });
+    }
+
+    function deletePost() {
+        $("#delete_post").off('click').on("click", function() {
+           let check = confirm("delete post?");
+           if(!check) return;
+           let endpoint = `/api/post/${likeData.post_seq}`;
+           fetch(endpoint, {
+               method : "DELETE"
+           }).then(function(response) {
+               response.json().then(function(data) {
+                   console.log(data);
+                   location.href = '/board';
+               });
+           }).catch(function(err) {
+               console.log(err);
+           });
+        });
     }
 
 })();

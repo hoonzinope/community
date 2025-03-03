@@ -30,10 +30,12 @@
         console.log(post);
         if(post.category === "General"){
             category =  `<span class="badge bg-info">${post.category}</span>`
-        }else if(post.category === "Disscusion"){
+        }else if(post.category === "Discussion"){
             category =  `<span class="badge bg-success">${post.category}</span>`
         }else if(post.category === "Question"){
             category =  `<span class="badge bg-warning">${post.category}</span>`
+        }else{
+            category =  `<span class="badge bg-info">${post.category}</span>`
         }
 
 
