@@ -42,18 +42,6 @@
         .reaction-btn:hover {
             color: var(--sky-primary) !important;
         }
-
-        .edit-mode {
-            display: none;
-        }
-
-        .edit-mode.active {
-            display: block;
-        }
-
-        .view-mode.hidden {
-            display: none;
-        }
     </style>
 </head>
 <body class="bg-light">
@@ -74,6 +62,17 @@
                     <span class="mx-2">|</span>
                     <i class="ri-time-line"></i> [[${data.post.insert_ts}]]
                 </div>
+
+                <!-- 수정/삭제 버튼: 작성자에게만 보임 -->
+                <div th:if="${session.user_seq == data.post.user_seq}">
+                    <span class="mx-2">|</span>
+                    <a th:href="@{/modify/{id}(id=${data.post.post_seq})}" class="btn btn-outline-warning me-2">
+                        <i class="ri-edit-line"></i> Edit
+                    </a>
+                    <a th:href="@{/post/delete/{id}(id=${data.post.post_seq})}" class="btn btn-outline-danger">
+                        <i class="ri-delete-bin-6-line"></i> Delete
+                    </a>
+                </div>
             </div>
 
             <!-- Post Body -->
@@ -82,7 +81,7 @@
             </div>
 
             <!-- Post Footer -->
-            <div class="d-flex justify-content-end">
+            <div class="d-flex justify-content-end align-items-center">
                 <button class="btn btn-outline-primary me-2" id="like">
                     <i class="ri-thumb-up-line"></i> Like <span id="like_cnt">([[${data.post.like_count}]])</span>
                 </button>
@@ -147,23 +146,6 @@
     let likeData = {
         post_seq : `[[${data.post.post_seq}]]`,
         user_seq : `[[${session.user_seq}]]`
-    }
-    function toggleEditMode() {
-        document.querySelector('.edit-mode').classList.toggle('active');
-        document.querySelector('.view-mode').classList.toggle('hidden');
-    }
-
-    function confirmDelete() {
-        if (confirm('Are you sure you want to delete this post?')) {
-            // Handle delete
-            window.location.href = 'index.html';
-        }
-    }
-
-    function saveEdit(event) {
-        event.preventDefault();
-        // Handle save
-        toggleEditMode();
     }
 </script>
 </body>

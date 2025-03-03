@@ -83,6 +83,7 @@ public class PostService {
         postJson.put("update_ts", post.getUpdate_ts());
         postJson.put("user_seq", post.getUser_seq());
         postJson.put("category", subjectMap.get(post.getSubject_seq()));
+        postJson.put("category_seq", post.getSubject_seq());
         postJson.put("like_count", postLikeService.countPostLike(post_seq, "LIKE"));
         postJson.put("dislike_count", postLikeService.countPostLike(post_seq, "DISLIKE"));
 
@@ -90,6 +91,11 @@ public class PostService {
         result.put("post", postJson);
 
         return result;
+    }
+
+    public boolean getPostByUser(long post_seq, long user_seq) {
+        Post post = postMapper.getPost(post_seq);
+        return post.getUser_seq() == user_seq;
     }
 
     public void addPost(String title, String content, long user_seq, int subject_seq) {

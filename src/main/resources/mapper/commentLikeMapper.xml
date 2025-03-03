@@ -31,12 +31,13 @@
         FROM
             comment_like
         WHERE
-            comment_seq in
-                <foreach collection="commentSeqList" item="commentSeq" separator="," open="(" close=")">
-                    #{commentSeq}
-                </foreach>
-
-          AND
             user_seq = #{user_seq}
+              <if test="commentSeqList != null and !commentSeqList.isEmpty()">
+                  AND
+                    comment_seq in
+                        <foreach collection="commentSeqList" item="commentSeq" separator="," open="(" close=")">
+                            #{commentSeq}
+                        </foreach>
+              </if>
     </select>
 </mapper>

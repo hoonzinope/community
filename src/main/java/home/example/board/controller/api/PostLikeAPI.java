@@ -16,7 +16,7 @@ public class PostLikeAPI {
     PostLikeService postLikeService;
 
     // 좋아요 or 싫어요 추가
-    @PostMapping("/like/add")
+    @PostMapping("/api/like/add")
     public ResponseEntity<JSONObject> addPostLike(@RequestBody JSONObject data) {
         long post_seq = Long.parseLong(data.get("post_seq").toString());
         long user_seq = Long.parseLong(data.get("user_seq").toString());
@@ -37,7 +37,7 @@ public class PostLikeAPI {
     }
 
     // postLike table row 삭제
-    @PostMapping("/like/delete")
+    @PostMapping("/api/like/delete")
     public ResponseEntity<JSONObject> removePostLike(@RequestBody JSONObject data) {
         long post_seq = Long.parseLong(data.get("post_seq").toString());
         long user_seq = Long.parseLong(data.get("user_seq").toString());
@@ -65,7 +65,7 @@ public class PostLikeAPI {
         try {
             PostLike postLike = postLikeService.getPostLike(post_seq, user_seq);
             result.put("result", "success");
-            result.put("like_type", postLike.getLike_type());
+            result.put("like_type", postLike != null ? postLike.getLike_type() : "");
             return ResponseEntity.ok(result);
 
         }catch (Exception e) {

@@ -100,7 +100,7 @@
     function deleteLikeType(like_type) {
         likeData.like_type = like_type;
 
-        fetch("/like/delete", {
+        fetch("/api/like/delete", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -118,7 +118,7 @@
     function addLikeType(like_type){
         likeData.like_type = like_type;
 
-        fetch("/like/add", {
+        fetch("/api/like/add", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -20,6 +21,10 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web -> web.ignoring().antMatchers("/css/**","/js/**","/images/**"));
+    }
+    @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity httpSecurity
     ) throws Exception{
@@ -29,7 +34,7 @@ public class SecurityConfig {
             // URL별 접근 제어 설정
             .authorizeHttpRequests(auth -> auth
                     // 게시판 목록이나 상세 페이지는 누구나 접근 가능
-                    .antMatchers("/**", "/posts/**","/addUser").permitAll()
+                    .antMatchers("/","/board/**", "/post/**","/addUser","/api/**").permitAll()
                     // 그 외의 URL은 인증 필요
                     .anyRequest().authenticated()
             )

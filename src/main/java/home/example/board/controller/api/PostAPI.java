@@ -56,11 +56,12 @@ public class PostAPI {
         String title = (String) requestMap.get("title");
         String content = (String) requestMap.get("content");
 
+        JSONObject jsonObject = new JSONObject();
         try{
             postService.modifyPost(post_seq, title, content);
-            return ResponseEntity.ok().body(null);
+            jsonObject.put("success","true");
+            return ResponseEntity.ok().body(jsonObject);
         } catch (IllegalArgumentException e) {
-            JSONObject jsonObject = new JSONObject();
             jsonObject.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(jsonObject);
         }
