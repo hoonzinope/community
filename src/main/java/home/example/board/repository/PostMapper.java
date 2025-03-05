@@ -9,6 +9,7 @@ import java.util.Map;
 
 @Mapper
 public interface PostMapper {
+    int getPostTotalSize();
     List<PostPagingDTO> getPostListPaging(Map<String, Object> paging);
     Post getPost(long post_seq);
     void insertPost(Post post);

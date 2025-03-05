@@ -1,14 +1,15 @@
 (function() {
     $(document).ready(function() {
-       console.log('Hello World');
-        getPosts();
+        getPosts(0, 5);
     });
 
-    function getPosts() {
-        fetch('/api/posts')
+    function getPosts(offset, limit) {
+        let endpoint = "/api/posts?offset=" + offset+ "&limit=" + limit;
+        fetch(endpoint)
             .then(function(response) {
                 response.json().then(function(data) {
                     drawPostTable(data);
+                    drawPagination(data, offset, limit);
                 });
             })
             .catch(function(err) {
@@ -27,7 +28,6 @@
 
     function drawRow(post) {
         let category = '';
-        console.log(post);
         if(post.category === "General"){
             category =  `<span class="badge bg-info">${post.category}</span>`
         }else if(post.category === "Discussion"){
@@ -49,5 +49,22 @@
                 <i class="ri-thumb-down-line text-secondary ms-2"></i> ${post.dislike_count}
             </td>
         </tr>`;
+    }
+
+    function drawPagination(data, offset, limit) {
+        let total = data.total;
+        let totalPages = Math.ceil(total / limit);
+        let currentPage = offset + 1;
+
+        $("#pagination").twbsPagination({
+            first : null,
+            last : null,
+            initiateStartPageClick : false,
+            totalPages : totalPages,
+            visiblePages : 5,
+            onPageClick : function(event, page) {
+                getPosts((page-1) * limit, 5);
+            }
+        })
     }
 })();

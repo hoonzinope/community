@@ -5,6 +5,13 @@
 
 <!-- SQL Mapping -->
 <mapper namespace="home.example.board.repository.PostMapper">
+    <select id="getPostTotalSize"
+    resultType="int">
+        select count(*)
+        from post
+        where delete_flag = 0
+    </select>
+
     <select id="getPostListPaging"
             parameterType="map"
             resultType="home.example.board.DTO.PostPagingDTO">

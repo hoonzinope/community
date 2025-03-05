@@ -35,6 +35,7 @@ public class PostService {
         Map<String, Object> paging = new HashMap<>();
         paging.put("offset", offset);
         paging.put("limit", limit);
+        int postTotalSize = postMapper.getPostTotalSize();
         List<PostPagingDTO> postListPaging = postMapper.getPostListPaging(paging);
 
         List<JSONObject> postList = postListPaging.stream()
@@ -54,6 +55,7 @@ public class PostService {
                 }).collect(Collectors.toList());
 
         JSONObject result = new JSONObject();
+        result.put("total", postTotalSize);
         result.put("size", postList.size());
         result.put("postList", postList);
 
