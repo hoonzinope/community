@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 public class User {
 
-    private Long user_seq;
+    private long user_seq;
     private String user_name;
     private String user_pw;
     private String user_email;

@@ -17,5 +17,5 @@ public class Post {
     private LocalDateTime delete_ts;
     private boolean delete_flag;
     private long user_seq;
-    private int subject_seq;
+    private long subject_seq;
 }

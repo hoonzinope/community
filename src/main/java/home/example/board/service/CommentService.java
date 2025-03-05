@@ -40,8 +40,8 @@ public class CommentService {
         JSONObject jsonObject = new JSONObject();
         List<CommentDTO> comments = commentMapper.selectComments(post_seq);
         if(user_seq != -1) {
-            List<Integer> commentSeqList = comments.stream().map(comment-> {
-                int comment_seq = comment.getComment_seq();
+            List<Long> commentSeqList = comments.stream().map(comment-> {
+                long comment_seq = comment.getComment_seq();
                 return comment_seq;
             }).collect(Collectors.toList());
             Map<String, Object> params = new HashMap<>();

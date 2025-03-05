@@ -26,8 +26,8 @@ public class SubjectService {
         return jsonObject;
     }
 
-    public Map<Integer, String> getSubjectMap() {
-        Map<Integer, String> subjectMap = new HashMap<>();
+    public Map<Long, String> getSubjectMap() {
+        Map<Long, String> subjectMap = new HashMap<>();
         subjectMapper.getSubjectList().forEach(subject -> {
             subjectMap.put(subject.getSubject_seq(), subject.getSubject_name());
         });

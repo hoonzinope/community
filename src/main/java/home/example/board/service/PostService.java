@@ -72,7 +72,7 @@ public class PostService {
     }
     public JSONObject getPost(long post_seq) {
         Post post = postMapper.getPost(post_seq);
-        Map<Integer, String> subjectMap = subjectService.getSubjectMap();
+        Map<Long, String> subjectMap = subjectService.getSubjectMap();
 
         JSONObject postJson = new JSONObject();
         postJson.put("post_seq", post.getPost_seq());

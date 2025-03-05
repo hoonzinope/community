@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
 @Data
 public class CommentDTO {
 
-    private int comment_seq;
+    private long comment_seq;
     private String content;
-    private int parent_comment_seq;
+    private long parent_comment_seq;
     private LocalDateTime insert_ts;
     private String user_name;
     private String sort_path;

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class CommentLike {
-    private int comment_like_seq;
+    private long comment_like_seq;
     private int comment_seq;
     private int user_seq;
     private int like_type;
