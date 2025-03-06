@@ -34,14 +34,14 @@ public class SecurityConfig {
             // URL별 접근 제어 설정
             .authorizeHttpRequests(auth -> auth
                     // 게시판 목록이나 상세 페이지는 누구나 접근 가능
-                    .antMatchers("/","/board/**", "/post/**","/addUser","/api/**").permitAll()
+                    .antMatchers("/","/login","/signup","/board/**", "/post/**","/auth/signup","/api/**").permitAll()
                     // 그 외의 URL은 인증 필요
                     .anyRequest().authenticated()
             )
             // 폼 로그인 설정
             .formLogin(form -> form
                     // 커스텀 로그인 페이지 URL 지정 (기본 제공 페이지도 사용 가능)
-                    //.loginPage("/auth/login")
+                    .loginPage("/login")
                     .loginProcessingUrl("/auth/login")
                     .usernameParameter("user_name")
                     .passwordParameter("user_pw")

@@ -16,7 +16,7 @@ public class UserAPI {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/addUser")
+    @PostMapping("/auth/signup")
     public ResponseEntity<JSONObject> addUsers(@RequestBody Map<String, Object> userInfo) {
         String user_name = (String) userInfo.get("user_name");
         String user_pw = (String) userInfo.get("user_pw");

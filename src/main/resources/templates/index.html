@@ -92,11 +92,6 @@
     <a th:if="${session.user_seq != null}" th:href="@{/write}" class="btn btn-sky btn-lg rounded-circle floating-button shadow">
         <i class="ri-pencil-line"></i>
     </a>
-
-    <!-- Previous pagination and modals remain the same -->
-    <!-- ... -->
-    <div th:replace="common/loginModal :: login_modal"></div>
-    <div th:replace="common/signupModal :: signup_modal"></div>
 </div>
 <!-- Bootstrap JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.2/jquery.twbsPagination.js" integrity="sha512-uzuo1GprrBscZGr+iQSv8+YQQsKY+rSHJju0FruVsGHV2CZNZPymW/4RkxoHxAxw3Lo5UQaxDMF8zINUfAsGeg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

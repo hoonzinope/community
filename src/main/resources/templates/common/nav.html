@@ -16,15 +16,16 @@
         <div class="container">
             <a class="navbar-brand" th:href="@{/}"><i class="ri-cloud-line me-2"></i>Sky Board</a>
             <div th:if="${session.user_seq == null}" class="ms-auto">
-                <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+                <button class="btn btn-outline-light me-2" id="login">
                     <i class="ri-login-circle-line me-1"></i>Login
                 </button>
-                <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#signupModal">
+                <button class="btn btn-light" id="signup">
                     <i class="ri-user-add-line me-1"></i>Sign Up
                 </button>
             </div>
             <div th:if="${session.user_seq != null}" class="ms-auto">
                 <span th:text="${session.user_nickname}" class="text-light">Writing as User123</span>
+                <span class="mx-2">|</span>
                 <button class="btn btn-outline-light me-2" id="logout">
                     <i class="ri-login-circle-line me-1"></i>Logout
                 </button>
