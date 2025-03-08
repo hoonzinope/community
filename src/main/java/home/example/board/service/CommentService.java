@@ -26,7 +26,7 @@ public class CommentService {
     @Autowired
     private CommentHistoryMapper commentHistoryMapper;
 
-    public void insertComment(long post_seq, String content, Integer parent_comment_seq, long user_seq) {
+    public void insertComment(long post_seq, String content, Long parent_comment_seq, long user_seq) {
         Comment comment = Comment.builder()
                 .post_seq(post_seq)
                 .content(content)
@@ -36,7 +36,7 @@ public class CommentService {
         commentMapper.insertComment(comment);
     }
 
-    public JSONObject selectComments(int post_seq, int user_seq) {
+    public JSONObject selectComments(long post_seq, long user_seq) {
         JSONObject jsonObject = new JSONObject();
         List<CommentDTO> comments = commentMapper.selectComments(post_seq);
         if(user_seq != -1) {
@@ -50,7 +50,7 @@ public class CommentService {
             List<CommentLike> commentLikes = commentLikeMapper.selectCommentLikes(params);
 
             commentLikes.stream().forEach(commentLike -> {
-                int comment_seq = commentLike.getComment_seq();
+                long comment_seq = commentLike.getComment_seq();
                 comments.stream().forEach(comment -> {
                     if(comment.getComment_seq() == comment_seq) {
                         comment.setClick_like(true);
@@ -64,7 +64,7 @@ public class CommentService {
         return jsonObject;
     }
 
-    public void updateComment(int comment_seq, String content, long user_seq) throws IllegalAccessException {
+    public void updateComment(long comment_seq, String content, long user_seq) throws IllegalAccessException {
         Comment comment = commentMapper.selectComment(comment_seq);
         if(user_seq != comment.getUser_seq()) {
             throw new IllegalAccessException("user not matched");
@@ -74,7 +74,7 @@ public class CommentService {
         commentMapper.updateComment(comment);
     }
 
-    public void deleteComment(int comment_seq, long user_seq) throws IllegalAccessException {
+    public void deleteComment(long comment_seq, long user_seq) throws IllegalAccessException {
         Comment comment = commentMapper.selectComment(comment_seq);
         if(user_seq != comment.getUser_seq()) {
             throw new IllegalAccessException("user not matched");

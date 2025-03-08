@@ -14,6 +14,6 @@ public class Comment {
     private LocalDateTime insert_ts;
     private LocalDateTime delete_ts;
     private Integer delete_flag;
-    private Integer parent_comment_seq;
+    private Long parent_comment_seq;
     private long user_seq;
 }

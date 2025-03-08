@@ -14,7 +14,7 @@ public class CommentLikeService {
     @Autowired
     private CommentLikeMapper commentLikeMapper;
 
-    public void insertCommentLike(int comment_seq, int user_seq, String like_type) {
+    public void insertCommentLike(long comment_seq, long user_seq, String like_type) {
         CommentLike commentLike = CommentLike.builder()
                 .comment_seq(comment_seq)
                 .user_seq(user_seq)
@@ -24,7 +24,7 @@ public class CommentLikeService {
         commentLikeMapper.insertCommentLike(commentLike);
     }
 
-    public void deleteCommentLike(int comment_seq, int user_seq) {
+    public void deleteCommentLike(long comment_seq, long user_seq) {
         CommentLike commentLike = CommentLike.builder()
                 .comment_seq(comment_seq)
                 .user_seq(user_seq)
