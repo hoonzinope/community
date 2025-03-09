@@ -5,6 +5,41 @@
 
 <!-- SQL Mapping -->
 <mapper namespace="home.example.board.repository.UserMapper">
+    <select id="getUserBySeq" parameterType="long"
+            resultType="home.example.board.domain.User">
+        select
+            user_seq,
+            user_name,
+            user_pw,
+            user_email,
+            user_nickname,
+            insert_ts,
+            role,
+            delete_flag,
+            delete_ts
+        from user
+        where user_seq = #{user_seq}
+    </select>
+
+    <select id="getUserBySeqList" parameterType="java.util.List"
+            resultType="home.example.board.domain.User">
+        select
+            user_seq,
+            user_name,
+            user_pw,
+            user_email,
+            user_nickname,
+            insert_ts,
+            role,
+            delete_flag,
+            delete_ts
+        from user
+        where user_seq in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
     <insert id="addUser" parameterType="home.example.board.domain.User">
         INSERT INTO user
             (user_name, user_pw, user_email, user_nickname)
@@ -21,7 +56,9 @@
             user_email,
             user_nickname,
             insert_ts,
-            role
+            role,
+            delete_flag,
+            delete_ts
         from user
         where user_name = #{user_name}
     </select>
@@ -35,7 +72,9 @@
             user_email,
             user_nickname,
             insert_ts,
-            role
+            role,
+            delete_flag,
+            delete_ts
         from user
     </select>
 

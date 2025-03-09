@@ -19,19 +19,6 @@ public class UserService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public User login(String user_name, String user_pw) {
-        System.out.println("login");
-        User user = userMapper.getUser(user_name);
-        if(user == null) {
-            throw new IllegalArgumentException("user_name does not exist");
-        }
-        if(!user.getUser_pw().equals(user_pw)) {
-            throw new IllegalArgumentException("user_pw is not correct");
-        }
-
-        return user;
-    }
-
     public void addUsers(String user_name, String user_pw, String user_email) {
         checkExceptionInput(user_name, user_pw, user_email);
         if(isValidate(user_name, user_pw, user_email)) {
@@ -92,4 +79,57 @@ public class UserService {
         return email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
     }
 
+    public void updateUserInfo(long user_seq, String userNickname, String userEmail) {
+        if(userNickname == null && userEmail == null) {
+            throw new IllegalArgumentException("user_nickname, user_email is required");
+        }
+
+        if(userNickname != null && (userNickname.length() < 4 || userNickname.length() > 20)) {
+            throw new IllegalArgumentException("user_nickname length must be between 4 and 20");
+        }
+
+        if(userEmail != null && (userEmail.length() < 10 || userEmail.length() > 50)) {
+            throw new IllegalArgumentException("user_email length must be between 10 and 50");
+        }
+
+        User user = userMapper.getUserBySeq(user_seq);
+        user.setUser_nickname(userNickname);
+        user.setUser_email(userEmail);
+
+        userMapper.updateUserInfo(user);
+    }
+
+    public void userPasswordReset(long userSeq) {
+        User user = userMapper.getUserBySeq(userSeq);
+        if(user == null) {
+            throw new IllegalArgumentException("user not found");
+        }
+        user.setUser_pw(passwordEncoder.encode("0000"));
+        userMapper.updateUserInfo(user);
+    }
+
+    public void userPasswordUpdate(long userSeq, String userPw, String newPw) {
+        User user = userMapper.getUserBySeq(userSeq);
+        if(user == null) {
+            throw new IllegalArgumentException("user not found");
+        }
+        if(!passwordEncoder.matches(userPw, user.getUser_pw())) {
+            throw new IllegalArgumentException("password is not correct");
+        }
+        if(!isPassword(newPw)) {
+            throw new IllegalArgumentException("new_pw is not valid");
+        }
+        user.setUser_pw(passwordEncoder.encode(newPw));
+        userMapper.updateUserInfo(user);
+    }
+
+    public void userDelete(long userSeq) {
+        User user = userMapper.getUserBySeq(userSeq);
+        if(user == null) {
+            throw new IllegalArgumentException("user not found");
+        }
+        user.setDelete_flag(1);
+        user.setDelete_ts(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+        userMapper.updateUserInfo(user);
+    }
 }

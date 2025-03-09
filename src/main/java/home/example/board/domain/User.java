@@ -16,4 +16,6 @@ public class User {
     private String user_nickname;
     private LocalDateTime insert_ts;
     private String role;
+    private int delete_flag;
+    private LocalDateTime delete_ts;
 }
