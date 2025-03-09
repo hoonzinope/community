@@ -49,7 +49,7 @@ public class CommentService {
             checkLikeClick(user_seq, comments);
         }
 
-        deleteUsernameBlind(comments);
+        setUserNickName(comments);
 
         jsonObject.put("comments", comments);
         jsonObject.put("comment_count", comments.size());
@@ -81,19 +81,22 @@ public class CommentService {
         });
     }
 
-    private void deleteUsernameBlind(List<CommentDTO> comments) {
+    private void setUserNickName(List<CommentDTO> comments) {
         List<Long> userSeqList = comments.stream().map(CommentDTO::getUser_seq)
                 .collect(Collectors.toList());
 
         // get user list by userSeqList
         Map<Long, Integer> userSeqDeleteFlagMap = userMapper.getUserBySeqList(userSeqList).stream()
                 .collect(Collectors.toMap(User::getUser_seq, User::getDelete_flag));
-
+        Map<Long, String> userSeqNicknameMap = userMapper.getUserBySeqList(userSeqList).stream()
+                .collect(Collectors.toMap(User::getUser_seq, User::getUser_nickname));
         // blind delete user nickname
         comments.stream().forEach(comment -> {
             long user_seq = comment.getUser_seq();
             if(userSeqDeleteFlagMap.get(user_seq) == 1) {
                 comment.setUser_name("비활성 사용자");
+            }else{
+                comment.setUser_name(userSeqNicknameMap.get(user_seq).substring(0,8));
             }
         });
     }
