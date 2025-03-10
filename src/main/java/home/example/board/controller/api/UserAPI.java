@@ -245,11 +245,10 @@ public class UserAPI {
             HttpServletRequest request) {
         JSONObject jsonObject = new JSONObject();
         long user_seq = (long) request.getSession().getAttribute("user_seq");
-        String user_pw = (String) userInfo.get("user_pw");
         String new_pw = (String) userInfo.get("new_pw");
 
         try{
-            userService.userPasswordUpdate(user_seq, user_pw, new_pw);
+            userService.userPasswordUpdate(user_seq, new_pw);
             jsonObject.put("success", true);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();

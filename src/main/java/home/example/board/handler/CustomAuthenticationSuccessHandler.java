@@ -26,6 +26,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         session.setAttribute("user_seq", userDetails.getUserSeq());
         session.setAttribute("user_nickname", user_nickname);
 
+        if(userDetails.getTempPassword())
+            referer = "/changePassword";
+
         response.sendRedirect(referer);
     }
 }

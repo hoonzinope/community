@@ -1,6 +1,8 @@
 package home.example.board.controller.page;
 
 import home.example.board.service.PostService;
+import home.example.board.service.UserService;
+import org.checkerframework.checker.units.qual.A;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,9 @@ public class PageController {
     @Autowired
     PostService postService;
 
+    @Autowired
+    UserService userService;
+
     @GetMapping("/")
     public String index() {
         return "redirect:/board";
@@ -31,6 +36,18 @@ public class PageController {
     @GetMapping("/write")
     public String write() {
         return "write";
+    }
+
+    @GetMapping("/profile")
+    public String profile(HttpServletRequest request, Model model) {
+        long user_seq = Long.parseLong(request.getSession().getAttribute("user_seq").toString());
+        userService.insertUserInfo(model, user_seq);
+        return "profile";
+    }
+
+    @GetMapping("/changePassword")
+    public String changePassword() {
+        return "changePassword";
     }
 
     @GetMapping("/modify/{post_seq}")

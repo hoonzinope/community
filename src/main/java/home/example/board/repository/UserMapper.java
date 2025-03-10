@@ -14,4 +14,5 @@ public interface UserMapper {
 
     User getUserBySeq(long userSeq);
     List<User> getUserBySeqList(List<Long> userSeqList);
+    void resetUserPw(User user);
 }

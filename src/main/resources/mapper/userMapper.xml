@@ -16,7 +16,8 @@
             insert_ts,
             role,
             delete_flag,
-            delete_ts
+            delete_ts,
+            force_password_change
         from user
         where user_seq = #{user_seq}
     </select>
@@ -32,7 +33,8 @@
             insert_ts,
             role,
             delete_flag,
-            delete_ts
+            delete_ts,
+            force_password_change
         from user
         where user_seq in
         <foreach collection="list" item="item" open="(" separator="," close=")">
@@ -58,7 +60,8 @@
             insert_ts,
             role,
             delete_flag,
-            delete_ts
+            delete_ts,
+            force_password_change
         from user
         where user_name = #{user_name}
     </select>
@@ -74,7 +77,8 @@
             insert_ts,
             role,
             delete_flag,
-            delete_ts
+            delete_ts,
+            force_password_change
         from user
     </select>
 
@@ -86,6 +90,15 @@
                 user_email = #{user_email},
                 user_nickname = #{user_nickname},
                 role = #{role}
+            where
+                user_seq = #{user_seq}
+    </update>
+
+    <update id="resetUserPw"
+            parameterType="home.example.board.domain.User">
+        update user
+            set user_pw = #{user_pw},
+                force_password_change = 1
             where
                 user_seq = #{user_seq}
     </update>

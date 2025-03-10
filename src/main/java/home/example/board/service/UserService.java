@@ -5,6 +5,7 @@ import home.example.board.repository.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -18,6 +19,19 @@ public class UserService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    public Model insertUserInfo(Model model, long user_seq) {
+        User user = userMapper.getUserBySeq(user_seq);
+        model.addAttribute("user_seq", user.getUser_seq());
+        model.addAttribute("user_name", user.getUser_name());
+        model.addAttribute("user_email", user.getUser_email());
+        model.addAttribute("user_nickname", user.getUser_nickname().substring(0,8));
+        model.addAttribute("insert_ts", user.getInsert_ts());
+        model.addAttribute("role", user.getRole());
+        model.addAttribute("delete_flag", user.getDelete_flag());
+        model.addAttribute("delete_ts", user.getDelete_ts());
+        return model;
+    }
 
     public void addUsers(String user_name, String user_pw, String user_email) {
         checkExceptionInput(user_name, user_pw, user_email);
@@ -105,16 +119,13 @@ public class UserService {
             throw new IllegalArgumentException("user not found");
         }
         user.setUser_pw(passwordEncoder.encode("0000"));
-        userMapper.updateUserInfo(user);
+        userMapper.resetUserPw(user);
     }
 
-    public void userPasswordUpdate(long userSeq, String userPw, String newPw) {
+    public void userPasswordUpdate(long userSeq, String newPw) {
         User user = userMapper.getUserBySeq(userSeq);
         if(user == null) {
             throw new IllegalArgumentException("user not found");
-        }
-        if(!passwordEncoder.matches(userPw, user.getUser_pw())) {
-            throw new IllegalArgumentException("password is not correct");
         }
         if(!isPassword(newPw)) {
             throw new IllegalArgumentException("new_pw is not valid");

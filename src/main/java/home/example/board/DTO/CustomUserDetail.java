@@ -16,6 +16,8 @@ public class CustomUserDetail implements UserDetails {
         this.user = user;
     }
 
+    public boolean getTempPassword() { return this.user.getForce_password_change() == 1;}
+
     public String getUserNickName() {
         return this.user.getUser_nickname();
     }

@@ -26,6 +26,10 @@
             <div th:if="${session.user_seq != null}" class="ms-auto">
                 <span th:text="${session.user_nickname}" class="text-light">Writing as User123</span>
                 <span class="mx-2">|</span>
+                <a th:href="@{/profile}" class="text-decoration-none text-light">
+                    <i class="ri-settings-3-line" style="font-size: 1.5rem;"></i>
+                </a>
+                <span class="mx-2">|</span>
                 <button class="btn btn-outline-light me-2" id="logout">
                     <i class="ri-login-circle-line me-1"></i>Logout
                 </button>

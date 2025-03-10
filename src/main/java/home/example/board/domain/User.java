@@ -18,4 +18,5 @@ public class User {
     private String role;
     private int delete_flag;
     private LocalDateTime delete_ts;
+    private int force_password_change;
 }
