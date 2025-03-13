@@ -14,7 +14,7 @@
             (#{post_seq}, #{content}, #{parent_comment_seq}, #{user_seq})
     </insert>
 
-    <select id="selectComments" parameterType="int"
+    <select id="selectComments" parameterType="long"
         resultType="home.example.board.DTO.CommentDTO">
         <![CDATA[
         WITH RECURSIVE cte_comment AS (
@@ -54,7 +54,7 @@
     </select>
 
     <select id="selectComment"
-            parameterType="int"
+            parameterType="long"
             resultType="home.example.board.domain.Comment">
         select
             comment_seq,
@@ -79,7 +79,7 @@
     </update>
 
     <update id="deleteComment"
-            parameterType="int">
+            parameterType="long">
         update comment
             set
                 delete_flag = 1,

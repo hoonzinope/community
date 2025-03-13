@@ -5,10 +5,11 @@
 
     function changePassword() {
         document.getElementById("changePassword").addEventListener("click", function() {
-           let new_pw = document.getElementById("new_pw").val();
+           let new_pw = document.getElementById("new_pw").value;
            let confirmPassword = document.getElementById("confirm_pw").value;
            if(new_pw !== confirmPassword) {
                alert("비밀번호가 일치하지 않습니다.");
+               return;
            }
 
            let data = {
@@ -26,7 +27,7 @@
             .then(data => {
                 // redirect login page
                 alert("비밀번호가 변경되었습니다.");
-                window.location.href = "/login";
+                window.location.href = "/auth/logout";
             })
             .catch(error => {
                 alert(error);

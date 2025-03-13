@@ -11,7 +11,6 @@ public class CommentDTO {
     private String content;
     private long parent_comment_seq;
     private LocalDateTime insert_ts;
-    private String user_name;
     private String sort_path;
     private String p_user_name;
     private int like_cnt;
@@ -19,4 +18,5 @@ public class CommentDTO {
     private boolean click_like;
     private int click_like_type;
     private long user_seq;
+    private String user_name;
 }

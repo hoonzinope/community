@@ -11,8 +11,9 @@ public interface UserMapper {
     User getUser(String user_name);
     List<User> getUserAll();
     void updateUserInfo(User user);
-
+    void updateUserPassword(User user);
     User getUserBySeq(long userSeq);
     List<User> getUserBySeqList(List<Long> userSeqList);
     void resetUserPw(User user);
+    void deleteUser(User user);
 }

@@ -22,10 +22,13 @@ public class UserService {
 
     public Model insertUserInfo(Model model, long user_seq) {
         User user = userMapper.getUserBySeq(user_seq);
+
         model.addAttribute("user_seq", user.getUser_seq());
         model.addAttribute("user_name", user.getUser_name());
         model.addAttribute("user_email", user.getUser_email());
-        model.addAttribute("user_nickname", user.getUser_nickname().substring(0,8));
+        String nickName = user.getUser_nickname();
+        nickName = nickName.contains("-") ? nickName.substring(0,8) : nickName;
+        model.addAttribute("user_nickname", nickName);
         model.addAttribute("insert_ts", user.getInsert_ts());
         model.addAttribute("role", user.getRole());
         model.addAttribute("delete_flag", user.getDelete_flag());
@@ -131,7 +134,8 @@ public class UserService {
             throw new IllegalArgumentException("new_pw is not valid");
         }
         user.setUser_pw(passwordEncoder.encode(newPw));
-        userMapper.updateUserInfo(user);
+        user.setForce_password_change(0);
+        userMapper.updateUserPassword(user);
     }
 
     public void userDelete(long userSeq) {
@@ -141,6 +145,6 @@ public class UserService {
         }
         user.setDelete_flag(1);
         user.setDelete_ts(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
-        userMapper.updateUserInfo(user);
+        userMapper.deleteUser(user);
     }
 }

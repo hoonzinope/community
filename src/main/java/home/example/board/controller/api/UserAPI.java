@@ -137,9 +137,10 @@ public class UserAPI {
         long user_seq = (long) request.getSession().getAttribute("user_seq");
         String user_nickname = (String) userInfo.get("user_nickname");
         String user_email = (String) userInfo.get("user_email");
-
+        System.out.println(user_nickname + " "+ user_email);
         try{
             userService.updateUserInfo(user_seq, user_nickname, user_email);
+            request.getSession().setAttribute("user_nickname", user_nickname);
             jsonObject.put("success", true);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -180,7 +181,7 @@ public class UserAPI {
                         )
         })
     })
-    @PostMapping("/member/me/passwordReset")
+    @PatchMapping("/member/me/passwordReset")
     public ResponseEntity<JSONObject> userPasswordReset(HttpServletRequest request) {
         JSONObject jsonObject = new JSONObject();
         long user_seq = (long) request.getSession().getAttribute("user_seq");

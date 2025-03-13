@@ -1,5 +1,6 @@
 package home.example.board.config;
 
+import home.example.board.handler.CustomAuthenticationFailureHandler;
 import home.example.board.handler.CustomAuthenticationSuccessHandler;
 import home.example.board.handler.CustomLogoutSuccessHandler;
 import org.springframework.context.annotation.Bean;
@@ -50,6 +51,7 @@ public class SecurityConfig {
                     // 로그인 실패 시 URL
                     .failureUrl("/error") //login?error=true
                     .successHandler(new CustomAuthenticationSuccessHandler())
+                    .failureHandler(new CustomAuthenticationFailureHandler())
                     // 모든 사용자에게 로그인 페이지 접근 허용
                     .permitAll()
             )

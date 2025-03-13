@@ -10,11 +10,10 @@
             let confirm = window.confirm('정보를 수정하시겠습니까?');
             if(!confirm){ return false; }
             let data = {
-                nickname : document.getElementById('nickname').value,
-                email : document.getElementById('email').value
+                user_nickname : document.getElementById('nickname').value,
+                user_email : document.getElementById('email').value
             }
-            let endpoint = '/member/me/update';
-            fetch(endpoint, {
+            fetch("/member/me/update", {
                 method : 'POST',
                 headers : {
                     'Content-Type' : 'application/json'
@@ -25,6 +24,7 @@
                 window.location.reload();
             }).catch(error => {
                 alert(error);
+                window.location.reload();
             })
         })
     }
@@ -34,12 +34,14 @@
             let confirm = window.confirm('비밀번호를 초기화 하시겠습니까?');
             if(!confirm){ return false; }
             let endpoint = '/member/me/passwordReset'
-            fetch(endpoint)
+            fetch(endpoint,{
+                method : "PATCH"
+            })
                 .then(response => response.json())
                 .then(data => {
                     // redirect password update page
                     alert("비밀번호가 초기화 되었습니다.");
-                    window.location.href = "/login";
+                    window.location.href = "/auth/logout";
                 })
                 .catch(error => {
                     alert(error);
@@ -59,7 +61,7 @@
                 .then(data => {
                     // redirect main page
                     alert("계정이 삭제되었습니다.");
-                    window.location.href = "/";
+                    window.location.href = "/auth/logout";
                 })
                 .catch(error => {
                     alert(error);

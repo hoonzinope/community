@@ -94,11 +94,29 @@
                 user_seq = #{user_seq}
     </update>
 
+    <update id="updateUserPassword"
+        parameterType="home.example.board.domain.User">
+        update user
+            set user_pw = #{user_pw},
+                force_password_change = #{force_password_change}
+            where
+                user_seq = #{user_seq}
+    </update>
+
     <update id="resetUserPw"
             parameterType="home.example.board.domain.User">
         update user
             set user_pw = #{user_pw},
                 force_password_change = 1
+            where
+                user_seq = #{user_seq}
+    </update>
+
+    <update id="deleteUser"
+            parameterType="home.example.board.domain.User">
+        update user
+            set delete_flag = #{delete_flag},
+                delete_ts = #{delete_ts}
             where
                 user_seq = #{user_seq}
     </update>

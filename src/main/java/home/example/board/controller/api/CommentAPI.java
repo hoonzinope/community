@@ -128,7 +128,7 @@ public class CommentAPI {
     @GetMapping("/api/post/{post_seq}/comments")
     public ResponseEntity<JSONObject> getComments(
             @Parameter(description = "게시글 번호", required = true)
-            @PathVariable int post_seq,
+            @PathVariable long post_seq,
             @Parameter(description = "사용자 번호", required = false)
             @RequestParam(value="user_seq", defaultValue = "-1") long user_seq) {
         JSONObject jsonObject = commentService.selectComments(post_seq, user_seq);

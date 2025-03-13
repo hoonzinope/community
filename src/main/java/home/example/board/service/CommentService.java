@@ -96,7 +96,9 @@ public class CommentService {
             if(userSeqDeleteFlagMap.get(user_seq) == 1) {
                 comment.setUser_name("비활성 사용자");
             }else{
-                comment.setUser_name(userSeqNicknameMap.get(user_seq).substring(0,8));
+                String nickname = userSeqNicknameMap.get(user_seq);
+                nickname = nickname.contains("-") ? nickname.substring(0,8) : nickname;
+                comment.setUser_name(nickname);
             }
         });
     }
