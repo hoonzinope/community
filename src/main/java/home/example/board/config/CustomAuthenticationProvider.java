@@ -40,12 +40,19 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
+
+        // 사용자 검증
+        UserDetails userDetails = userDetailService.loadUserByUsername(username);
+        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+        }
+
         // 동시 로그인 체크
         List<Object> principals = sessionRegistry.getAllPrincipals();
         for (Object principal : principals) {
             if (principal instanceof CustomUserDetail) {
-                CustomUserDetail userDetails = (CustomUserDetail) principal;
-                if (userDetails.getUsername().equals(username)) {
+                CustomUserDetail checkUserDetails = (CustomUserDetail) principal;
+                if (checkUserDetails.getUsername().equals(username)) {
                     List<SessionInformation> sessions =
                             sessionRegistry.getAllSessions(principal, false);
                     for (SessionInformation session : sessions) {
@@ -53,12 +60,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                     }
                 }
             }
-        }
-
-        // 사용자 검증
-        UserDetails userDetails = userDetailService.loadUserByUsername(username);
-        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
 
         // 인증 완료된 토큰 생성
