@@ -21,11 +21,11 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         String errorMessage;
         if (exception instanceof DisabledException) {
             // 계정이 비활성화된 경우 처리 로직 (예: 별도 에러 메시지 처리)
-            System.out.println("비활성화된 계정입니다.");
+            System.out.println("비활성화된 계정입니다." + exception.getMessage());
             errorMessage = "inactive account";
         } else {
             // 그 외의 인증 실패에 대한 처리
-            System.out.println("인증에 실패했습니다.");
+            System.out.println("인증에 실패했습니다." + exception.getMessage());
             errorMessage = "authentication failed";
         }
         errorMessage = URLEncoder.encode(errorMessage, String.valueOf(StandardCharsets.UTF_8));
