@@ -3,16 +3,28 @@ package home.example.board.config;
 import home.example.board.handler.CustomAuthenticationFailureHandler;
 import home.example.board.handler.CustomAuthenticationSuccessHandler;
 import home.example.board.handler.CustomLogoutSuccessHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.session.ConcurrentSessionFilter;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.security.web.session.SessionManagementFilter;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableWebSecurity
@@ -21,14 +33,36 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web -> web.ignoring().antMatchers("/css/**","/js/**","/images/**"));
     }
+
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
+    @Bean
+    public SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+        ConcurrentSessionControlAuthenticationStrategy sessionStrategy =
+                new ConcurrentSessionControlAuthenticationStrategy(sessionRegistry());
+        sessionStrategy.setMaximumSessions(1);
+        sessionStrategy.setExceptionIfMaximumExceeded(false);
+        return sessionStrategy;
+    }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(
-            HttpSecurity httpSecurity
-    ) throws Exception{
+            HttpSecurity httpSecurity,
+            CustomAuthenticationProvider customAuthenticationProvider,
+            CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) throws Exception{
         httpSecurity
             // CSRF 보호 설정 (필요에 따라 disable 할 수 있음)
             .csrf(csrf -> csrf.disable())
@@ -50,7 +84,7 @@ public class SecurityConfig {
                     //.defaultSuccessUrl("/", true)
                     // 로그인 실패 시 URL
                     // .failureUrl("/error") //login?error=true
-                    .successHandler(new CustomAuthenticationSuccessHandler())
+                    .successHandler(customAuthenticationSuccessHandler)
                     .failureHandler(new CustomAuthenticationFailureHandler())
                     // 모든 사용자에게 로그인 페이지 접근 허용
                     .permitAll()
@@ -60,8 +94,29 @@ public class SecurityConfig {
                     .logoutUrl("/auth/logout")
                     .logoutSuccessUrl("/") ///login?logout
                     .logoutSuccessHandler(new CustomLogoutSuccessHandler())
+                    .deleteCookies("JSESSIONID") // 세션 쿠키 삭제
+                    .invalidateHttpSession(true)  // 세션 무효화
                     .permitAll()
-            );
+            )
+                .authenticationProvider(customAuthenticationProvider)  // 추가
+            // 세션 관리 및 동시 로그인 제한 설정
+             .sessionManagement(session -> session
+                     .invalidSessionUrl("/")  // 유효하지 않은 세션 리다이렉트
+                     .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 필요한 경우에만 세션 생성
+                     .maximumSessions(1) // 최대 세션 수
+                     .maxSessionsPreventsLogin(false) // 기존 세션 만료
+                     .expiredUrl("/login?error=true&message=expireLogin") // expiredSessionStrategy 대신 expiredUrl 사용
+                     .sessionRegistry(sessionRegistry())
+             )
+            .headers(headers -> headers
+                    .frameOptions().sameOrigin()
+                    .cacheControl().disable()  // 캐시 비활성화
+            )
+            .addFilterBefore(new ConcurrentSessionFilter(sessionRegistry(), event -> {
+                HttpServletResponse response = event.getResponse();
+                response.sendRedirect("/login?expired=true&message=expiredLogin");
+            }), SessionManagementFilter.class);
+
         return httpSecurity.build();
     }
 
