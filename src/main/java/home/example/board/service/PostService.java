@@ -8,6 +8,7 @@ import home.example.board.repository.PostHistoryMapper;
 import home.example.board.repository.PostMapper;
 import home.example.board.repository.SubjectMapper;
 import home.example.board.repository.UserMapper;
+import home.example.board.utils.NickNameUtils;
 import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
@@ -83,10 +84,12 @@ public class PostService {
         Map<Long, String> subjectMap = subjectService.getSubjectMap();
 
         User user = userMapper.getUserBySeq(post.getUser_seq());
-        String userNickname = user.getUser_nickname().trim();
-        int dashIndex = userNickname.indexOf("-");
-        if (dashIndex != -1) {
-            userNickname = userNickname.substring(0, dashIndex).trim();
+        int deleteFlag = user.getDelete_flag();
+        String userNickname = user.getUser_nickname();
+        if (deleteFlag == 1) {
+            userNickname = "비활성 사용자";
+        }else{
+            userNickname = NickNameUtils.nickNameTrim(userNickname);
         }
 
         JSONObject postJson = new JSONObject();

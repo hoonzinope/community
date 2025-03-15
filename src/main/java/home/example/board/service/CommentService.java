@@ -8,6 +8,7 @@ import home.example.board.repository.CommentHistoryMapper;
 import home.example.board.repository.CommentLikeMapper;
 import home.example.board.repository.CommentMapper;
 import home.example.board.repository.UserMapper;
+import home.example.board.utils.NickNameUtils;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,12 +95,26 @@ public class CommentService {
         // blind delete user nickname
         comments.stream().forEach(comment -> {
             long user_seq = comment.getUser_seq();
+            long parent_user_seq = comment.getP_user_seq();
+
             if(userSeqDeleteFlagMap.get(user_seq) == 1) {
                 comment.setUser_name("비활성 사용자");
             }else{
                 String nickname = userSeqNicknameMap.get(user_seq);
-                nickname = nickname.contains("-") ? nickname.substring(0,8) : nickname;
+                nickname = NickNameUtils.nickNameTrim(nickname);
                 comment.setUser_name(nickname);
+            }
+
+            if(parent_user_seq != 0) {
+                if(userSeqDeleteFlagMap.get(parent_user_seq) == 1) {
+                    comment.setP_user_name("비활성 사용자");
+                }else{
+                    String nickname = userSeqNicknameMap.get(parent_user_seq);
+                    nickname = NickNameUtils.nickNameTrim(nickname);
+                    comment.setP_user_name(nickname);
+                }
+            }else{
+                comment.setP_user_name("");
             }
         });
     }
