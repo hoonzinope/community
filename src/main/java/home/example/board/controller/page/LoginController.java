@@ -6,6 +6,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,16 +21,24 @@ public class LoginController {
     private UserService userService;
 
     @GetMapping("/login")
-    public String login(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        // Referer 헤더를 통해 이전 페이지 URL 획득
-        String referer = request.getHeader("Referer");
+    public String login(
+            @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "message", required = false) String message,
+            HttpServletRequest request, Model model) {
 
-        // referer 값이 null일 경우를 대비한 기본값 설정 (예: 메인 페이지)
-        if(referer == null || referer.isEmpty() || referer.contains("signup") || referer.contains("login")){
-            referer = "/";
+        if(error != null){
+            model.addAttribute("error", error);
+            model.addAttribute("message", message);
+        }else{
+            HttpSession session = request.getSession();
+            // Referer 헤더를 통해 이전 페이지 URL 획득
+            String referer = request.getHeader("Referer");
+            // referer 값이 null일 경우를 대비한 기본값 설정 (예: 메인 페이지)
+            if(referer == null || referer.isEmpty() || referer.contains("signup") || referer.contains("login")){
+                referer = "/";
+            }
+            session.setAttribute("referer", referer);
         }
-        session.setAttribute("referer", referer);
 
         return "login";
     }
