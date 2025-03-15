@@ -9,6 +9,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
@@ -26,6 +28,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
             System.out.println("인증에 실패했습니다.");
             errorMessage = "authentication failed";
         }
+        errorMessage = URLEncoder.encode(errorMessage, String.valueOf(StandardCharsets.UTF_8));
         response.sendRedirect("/login?error=true&message=" + errorMessage);
     }
 }
