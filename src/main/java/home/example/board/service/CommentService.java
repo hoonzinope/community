@@ -8,6 +8,7 @@ import home.example.board.repository.CommentHistoryMapper;
 import home.example.board.repository.CommentLikeMapper;
 import home.example.board.repository.CommentMapper;
 import home.example.board.repository.UserMapper;
+import home.example.board.utils.NickNameUtils;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -99,11 +100,8 @@ public class CommentService {
             if(userSeqDeleteFlagMap.get(user_seq) == 1) {
                 comment.setUser_name("비활성 사용자");
             }else{
-                String nickname = userSeqNicknameMap.get(user_seq).trim();
-                int dashIndex = nickname.indexOf("-");
-                if (dashIndex != -1) {
-                    nickname = nickname.substring(0, dashIndex).trim();
-                }
+                String nickname = userSeqNicknameMap.get(user_seq);
+                nickname = NickNameUtils.nickNameTrim(nickname);
                 comment.setUser_name(nickname);
             }
 
@@ -111,11 +109,8 @@ public class CommentService {
                 if(userSeqDeleteFlagMap.get(parent_user_seq) == 1) {
                     comment.setP_user_name("비활성 사용자");
                 }else{
-                    String nickname = userSeqNicknameMap.get(parent_user_seq).trim();
-                    int dashIndex = nickname.indexOf("-");
-                    if (dashIndex != -1) {
-                        nickname = nickname.substring(0, dashIndex).trim();
-                    }
+                    String nickname = userSeqNicknameMap.get(parent_user_seq);
+                    nickname = NickNameUtils.nickNameTrim(nickname);
                     comment.setP_user_name(nickname);
                 }
             }else{
