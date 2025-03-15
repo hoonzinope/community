@@ -18,7 +18,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
-        String errorMessage = null;
+        String errorMessage;
         if (exception instanceof DisabledException) {
             // 계정이 비활성화된 경우 처리 로직 (예: 별도 에러 메시지 처리)
             System.out.println("비활성화된 계정입니다.");
