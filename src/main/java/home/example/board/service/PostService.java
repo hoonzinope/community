@@ -3,9 +3,11 @@ package home.example.board.service;
 import home.example.board.DTO.PostPagingDTO;
 import home.example.board.domain.Post;
 import home.example.board.domain.Subject;
+import home.example.board.domain.User;
 import home.example.board.repository.PostHistoryMapper;
 import home.example.board.repository.PostMapper;
 import home.example.board.repository.SubjectMapper;
+import home.example.board.repository.UserMapper;
 import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
@@ -30,6 +32,9 @@ public class PostService {
 
     @Autowired
     PostLikeService postLikeService;
+
+    @Autowired
+    UserMapper userMapper;
 
     public JSONObject getPostListPaging(int offset, int limit) {
         Map<String, Object> paging = new HashMap<>();
@@ -77,6 +82,13 @@ public class PostService {
         Post post = postMapper.getPost(post_seq);
         Map<Long, String> subjectMap = subjectService.getSubjectMap();
 
+        User user = userMapper.getUserBySeq(post.getUser_seq());
+        String userNickname = user.getUser_nickname().trim();
+        int dashIndex = userNickname.indexOf("-");
+        if (dashIndex != -1) {
+            userNickname = userNickname.substring(0, dashIndex).trim();
+        }
+
         JSONObject postJson = new JSONObject();
         postJson.put("post_seq", post.getPost_seq());
         postJson.put("title", post.getTitle());
@@ -85,6 +97,7 @@ public class PostService {
         postJson.put("insert_ts", post.getInsert_ts());
         postJson.put("update_ts", post.getUpdate_ts());
         postJson.put("user_seq", post.getUser_seq());
+        postJson.put("user_nickname", userNickname);
         postJson.put("category", subjectMap.get(post.getSubject_seq()));
         postJson.put("category_seq", post.getSubject_seq());
         postJson.put("like_count", postLikeService.countPostLike(post_seq, "LIKE"));
