@@ -18,6 +18,10 @@
             <div class="card shadow-sm mt-5">
                 <div class="card-body">
                     <h3 class="card-title mb-4 text-center" style="color: var(--sky-primary);">로그인</h3>
+                    <!-- 에러 메시지 표시 영역 추가 -->
+                    <div th:if="${error}" class="alert alert-danger" role="alert">
+                        <p th:text="${message}" class="mb-0"></p>
+                    </div>
                     <form th:action="@{/auth/login}" method="post">
                         <div class="mb-3">
                             <label class="form-label">Username</label>

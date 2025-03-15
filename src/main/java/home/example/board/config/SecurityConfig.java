@@ -49,7 +49,7 @@ public class SecurityConfig {
                     // 로그인 성공 시 이동할 URL
                     //.defaultSuccessUrl("/", true)
                     // 로그인 실패 시 URL
-                    .failureUrl("/error") //login?error=true
+                    // .failureUrl("/error") //login?error=true
                     .successHandler(new CustomAuthenticationSuccessHandler())
                     .failureHandler(new CustomAuthenticationFailureHandler())
                     // 모든 사용자에게 로그인 페이지 접근 허용
