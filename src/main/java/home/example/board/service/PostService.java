@@ -83,8 +83,11 @@ public class PostService {
         Map<Long, String> subjectMap = subjectService.getSubjectMap();
 
         User user = userMapper.getUserBySeq(post.getUser_seq());
-        String userNickname = user.getUser_nickname();
-        userNickname = userNickname.contains("-") ? userNickname.split("-")[0] : userNickname;
+        String userNickname = user.getUser_nickname().trim();
+        int dashIndex = userNickname.indexOf("-");
+        if (dashIndex != -1) {
+            userNickname = userNickname.substring(0, dashIndex).trim();
+        }
 
         JSONObject postJson = new JSONObject();
         postJson.put("post_seq", post.getPost_seq());
