@@ -48,8 +48,9 @@ public class CommentService {
         if(user_seq != -1) {
             checkLikeClick(user_seq, comments);
         }
-
-        setUserNickName(comments);
+        if (!comments.isEmpty()) {
+            setUserNickName(comments);
+        }
 
         jsonObject.put("comments", comments);
         jsonObject.put("comment_count", comments.size());
