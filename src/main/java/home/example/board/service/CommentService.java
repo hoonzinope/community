@@ -94,12 +94,32 @@ public class CommentService {
         // blind delete user nickname
         comments.stream().forEach(comment -> {
             long user_seq = comment.getUser_seq();
+            long parent_user_seq = comment.getP_user_seq();
+
             if(userSeqDeleteFlagMap.get(user_seq) == 1) {
                 comment.setUser_name("비활성 사용자");
             }else{
-                String nickname = userSeqNicknameMap.get(user_seq);
-                nickname = nickname.contains("-") ? nickname.substring(0,8) : nickname;
+                String nickname = userSeqNicknameMap.get(user_seq).trim();
+                int dashIndex = nickname.indexOf("-");
+                if (dashIndex != -1) {
+                    nickname = nickname.substring(0, dashIndex).trim();
+                }
                 comment.setUser_name(nickname);
+            }
+
+            if(parent_user_seq != 0) {
+                if(userSeqDeleteFlagMap.get(parent_user_seq) == 1) {
+                    comment.setP_user_name("비활성 사용자");
+                }else{
+                    String nickname = userSeqNicknameMap.get(parent_user_seq).trim();
+                    int dashIndex = nickname.indexOf("-");
+                    if (dashIndex != -1) {
+                        nickname = nickname.substring(0, dashIndex).trim();
+                    }
+                    comment.setP_user_name(nickname);
+                }
+            }else{
+                comment.setP_user_name("");
             }
         });
     }

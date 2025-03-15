@@ -83,10 +83,15 @@ public class PostService {
         Map<Long, String> subjectMap = subjectService.getSubjectMap();
 
         User user = userMapper.getUserBySeq(post.getUser_seq());
+        int deleteFlag = user.getDelete_flag();
         String userNickname = user.getUser_nickname().trim();
-        int dashIndex = userNickname.indexOf("-");
-        if (dashIndex != -1) {
-            userNickname = userNickname.substring(0, dashIndex).trim();
+        if (deleteFlag == 1) {
+            userNickname = "비활성 사용자";
+        }else{
+            int dashIndex = userNickname.indexOf("-");
+            if (dashIndex != -1) {
+                userNickname = userNickname.substring(0, dashIndex).trim();
+            }
         }
 
         JSONObject postJson = new JSONObject();

@@ -26,7 +26,8 @@
                 c.user_seq,
                 -- CAST(LEFT((SELECT user_nickname FROM user WHERE user_seq = c.user_seq), 8) AS CHAR(8)) AS user_name,
                 CAST(LPAD(c.comment_seq, 5, '0') AS CHAR(1024)) AS sort_path,
-                CAST('' AS CHAR(8)) AS p_user_name,
+                -- CAST('' AS CHAR(8)) AS p_user_name,
+                CAST(NULL as UNSIGNED) AS p_user_seq,
                 (SELECT count(*) FROM comment_like WHERE comment_like.comment_seq = c.comment_seq AND like_type = 1) AS like_cnt,
                 (SELECT count(*) FROM comment_like WHERE comment_like.comment_seq = c.comment_seq AND like_type = 0) AS dislike_cnt
             FROM comment c
@@ -42,7 +43,8 @@
                 c.user_seq,
                 -- CAST(LEFT((SELECT user_nickname FROM user WHERE user_seq = c.user_seq), 8) AS CHAR(8)) AS user_name,
                 CONCAT(cc.sort_path, '-', LPAD(c.comment_seq, 5, '0')) AS sort_path,
-                CAST(LEFT((SELECT user_nickname FROM user WHERE user_seq = cc.user_seq), 8) AS CHAR(8)) AS p_user_name,
+                -- CAST(LEFT((SELECT user_nickname FROM user WHERE user_seq = cc.user_seq), 8) AS CHAR(8)) AS p_user_name,
+                CAST(cc.user_seq AS UNSIGNED) AS p_user_seq,
                 (SELECT count(*) FROM comment_like WHERE comment_like.comment_seq = c.comment_seq AND like_type = 1) AS like_cnt,
                 (SELECT count(*) FROM comment_like WHERE comment_like.comment_seq = c.comment_seq AND like_type = 0) AS dislike_cnt
             FROM comment c
