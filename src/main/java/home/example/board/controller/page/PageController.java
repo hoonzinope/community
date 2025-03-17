@@ -2,7 +2,6 @@ package home.example.board.controller.page;
 
 import home.example.board.service.PostService;
 import home.example.board.service.UserService;
-import org.checkerframework.checker.units.qual.A;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,9 +28,14 @@ public class PageController {
 
     @GetMapping("/board")
     public String board() {
-        return "index";
+        return "board";
     }
 
+    @GetMapping("/board/{category}")
+    public String boardCategory(@PathVariable long category, Model model) {
+        model.addAttribute("category", category);
+        return "subject_board";
+    }
 
     @GetMapping("/write")
     public String write() {

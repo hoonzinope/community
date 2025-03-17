@@ -12,6 +12,14 @@
         where delete_flag = 0
     </select>
 
+    <select id="getPostTotalSizeByCategory" parameterType="map"
+    resultType="int">
+        select count(*)
+        from post
+        where delete_flag = 0
+        and subject_seq = #{subject_seq}
+    </select>
+
     <select id="getPostListPaging"
             parameterType="map"
             resultType="home.example.board.DTO.PostPagingDTO">
@@ -30,6 +38,28 @@
             post p
         WHERE
             delete_flag = 0
+        order by post_seq desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="getPostListByCategory" parameterType="map"
+            resultType="home.example.board.DTO.PostPagingDTO">
+        SELECT
+            post_seq,
+            title,
+            content,
+            insert_ts,
+            update_ts,
+            view_count,
+            user_seq,
+            (select subject_name from subject s where s.subject_seq = p.subject_seq) as category,
+            (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "LIKE") as like_count,
+            (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "DISLIKE") as dislike_count
+        FROM
+            post p
+        WHERE
+            delete_flag = 0
+        AND subject_seq = #{subject_seq}
         order by post_seq desc
         limit #{offset}, #{limit}
     </select>

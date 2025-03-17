@@ -68,6 +68,38 @@ public class PostService {
         return result;
     }
 
+    public JSONObject getPostListPaging(int offset, int limit, long subject_seq) {
+        Map<String, Object> paging = new HashMap<>();
+        paging.put("offset", offset);
+        paging.put("limit", limit);
+        paging.put("subject_seq", subject_seq);
+        int postTotalSize = postMapper.getPostTotalSizeByCategory(paging);
+
+        List<PostPagingDTO> postListPaging = postMapper.getPostListByCategory(paging);
+        List<JSONObject> postList = postListPaging.stream()
+                .map(post -> {
+                    JSONObject postJson = new JSONObject();
+                    postJson.put("post_seq", post.getPost_seq());
+                    postJson.put("title", post.getTitle());
+                    postJson.put("content", post.getContent());
+                    postJson.put("insert_ts", post.getInsert_ts());
+                    postJson.put("update_ts", post.getUpdate_ts());
+                    postJson.put("view_count", post.getView_count());
+                    postJson.put("user_seq", post.getUser_seq());
+                    postJson.put("category", post.getCategory());
+                    postJson.put("like_count", post.getLike_count());
+                    postJson.put("dislike_count", post.getDislike_count());
+                    return postJson;
+                }).collect(Collectors.toList());
+
+        JSONObject result = new JSONObject();
+        result.put("total", postTotalSize);
+        result.put("size", postList.size());
+        result.put("postList", postList);
+
+        return result;
+    }
+
     public JSONObject getPostView(long post_seq) {
         Post post = postMapper.getPost(post_seq);
         if(post == null) {
