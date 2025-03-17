@@ -29,7 +29,7 @@ public class SubjectAPI {
                                     examples = {
                                             @io.swagger.v3.oas.annotations.media.ExampleObject(
                                                     name = "정상 response",
-                                                    value = "{\"subjectList\" : [{\"subject_id\" : 1, \"subject_name\" : \"자유게시판\"}, {\"subject_id\" : 2, \"subject_name\" : \"질문게시판\"}]}")
+                                                    value = "{\"subjectList\" : [{\"subject_seq\" : 1, \"subject_name\" : \"자유게시판\"}, {\"subject_seq\" : 2, \"subject_name\" : \"질문게시판\"}]}")
                                     }
                             )
             })
@@ -51,7 +51,7 @@ public class SubjectAPI {
                                     examples = {
                                             @io.swagger.v3.oas.annotations.media.ExampleObject(
                                                     name = "정상 response",
-                                                    value = "{\"subjectList\" : [{\"subject_id\" : 1, \"subject_name\" : \"자유게시판\"}, {\"subject_id\" : 2, \"subject_name\" : \"질문게시판\"}]}")
+                                                    value = "{\"subjectList\" : [{\"subject_seq\" : 1, \"subject_name\" : \"자유게시판\"}, {\"subject_seq\" : 2, \"subject_name\" : \"질문게시판\"}]}")
                                     }
                             )
             })
@@ -73,7 +73,7 @@ public class SubjectAPI {
                                     examples = {
                                             @io.swagger.v3.oas.annotations.media.ExampleObject(
                                                     name = "정상 response",
-                                                    value = "{\"subjectList\" : [{\"subject_id\" : 1, \"subject_name\" : \"자유게시판\"}, {\"subject_id\" : 2, \"subject_name\" : \"질문게시판\"}]}")
+                                                    value = "{\"subjectList\" : [{\"subject_seq\" : 1, \"subject_name\" : \"자유게시판\"}, {\"subject_seq\" : 2, \"subject_name\" : \"질문게시판\"}]}")
                                     }
                             )
             })
@@ -96,9 +96,9 @@ public class SubjectAPI {
             )
             @RequestBody JSONObject subjectId
     ) {
-        // Extract the subject_id from the request body
-        long subject_id = Long.parseLong(subjectId.get("major_seq").toString());
-        JSONObject subjectList = subjectService.getChildSubjectList(subject_id);
+        // Extract the subject_seq from the request body
+        long subject_seq = Long.parseLong(subjectId.get("major_seq").toString());
+        JSONObject subjectList = subjectService.getChildSubjectList(subject_seq);
         return ResponseEntity.ok().body(subjectList);
     }
 

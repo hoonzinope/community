@@ -37,8 +37,8 @@
                 nav.appendChild(li);
             });
         },
-        drawSubjectSection : function(subject) {
-            let subjectList = subject.subjectList;
+        drawSubjectSection : function(subjectsData) {
+            let subjectList = subjectsData.subjectList;
             let subjectlength = subjectList.length;
             let subjectsection = document.querySelector('.subject-container');
 
