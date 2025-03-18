@@ -170,7 +170,7 @@ public class PostService {
             String src = iframe.attr("src");
             try {
                 URL url = new URL(src);
-                String host = url.getHost();
+                String host = url.getHost().toLowerCase();
                 if (!allowedHosts.contains(host)) {
                     iframe.remove();
                 }
