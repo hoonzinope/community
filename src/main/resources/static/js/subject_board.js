@@ -7,7 +7,7 @@
     const subject_board = {
         init: function () {
             let url = window.location.href;
-            let subject_seq = url.substring(url.lastIndexOf('/') + 1);
+            let subject_seq = category;
             subject_board.getSubjectName(subject_seq);
             subject_board.getSubjects(subject_seq);
             subject_board.drawSubjectPosts(subject_seq);
@@ -61,21 +61,37 @@
                     return response.json();
                 })
                 .then(data => {
-                    subject_board.drawNav(data);
+                    subject_board.drawNav(subject_seq,data);
                 })
                 .catch(error => {
                     console.error('Error fetching subjects:', error);
                 });
         },
-        drawNav : function(subjects) {
+        drawNav : function(subject_seq, subjects) {
             let subjectList = subjects.subjectList;
+            let category = subject_seq;
             const nav = document.querySelector('.nav');
             subjectList.forEach(subject => {
                 const li = document.createElement('li');
+                //const href = `/board/${category}?subCategory=${subject.subject_seq}`;
                 li.classList.add('nav-item');
-                li.innerHTML = `<a class="nav-link" href="/board/${subject.subject_seq}">${subject.subject_name}</a>`;
+                li.innerHTML = `<a class="nav-link" href="#">${subject.subject_name}</a>`;
                 nav.appendChild(li);
             });
+
+            // if clicked, nav active & draw subject posts
+            const navLinks = nav.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    navLinks.forEach(link => link.classList.remove('active'));
+                    this.classList.add('active');
+                    const selectedSubject = this.textContent;
+                    const selectedSubjectSeq = subjectList.find(subject => subject.subject_name === selectedSubject).subject_seq;
+                    subject_board.drawSubjectPosts(selectedSubjectSeq);
+                });
+            });
+
         },
         drawSubjectPosts : function(subject_seq) {
             let tbody = document.getElementById("rows");
