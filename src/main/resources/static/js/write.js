@@ -34,6 +34,10 @@
                     deletedImages.forEach(function(imageUrl){
                         deleteSummernoteFile(imageUrl);
                     });
+
+                    $editable.find('iframe[src^="//"]').each(function(){
+                        $(this).attr('src', 'https:' + $(this).attr('src'));
+                    });
                 }
             }
         });
@@ -77,16 +81,6 @@
     }
 
     function callSubjects(){
-        // fetch('/api/subjects')
-        //     .then(function(response) {
-        //         response.json().then(function(data) {
-        //             drawSubject(data);
-        //         });
-        //     })
-        //     .catch(function(err) {
-        //         console.log(err);
-        //     });
-
         const url = '/api/subject/minorSubjects';
         let data = {
             major_seq: category
@@ -140,8 +134,11 @@
                 body: JSON.stringify(data)
             }).then(function(response) {
                 response.json().then(function(data) {
-                    console.log(data);
-                    history.back();
+                    if (document.referrer) {
+                        window.location.href = document.referrer;
+                    }else{
+                        window.location.href = '/';
+                    }
                 });
             }).catch(function(err) {
                 console.log(err);
