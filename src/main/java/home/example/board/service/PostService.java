@@ -9,12 +9,19 @@ import home.example.board.repository.PostMapper;
 import home.example.board.repository.SubjectMapper;
 import home.example.board.repository.UserMapper;
 import home.example.board.utils.NickNameUtils;
+import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.safety.Safelist;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,9 +134,8 @@ public class PostService {
         JSONObject postJson = new JSONObject();
         postJson.put("post_seq", post.getPost_seq());
         postJson.put("title", post.getTitle());
-        postJson.put("content", Jsoup.clean(post.getContent(), Safelist.basicWithImages()
-            .addTags("iframe")
-            .addAttributes("iframe", "src", "width", "height", "frameborder", "allow", "allowfullscreen")));
+        String content_html = getContentHtml(post);
+        postJson.put("content", content_html);
         postJson.put("view_count", post.getView_count());
         postJson.put("insert_ts", post.getInsert_ts());
         postJson.put("update_ts", post.getUpdate_ts());
@@ -144,6 +150,35 @@ public class PostService {
         result.put("post", postJson);
 
         return result;
+    }
+
+    @NotNull
+    private static String getContentHtml(Post post) {
+        List<String> allowedHosts = Arrays.asList(
+            "www.youtube.com", "youtube.com", "youtu.be",
+            "vimeo.com", "vine.co", "instagram.com",
+            "dailymotion.com", "youku.com"
+        );
+        String rawContent = post.getContent();
+        Safelist safelist = Safelist.basicWithImages()
+            .addTags("iframe")
+            .addAttributes("iframe", "src", "width", "height", "frameborder", "allow", "allowfullscreen");
+        String cleanedContent = Jsoup.clean(rawContent, safelist);
+        Document doc = Jsoup.parseBodyFragment(cleanedContent);
+        Elements iframes = doc.select("iframe");
+        for (Element iframe : iframes) {
+            String src = iframe.attr("src");
+            try {
+                URL url = new URL(src);
+                String host = url.getHost();
+                if (!allowedHosts.contains(host)) {
+                    iframe.remove();
+                }
+            } catch (MalformedURLException e) {
+                iframe.remove();
+            }
+        }
+        return doc.body().html();
     }
 
     public boolean getPostByUser(long post_seq, long user_seq) {
