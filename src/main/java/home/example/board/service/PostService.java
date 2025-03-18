@@ -127,7 +127,9 @@ public class PostService {
         JSONObject postJson = new JSONObject();
         postJson.put("post_seq", post.getPost_seq());
         postJson.put("title", post.getTitle());
-        postJson.put("content", Jsoup.clean(post.getContent(), Safelist.basicWithImages()));
+        postJson.put("content", Jsoup.clean(post.getContent(), Safelist.basicWithImages()
+            .addTags("iframe")
+            .addAttributes("iframe", "src", "width", "height", "frameborder", "allow", "allowfullscreen")));
         postJson.put("view_count", post.getView_count());
         postJson.put("insert_ts", post.getInsert_ts());
         postJson.put("update_ts", post.getUpdate_ts());

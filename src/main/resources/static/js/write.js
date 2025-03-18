@@ -34,6 +34,10 @@
                     deletedImages.forEach(function(imageUrl){
                         deleteSummernoteFile(imageUrl);
                     });
+
+                    $editable.find('iframe[src^="//"]').each(function(){
+                        $(this).attr('src', 'https:' + $(this).attr('src'));
+                    });
                 }
             }
         });
@@ -141,7 +145,7 @@
             }).then(function(response) {
                 response.json().then(function(data) {
                     console.log(data);
-                    history.back();
+                    window.location.href = document.referrer;
                 });
             }).catch(function(err) {
                 console.log(err);
