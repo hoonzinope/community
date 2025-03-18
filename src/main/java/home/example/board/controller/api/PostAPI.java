@@ -37,9 +37,15 @@ public class PostAPI {
     @GetMapping("/api/posts")
     public ResponseEntity<JSONObject> getPosts(
             @Parameter(description = "페이징 offset", required = true) @RequestParam(value = "offset", defaultValue = "0") int offset,
-            @Parameter(description = "페이징 limit", required = true) @RequestParam(value = "limit", defaultValue = "10") int limit
+            @Parameter(description = "페이징 limit", required = true) @RequestParam(value = "limit", defaultValue = "10") int limit,
+            @Parameter(description = "주제", required = false) @RequestParam(value = "subject_seq", defaultValue = "0") long subject_seq
     ) {
-        JSONObject postListPaging = postService.getPostListPaging(offset, limit);
+        JSONObject postListPaging = new JSONObject();
+        if (subject_seq != 0) {
+            postListPaging = postService.getPostListPaging(offset, limit, subject_seq);
+        }else{
+            postListPaging = postService.getPostListPaging(offset, limit);
+        }
         return ResponseEntity.ok().body(postListPaging);
     }
 

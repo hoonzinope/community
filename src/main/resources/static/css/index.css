@@ -38,3 +38,27 @@
     right: 2rem;
     z-index: 1000;
 }
+
+.btn-outline-sky {
+    color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-outline-sky:hover {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.subject-section {
+    transition: all 0.3s ease;
+}
+
+.subject-section:hover {
+    transform: translateY(-2px);
+}
+
+.subject-title {
+    color: #333;
+    font-weight: 600;
+}

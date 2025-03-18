@@ -8,5 +8,6 @@ import java.util.List;
 @Mapper
 public interface SubjectMapper {
     List<Subject> getSubjectList();
-    Subject getSubject(long subject_seq);
+    List<Subject> getParentsSubjectList();
+    List<Subject> getChildSubjectList(long parent_seq);
 }

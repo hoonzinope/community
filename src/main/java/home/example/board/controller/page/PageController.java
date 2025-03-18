@@ -2,13 +2,14 @@ package home.example.board.controller.page;
 
 import home.example.board.service.PostService;
 import home.example.board.service.UserService;
-import org.checkerframework.checker.units.qual.A;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -29,12 +30,23 @@ public class PageController {
 
     @GetMapping("/board")
     public String board() {
-        return "index";
+        return "board";
     }
 
+    @GetMapping("/board/{category}")
+    public String boardCategory(
+            @PathVariable long category,
+            Model model) {
+        model.addAttribute("category", category);
+        return "subject_board";
+    }
 
-    @GetMapping("/write")
-    public String write() {
+    @GetMapping("/write/{subject_seq}")
+    public String write(
+            @PathVariable long subject_seq,
+            Model model)
+    {
+        model.addAttribute("subject_seq", subject_seq);
         return "write";
     }
 
