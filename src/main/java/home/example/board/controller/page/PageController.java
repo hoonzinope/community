@@ -41,8 +41,12 @@ public class PageController {
         return "subject_board";
     }
 
-    @GetMapping("/write")
-    public String write() {
+    @GetMapping("/write/{subject_seq}")
+    public String write(
+            @PathVariable long subject_seq,
+            Model model)
+    {
+        model.addAttribute("subject_seq", subject_seq);
         return "write";
     }
 

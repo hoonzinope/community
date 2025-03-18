@@ -99,7 +99,7 @@
     </div>
 
     <!-- Floating Write Button -->
-    <a th:if="${session.user_seq != null}" th:href="@{/write}" class="btn btn-sky btn-lg rounded-circle floating-button shadow">
+    <a th:if="${session.user_seq != null}" th:href="@{/write/{category}(category=${category})}" class="btn btn-sky btn-lg rounded-circle floating-button shadow">
         <i class="ri-pencil-line"></i>
     </a>
 </div>
