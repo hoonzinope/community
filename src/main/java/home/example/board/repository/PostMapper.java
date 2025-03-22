@@ -19,4 +19,7 @@ public interface PostMapper {
     void deletePost(long post_seq);
 
     void updateViewCount(long post_seq);
+
+    int getUserPostTotalSize(Map<String, Object> paging);
+    List<PostPagingDTO> getUserPostListPaging(Map<String, Object> paging);
 }

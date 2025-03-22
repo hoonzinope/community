@@ -217,4 +217,33 @@ public class PostService {
             postMapper.deletePost(post_seq);
         }
     }
+
+    public JSONObject getUserPostListPaging(long userSeq, int offset, int limit) {
+        Map<String, Object> paging = new HashMap<>();
+        paging.put("offset", offset);
+        paging.put("limit", limit);
+        paging.put("user_seq", userSeq);
+        int postTotalSize = postMapper.getUserPostTotalSize(paging);
+        List<PostPagingDTO> postListPaging = postMapper.getUserPostListPaging(paging);
+
+        List<JSONObject> postList = postListPaging.stream()
+                .map(post -> {
+                    JSONObject postJson = new JSONObject();
+                    postJson.put("post_seq", post.getPost_seq());
+                    postJson.put("title", post.getTitle());
+                    postJson.put("content", post.getContent());
+                    postJson.put("insert_ts", post.getInsert_ts());
+                    postJson.put("update_ts", post.getUpdate_ts());
+                    postJson.put("view_count", post.getView_count());
+                    postJson.put("user_seq", post.getUser_seq());
+                    return postJson;
+                }).collect(Collectors.toList());
+
+        JSONObject result = new JSONObject();
+        result.put("total", postTotalSize);
+        result.put("size", postList.size());
+        result.put("postList", postList);
+
+        return result;
+    }
 }

@@ -238,4 +238,41 @@ public class PostAPI {
             return ResponseEntity.badRequest().body(jsonObject);
         }
     }
+
+    @Operation(summary = "유저 게시글 목록 조회", description = "유저의 게시글 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode="200",
+                    description = "유저 게시글 목록 조회 성공",
+                    content = {
+                            @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                                    name = "정상 response",
+                                                    value = "{\"postList\" : [{\"post_seq\" : 1, \"title\" : \"title\", \"content\" : \"content\", \"user_seq\" : 1, \"subject_seq\" : 1, \"created_at\" : \"2021-01-01 00:00:00\"}], \"total\" : 1}"
+                                            )
+                                    }
+                            )
+            })
+    })
+    @GetMapping("/api/post/user")
+    public ResponseEntity<JSONObject> getUserPosts(
+            @Parameter(description = "유저 번호", required = true)
+            @RequestParam(value = "user_seq") long user_seq,
+            @Parameter(description = "페이징 offset", required = true)
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @Parameter(description = "페이징 limit", required = true)
+            @RequestParam(value = "limit", defaultValue = "10") int limit
+    ) {
+        try{
+            JSONObject postListPaging = postService.getUserPostListPaging(user_seq, offset, limit);
+            return ResponseEntity.ok().body(postListPaging);
+        }
+        catch (IllegalArgumentException e) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(jsonObject);
+        }
+    }
 }
