@@ -18,7 +18,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data);
                     //board.renderSubjects(data);
                     board.drawNav(data);
                     board.drawSubjectSection(data);
@@ -68,7 +67,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data);
                     board.renderSubjectColumn(row, subject, data);
                 })
                 .catch(error => {
@@ -109,7 +107,6 @@
             row.appendChild(column);
         },
         renderSubjectRows : function(data) {
-            console.log(data);
             let total = data.total;
             let postList = data.postList;
             let rows = '';

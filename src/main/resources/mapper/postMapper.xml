@@ -128,4 +128,33 @@
         WHERE
             post_seq = #{post_seq}
     </update>
+
+    <select id="getUserPostTotalSize" parameterType="map"
+    resultType="int">
+        select count(*)
+        from post
+        where delete_flag = 0
+        and user_seq = #{user_seq}
+    </select>
+    <select id="getUserPostListPaging" parameterType="map"
+            resultType="home.example.board.DTO.PostPagingDTO">
+        SELECT
+            post_seq,
+            title,
+            content,
+            insert_ts,
+            update_ts,
+            view_count,
+            user_seq,
+            (select subject_name from subject s where s.subject_seq = p.subject_seq) as category,
+            (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "LIKE") as like_count,
+            (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "DISLIKE") as dislike_count
+        FROM
+            post p
+        WHERE
+            delete_flag = 0
+        AND user_seq = #{user_seq}
+        order by post_seq desc
+        limit #{offset}, #{limit}
+    </select>
 </mapper>
