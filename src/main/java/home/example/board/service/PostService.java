@@ -230,6 +230,7 @@ public class PostService {
                 .map(post -> {
                     JSONObject postJson = new JSONObject();
                     postJson.put("post_seq", post.getPost_seq());
+                    postJson.put("category", post.getCategory());
                     postJson.put("title", post.getTitle());
                     postJson.put("content", post.getContent());
                     postJson.put("insert_ts", post.getInsert_ts());

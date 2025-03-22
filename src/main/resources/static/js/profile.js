@@ -89,6 +89,7 @@
             fetch(endpoint)
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data);
                     userPost.drawPost(data);
                     userPost.drawPagination(data.total, offset ? offset : 0, limit ? limit : 10);
                 })
@@ -107,15 +108,23 @@
                         let post = postList[i];
                         let tr = document.createElement('tr');
                         let post_endpoint = '/post/' + post.post_seq;
+                        let insert_ts = new Date(post.insert_ts);
+                        insert_ts =
+                            paddingZero(insert_ts.getMonth()+1)
+                            +"-"
+                            +paddingZero(insert_ts.getDate())
+                            +" "
+                            +paddingZero(insert_ts.getHours())
+                            +":"
+                            +paddingZero(insert_ts.getMinutes());
                         tr.innerHTML =
-                            '<td>'+'<span class="badge bg-info">일상</span>'+'</td>' +
-                            '<td><a href="'+post_endpoint+'" class="text-decoration-none text-dark">' + post.title + '</a></td>' +
-                            '<td><i class="ri-eye-line"></i> post.view_count</td>' +
-                            '<td>' + post.insert_ts + '</td>';
+                            '<td>'+'<span class="badge bg-info">'+post.category+'</span>'+'</td>' +
+                            '<td><a href="'+post_endpoint+'" class="text-decoration-none text-dark">'+post.title+'</a></td>' +
+                            '<td><i class="ri-eye-line"></i>'+post.view_count+'</td>' +
+                            '<td>' + insert_ts + '</td>';
                         postListTbody.appendChild(tr);
                     }
               }
-
         },
         drawPagination : function(total, offset, limit) {
             let totalPages = Math.ceil(total / limit);
@@ -133,5 +142,9 @@
                 }
             });
         }
+    }
+
+    function paddingZero(num) {
+        return (num < 10 ? '0' : '') + num;
     }
 })();
