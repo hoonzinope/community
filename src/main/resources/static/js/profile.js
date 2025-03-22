@@ -130,6 +130,10 @@
             let totalPages = Math.ceil(total / limit);
             let currentPage = offset + 1;
 
+            if ($("#pagination").data("twbs-pagination")) {
+                $("#pagination").twbsPagination('destroy');
+            }
+
             $("#pagination").twbsPagination({
                 first : null,
                 last : null,
