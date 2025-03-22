@@ -1,18 +1,4 @@
 (function () {
-    // document.addEventListener("DOMContentLoaded", function () {
-    //     let post_seq = document.getElementById("post_seq").value;
-    //     console.log("comment.js", post_seq);
-    //
-    //     // 댓글 목록 조회
-    //     comments();
-    //
-    //     // Reply 버튼 클릭 시 해당 댓글 항목 내의 reply form을 토글
-    //     replyButton();
-    //
-    //     // Cancel 버튼 클릭 시 reply form 숨김
-    //     cancelReplyButton();
-    // });
-
     $(document).ready(function () {
         // let post_seq = document.getElementById("post_seq").value;
         // 댓글 목록 조회
@@ -31,7 +17,13 @@
         }
 
         if (commentList) {
-            fetch(endpoint)
+            fetch(endpoint,{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
                 .then(response => response.json())
                 .then(data => {
                     drawComments(data);
@@ -168,11 +160,11 @@
                     "content": content,
                     "parent_comment_seq": parent_comment_seq
                 };
-                console.log(data);
                 fetch(`/api/post/${post_seq}/comment`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify(data)
                 })
@@ -283,11 +275,11 @@
             "user_seq": document.getElementById("user_seq").value,
             "like_type": type
         }
-        console.log(data);
         fetch("/api/comment/like", {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(data)
         })
@@ -307,7 +299,8 @@
         fetch("/api/comment/like/delete", {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(data)
         })
@@ -354,11 +347,11 @@
                     "content": content,
                     "comment_seq": comment_seq
                 };
-                console.log(data);
                 fetch(`/api/comment/update/${comment_seq}`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify(data)
                 })
@@ -400,11 +393,11 @@
                     "user_seq": user_seq,
                     "comment_seq": comment_seq
                 };
-                console.log(data);
                 fetch(`/api/comment/delete/${comment_seq}`, {
                     method: 'DELETE',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify(data)
                 })

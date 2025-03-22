@@ -1,7 +1,5 @@
 (function() {
-    console.log("post.js");
     document.addEventListener("DOMContentLoaded", function() {
-        console.log(likeData);
         getLikeType();
         like();
         dislike();
@@ -16,7 +14,8 @@
         fetch("/like/get", {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(likeData)})
             .then(function(response) {
@@ -104,7 +103,8 @@
         fetch("/api/like/delete", {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(likeData)})
             .then(function(response) {
@@ -122,7 +122,8 @@
         fetch("/api/like/add", {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(likeData)})
             .then(function(response) {
@@ -140,10 +141,13 @@
            if(!check) return;
            let endpoint = `/api/post/${likeData.post_seq}`;
            fetch(endpoint, {
-               method : "DELETE"
+               method : "DELETE",
+                headers : {
+                     "Content-Type" : "application/json",
+                     "Accept" : "application/json"
+                }
            }).then(function(response) {
                response.json().then(function(data) {
-                   console.log(data);
                    location.href = '/board';
                });
            }).catch(function(err) {

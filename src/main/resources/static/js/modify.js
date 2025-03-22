@@ -1,16 +1,18 @@
 (function() {
     document.addEventListener("DOMContentLoaded",function() {
-        // console.log('Hello World');
-        console.log(post_seq);
         loadPostData();
-        // loadingSummerNote();
-        // callSubjects();
         writePost();
     });
 
     function loadPostData() {
         let endpoint = `/api/post/${post_seq}`;
-        fetch(endpoint)
+        fetch(endpoint,{
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
             .then(function(response) {
                 response.json().then(function(data) {
                     console.log(data);
@@ -85,6 +87,10 @@
         data.append("image", file);
         fetch('/api/image/upload', {
             method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                // 'Content-Type': 'application/json' // FormData를 사용하므로 Content-Type을 설정하지 않음
+            },
             body: data
         })
             .then(response => response.json())
@@ -104,7 +110,8 @@
         fetch('/api/image/delete', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
             },
             body: 'url=' + encodeURIComponent(imageUrl)
         })
@@ -118,7 +125,13 @@
     }
 
     function callSubjects(category_seq){
-        fetch('/api/subjects')
+        fetch('/api/subjects',{
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
             .then(function(response) {
                 response.json().then(function(data) {
                     drawSubject(data, category_seq);
@@ -149,17 +162,16 @@
                 content : $("#content").summernote('code'),
                 user_seq: $("#user_seq").val()
             }
-            console.log(data);
             let endpoint = `/api/post/${post_seq}`;
             fetch(endpoint, {
                 method: 'PATCH',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify(data)
             }).then(function(response) {
                 response.json().then(function(data) {
-                    console.log(data);
                     location.href = '/';
                 });
             }).catch(function(err) {

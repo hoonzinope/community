@@ -20,7 +20,8 @@
             fetch(url,{
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify(data)
             })
@@ -50,7 +51,8 @@
             fetch(url,{
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify(data)
             })
@@ -97,7 +99,13 @@
             let tbody = document.getElementById("rows");
             // get subject post
             let endpoint = '/api/posts?limit=5&subject_seq=' + subject_seq;
-            fetch(endpoint)
+            fetch(endpoint,{
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+            })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
