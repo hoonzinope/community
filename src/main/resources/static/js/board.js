@@ -1,6 +1,5 @@
 (function () {
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('DOMContentLoaded');
         board.init();
     });
 
@@ -10,7 +9,14 @@
         },
         getSubjects : function () {
             const url = '/api/subject/majorSubjects';
-            fetch(url)
+            fetch(url,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -59,7 +65,13 @@
 
             // get subject post
             let endpoint = '/api/posts?limit=5&subject_seq=' + subject_seq;
-            fetch(endpoint)
+            fetch(endpoint,{
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+            })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
