@@ -10,6 +10,7 @@ RUN gradle bootJar --no-daemon
 FROM openjdk:8-jre-slim
 # 빌드 시 인자로 활성화할 프로파일을 전달할 수 있음 (기본값은 dev)
 ARG ACTIVE_PROFILE=dev
+ENV ACTIVE_PROFILE=${ACTIVE_PROFILE}
 # 생성된 JAR 파일을 복사합니다.
 COPY --from=builder /app/build/libs/*.jar app.jar
 # 컨테이너 시작 시, 활성화할 스프링 프로파일을 지정하여 애플리케이션 실행
