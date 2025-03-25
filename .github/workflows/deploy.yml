@@ -18,6 +18,6 @@ jobs:
 
       - name: Deploy Docker Container
         run: |
-          docker stop board:latest || true
-          docker rm board:latest || true
+          docker stop board-container  || true
+          docker rm board-container  || true
           docker run -d --name board-container -p 8080:8080 board:latest
