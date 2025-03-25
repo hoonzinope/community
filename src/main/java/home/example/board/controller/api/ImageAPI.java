@@ -1,5 +1,6 @@
 package home.example.board.controller.api;
 
+import home.example.board.config.MinioConfig;
 import io.minio.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,19 +25,11 @@ import java.util.UUID;
 @RestController
 public class ImageAPI {
 
-    private final String minIOUrl = "http://172.30.1.86:9000";
-    private final String accessKey = "minioadmin";
-    private final String secretKey = "minioadmin";
-    private final String bucketName = "images";
+    @Autowired
+    private MinioConfig minioConfig;
 
-    private final MinioClient minioClient;
-    public ImageAPI() {
-        this.minioClient = MinioClient.builder()
-                .endpoint(minIOUrl)
-                .credentials(accessKey, secretKey)
-                .build();
-    }
-
+    @Autowired
+    private MinioClient minioClient;
 
     @Operation(summary = "이미지 업로드", description = "이미지를 업로드합니다.")
     @ApiResponses(value = {
@@ -98,6 +92,8 @@ public class ImageAPI {
 
             // UUID를 이용해 고유 파일명 생성
             String fileName = UUID.randomUUID().toString() + ext;
+            String bucketName = minioConfig.getBucketName();
+            String minIOUrl = minioConfig.getMinioUrl();
 
             // 버킷이 존재하는지 확인하고 없으면 생성
             boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
@@ -183,6 +179,8 @@ public class ImageAPI {
         }
 
         try {
+            String bucketName = minioConfig.getBucketName();
+            String minIOUrl = minioConfig.getMinioUrl();
             // 이미지 URL에서 파일명 추출 (예: http://172.30.1.86:9001/uploads/uuid.jpg)
             String basePath = minIOUrl + "/" + bucketName + "/";
             if (!imageUrl.startsWith(basePath)) {
