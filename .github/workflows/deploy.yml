@@ -20,4 +20,4 @@ jobs:
         run: |
           docker stop board-container  || true
           docker rm board-container  || true
-          docker run -d --name board-container -p 8080:8080 board:latest
+          docker run -d --name board-container -p 8080:8080 --network hoonzi_network board:latest
