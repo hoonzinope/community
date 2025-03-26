@@ -22,4 +22,5 @@ public interface PostMapper {
 
     int getUserPostTotalSize(Map<String, Object> paging);
     List<PostPagingDTO> getUserPostListPaging(Map<String, Object> paging);
+    List<Post> getPostAll();
 }

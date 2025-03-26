@@ -89,4 +89,17 @@
         where
             comment_seq = #{comment_seq}
     </update>
+
+    <select id="getCommentAll" resultType="home.example.board.domain.Comment">
+        SELECT
+            c.comment_seq,
+            c.post_seq,
+            c.content,
+            c.insert_ts,
+            c.delete_ts,
+            c.delete_flag,
+            c.parent_comment_seq,
+            c.user_seq
+        FROM comment c
+    </select>
 </mapper>
