@@ -147,7 +147,7 @@
         drawPagination : function(subject_seq, data, offset, limit) {
             let total = data.total;
             let totalPages = Math.ceil(total / limit);
-            let currentPage = offset + 1;
+            let currentPage = Math.floor(offset / limit) + 1;
 
             $("#pagination").twbsPagination({
                 first : null,
