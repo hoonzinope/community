@@ -10,7 +10,7 @@
             let subject_seq = category;
             subject_board.getSubjectName(subject_seq);
             subject_board.getSubjects(subject_seq);
-            subject_board.drawSubjectPosts(subject_seq);
+            subject_board.drawSubjectPosts(subject_seq, 5, 0);
         },
         getSubjectName : function(subject_seq) {
             const url = '/api/subject/name';
@@ -90,15 +90,15 @@
                     this.classList.add('active');
                     const selectedSubject = this.textContent;
                     const selectedSubjectSeq = subjectList.find(subject => subject.subject_name === selectedSubject).subject_seq;
-                    subject_board.drawSubjectPosts(selectedSubjectSeq);
+                    subject_board.drawSubjectPosts(selectedSubjectSeq, 5, 0);
                 });
             });
 
         },
-        drawSubjectPosts : function(subject_seq) {
+        drawSubjectPosts : function(subject_seq, limit, offset) {
             let tbody = document.getElementById("rows");
             // get subject post
-            let endpoint = '/api/posts?limit=5&subject_seq=' + subject_seq;
+            let endpoint = '/api/posts?offset='+offset+'&limit='+limit+'&subject_seq=' + subject_seq;
             fetch(endpoint,{
                     method: 'GET',
                     headers: {
@@ -114,13 +114,13 @@
                 })
                 .then(data => {
                     subject_board.renderSubjectColumn(tbody, data);
+                    subject_board.drawPagination(subject_seq, data, offset, limit);
                 })
                 .catch(error => {
                     console.error('Error fetching subjects:', error);
                 });
         },
         renderSubjectColumn : function(tbody, data) {
-            console.log(data);
             let total = data.total;
             let size = data.size;
             let posts = data.postList;
@@ -143,6 +143,23 @@
                     <i class="ri-thumb-down-line text-secondary ms-2"></i> ${post.dislike_count}
                 </td>
             </tr>`;
+        },
+        drawPagination : function(subject_seq, data, offset, limit) {
+            let total = data.total;
+            let totalPages = Math.ceil(total / limit);
+            let currentPage = offset + 1;
+
+            $("#pagination").twbsPagination({
+                first : null,
+                last : null,
+                totalPages: totalPages,
+                visiblePages: 5,
+                startPage: currentPage,
+                initiateStartPageClick: false,
+                onPageClick: function (event, page) {
+                    subject_board.drawSubjectPosts(subject_seq, limit, (page - 1) * limit);
+                }
+            });
         }
     }
 })();
