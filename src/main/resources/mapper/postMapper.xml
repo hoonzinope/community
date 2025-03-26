@@ -157,4 +157,22 @@
         order by post_seq desc
         limit #{offset}, #{limit}
     </select>
+
+    <select id="getPostAll"
+            resultType="home.example.board.domain.Post">
+        select
+            post_seq,
+            title,
+            content,
+            insert_ts,
+            update_ts,
+            view_count,
+            delete_ts,
+            delete_flag,
+            user_seq,
+            subject_seq
+        FROM
+            post
+    </select>
+
 </mapper>

@@ -13,4 +13,5 @@ public interface CommentMapper {
     Comment selectComment(long comment_seq);
     void updateComment(Comment comment);
     void deleteComment(long comment_seq);
+    List<Comment> getCommentAll();
 }
