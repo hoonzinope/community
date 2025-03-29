@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface CommentMapper {
-    Long insertComment(Comment comment);
+    void insertComment(Comment comment);
     List<CommentDTO> selectComments(long post_seq);
     Comment selectComment(long comment_seq);
     void updateComment(Comment comment);
