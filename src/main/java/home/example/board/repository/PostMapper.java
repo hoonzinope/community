@@ -14,7 +14,7 @@ public interface PostMapper {
     List<PostPagingDTO> getPostListPaging(Map<String, Object> paging);
     List<PostPagingDTO> getPostListByCategory(Map<String, Object> requestMap);
     Post getPost(long post_seq);
-    void insertPost(Post post);
+    Long insertPost(Post post);
     void updatePost(Post post);
     void deletePost(long post_seq);
 

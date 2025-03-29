@@ -6,7 +6,7 @@
 <!-- SQL Mapping -->
 <mapper namespace="home.example.board.repository.CommentMapper">
 
-    <insert id="insertComment"
+    <insert id="insertComment" useGeneratedKeys="true" keyProperty="comment_seq"
             parameterType="home.example.board.domain.Comment">
         INSERT INTO comment
             (post_seq, content, parent_comment_seq, user_seq)

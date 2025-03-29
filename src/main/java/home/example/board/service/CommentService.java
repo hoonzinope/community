@@ -1,6 +1,7 @@
 package home.example.board.service;
 
 import home.example.board.DTO.CommentDTO;
+import home.example.board.dao.OutboxDAO;
 import home.example.board.domain.Comment;
 import home.example.board.domain.CommentLike;
 import home.example.board.domain.User;
@@ -12,6 +13,7 @@ import home.example.board.utils.NickNameUtils;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +34,10 @@ public class CommentService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private OutboxDAO outboxDAO;
+
+    @Transactional
     public void insertComment(long post_seq, String content, Long parent_comment_seq, long user_seq) {
         Comment comment = Comment.builder()
                 .post_seq(post_seq)
@@ -40,6 +46,7 @@ public class CommentService {
                 .user_seq(user_seq)
                 .build();
         commentMapper.insertComment(comment);
+        outboxDAO.insertComment(comment, "INSERT");
     }
 
     public JSONObject selectComments(long post_seq, long user_seq) {
@@ -119,6 +126,7 @@ public class CommentService {
         });
     }
 
+    @Transactional
     public void updateComment(long comment_seq, String content, long user_seq) throws IllegalAccessException {
         Comment comment = commentMapper.selectComment(comment_seq);
         if(user_seq != comment.getUser_seq()) {
@@ -127,8 +135,10 @@ public class CommentService {
         commentHistoryMapper.insertCommentHistory(comment);
         comment.setContent(content);
         commentMapper.updateComment(comment);
+        outboxDAO.insertComment(comment, "UPDATE");
     }
 
+    @Transactional
     public void deleteComment(long comment_seq, long user_seq) throws IllegalAccessException {
         Comment comment = commentMapper.selectComment(comment_seq);
         if(user_seq != comment.getUser_seq()) {
@@ -136,5 +146,6 @@ public class CommentService {
         }
         commentHistoryMapper.insertCommentHistory(comment);
         commentMapper.deleteComment(comment_seq);
+        outboxDAO.insertComment(comment, "DELETE");
     }
 }

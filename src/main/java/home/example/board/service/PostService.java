@@ -1,6 +1,7 @@
 package home.example.board.service;
 
 import home.example.board.DTO.PostPagingDTO;
+import home.example.board.dao.OutboxDAO;
 import home.example.board.domain.Post;
 import home.example.board.domain.Subject;
 import home.example.board.domain.User;
@@ -18,6 +19,7 @@ import org.jsoup.safety.Safelist;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -43,6 +45,9 @@ public class PostService {
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    OutboxDAO outboxDAO;
 
     public JSONObject getPostListPaging(int offset, int limit) {
         Map<String, Object> paging = new HashMap<>();
@@ -186,6 +191,7 @@ public class PostService {
         return post.getUser_seq() == user_seq;
     }
 
+    @Transactional
     public void addPost(String title, String content, long user_seq, int subject_seq) {
         Post post = Post.builder()
                 .title(title)
@@ -194,8 +200,10 @@ public class PostService {
                 .subject_seq(subject_seq)
                 .build();
         postMapper.insertPost(post);
+        outboxDAO.insertOutbox(post, "INSERT");
     }
 
+    @Transactional
     public void modifyPost(long post_seq, String title, String content) {
         Post post = postMapper.getPost(post_seq);
         if(post == null) {
@@ -205,9 +213,11 @@ public class PostService {
             post.setTitle(title);
             post.setContent(content);
             postMapper.updatePost(post);
+            outboxDAO.insertOutbox(post, "UPDATE");
         }
     }
 
+    @Transactional
     public void removePost(long post_seq) {
         Post post = postMapper.getPost(post_seq);
         if(post == null) {
@@ -215,6 +225,7 @@ public class PostService {
         }else{
             postHistoryMapper.insertPostHistory(post);
             postMapper.deletePost(post_seq);
+            outboxDAO.insertOutbox(post, "DELETE");
         }
     }
 
