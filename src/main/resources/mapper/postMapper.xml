@@ -84,7 +84,7 @@
             post_seq = #{post_seq}
     </select>
 
-    <insert id="insertPost"
+    <insert id="insertPost" useGeneratedKeys="true" keyProperty="post_seq"
             parameterType="home.example.board.domain.Post">
         INSERT INTO post (
             title,
