@@ -10,6 +10,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -54,6 +55,14 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                     }
                 }
             }
+
+            // 세션 쿠키 명시적 설정
+            Cookie sessionCookie = new Cookie("JSESSIONID", session.getId());
+            sessionCookie.setPath("/");
+            // 프로덕션 환경에서는 secure 속성 적용 고려
+            // sessionCookie.setSecure(true);
+            // sessionCookie.setHttpOnly(true);
+            response.addCookie(sessionCookie);
         } catch (Exception e) {
             logger.error("세션 처리 중 오류 발생: " + e.getMessage());
         }
