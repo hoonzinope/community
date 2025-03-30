@@ -64,7 +64,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         if (userDetails.getTempPassword()) {
             referer = "/changePassword";
         }
-
+        System.out.println("login success name: " + userNickname);
         getRedirectStrategy().sendRedirect(request, response, referer);
     }
 }
