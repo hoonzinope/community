@@ -175,4 +175,30 @@
             post
     </select>
 
+    <select id="getPostList"
+            parameterType="list"
+            resultType="home.example.board.domain.Post">
+        select
+            post_seq,
+            title,
+            content,
+            insert_ts,
+            update_ts,
+            view_count,
+            delete_ts,
+            delete_flag,
+            user_seq,
+            subject_seq
+        FROM
+            post
+        where
+            <if test="post_seq_list != null">
+                post_seq in
+                <foreach item="item" index="index" collection="post_seq_list"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+    </select>
 </mapper>

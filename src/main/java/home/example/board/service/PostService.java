@@ -23,10 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -255,6 +252,35 @@ public class PostService {
         result.put("total", postTotalSize);
         result.put("size", postList.size());
         result.put("postList", postList);
+
+        return result;
+    }
+
+    public JSONObject getPostList(List<Long> post_seq_list) {
+        JSONObject result = new JSONObject();
+        if(post_seq_list == null || post_seq_list.isEmpty()) {
+            result.put("postList", new ArrayList<>());
+            return result;
+        }
+        List<Post> postList = postMapper.getPostList(post_seq_list);
+        Map<Long, String> subjectMap = subjectService.getSubjectMap();
+
+        List<JSONObject> postJsonList = postList.stream()
+                .map(post -> {
+                    JSONObject postJson = new JSONObject();
+                    postJson.put("post_seq", post.getPost_seq());
+                    postJson.put("title", post.getTitle());
+                    //String content_html = getContentHtml(post);
+                    //postJson.put("content", content_html);
+                    postJson.put("view_count", post.getView_count());
+                    postJson.put("insert_ts", post.getInsert_ts());
+                    postJson.put("update_ts", post.getUpdate_ts());
+                    postJson.put("user_seq", post.getUser_seq());
+                    postJson.put("category", subjectMap.get(post.getSubject_seq()));
+                    return postJson;
+                }).collect(Collectors.toList());
+
+        result.put("postList", postJsonList);
 
         return result;
     }
