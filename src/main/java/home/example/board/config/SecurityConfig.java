@@ -69,7 +69,7 @@ public class SecurityConfig {
             // URL별 접근 제어 설정
             .authorizeHttpRequests(auth -> auth
                     // 게시판 목록이나 상세 페이지는 누구나 접근 가능
-                    .antMatchers("/","/login","/signup","/board/**", "/post/**","/auth/signup","/api/**","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                    .antMatchers("/","/login","/signup","/board/**", "/post/**","/auth/signup","/api/**","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/search").permitAll()
                     // 그 외의 URL은 인증 필요
                     .anyRequest().authenticated()
             )

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="board.io는 다양한 주제의 토론과 정보 공유가 이루어지는 커뮤니티 게시판입니다.">
+    <meta name="keywords" content="skyboard,게시판,커뮤니티,토론,정보공유">
+    <meta name="author" content="board.io">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="board.io - 커뮤니티">
+    <meta property="og:description" content="board.io는 다양한 주제의 토론과 정보 공유가 이루어지는 커뮤니티 게시판입니다.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" th:content="@{${#httpServletRequest.requestURL.toString()}}">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="board.io - 커뮤니티">
+    <meta name="twitter:description" content="board.io는 다양한 주제의 토론과 정보 공유가 이루어지는 커뮤니티 게시판입니다.">
+
+    <title>board.io - 커뮤니티</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link th:href="@{/css/index.css}" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+<!-- Previous navbar remains the same -->
+<div th:replace="common/nav :: common_nav"></div>
+
+<!-- Main Content -->
+<div class="container mt-4">
+
+    <h1 class="text-center mb-4" id="subject_name">"[[${keyword}]]" 검색결과</h1>
+
+    <!-- Navigation -->
+    <ul class="nav nav-pills mb-4">
+    </ul>
+
+    <!-- Search Bar -->
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <div class="input-group">
+                <select class="form-select" id="searchType" style="max-width: 150px;">
+                    <option value="all">제목+내용</option>
+                    <option value="title">제목</option>
+                    <option value="content">내용</option>
+                    <option value="comment">댓글</option>
+                </select>
+                <input type="text" class="form-control" id="searchKeyword" placeholder="검색어를 입력하세요..." th:value="${keyword}">
+                <button class="btn btn-sky" id="searchBtn">
+                    <i class="ri-search-line"></i> 검색
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Posts Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Title</th>
+                    <th>Views</th>
+                    <th>Date</th>
+                    <th>Reactions</th>
+                </tr>
+                </thead>
+                <tbody id="rows">
+                <tr>
+                    <td><span class="badge bg-info">General</span></td>
+                    <td><a href="post.html" class="text-decoration-none text-dark">Welcome to board.io</a></td>
+                    <td><i class="ri-eye-line"></i> 1.2k</td>
+                    <td>2024-01-31</td>
+                    <td>
+                        <i class="ri-thumb-up-line text-primary"></i> 24
+                        <i class="ri-thumb-down-line text-secondary ms-2"></i> 3
+                    </td>
+                </tr>
+                <!-- More rows... -->
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination -->
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center" id="pagination">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#"><i class="ri-arrow-left-s-line"></i></a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#"><i class="ri-arrow-right-s-line"></i></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Floating Write Button -->
+    <a th:if="${session.user_seq != null}" th:href="@{/write/{category}(category=${category})}" class="btn btn-sky btn-lg rounded-circle floating-button shadow">
+        <i class="ri-pencil-line"></i>
+    </a>
+</div>
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.2/jquery.twbsPagination.js" integrity="sha512-uzuo1GprrBscZGr+iQSv8+YQQsKY+rSHJju0FruVsGHV2CZNZPymW/4RkxoHxAxw3Lo5UQaxDMF8zINUfAsGeg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    let data = [[${data}]];
+</script>
+<script type="text/javascript" th:src="@{/js/searchPage.js}"></script>
+</body>
+</html>

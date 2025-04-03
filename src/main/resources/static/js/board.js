@@ -6,6 +6,7 @@
     const board = {
         init: function () {
             this.getSubjects();
+            this.search();
         },
         getSubjects : function () {
             const url = '/api/subject/majorSubjects';
@@ -133,6 +134,33 @@
                 `;
             });
             return rows;
+        },
+        search : function() {
+            const searchButton = document.getElementById("searchBtn");
+
+            searchButton.addEventListener('click', function() {
+                // 클릭 시점에 최신 값을 가져옴
+                let searchType = document.getElementById('searchType').value;
+                let searchInput = document.getElementById('searchKeyword').value;
+                searchInput = encodeURIComponent(searchInput);
+
+                const queryString = "?keyword=" + searchInput
+                    + "&searchType=" + searchType
+                    + "&offset=0&limit=10";
+
+                console.log("clicked "+ queryString);
+                if (searchInput) {
+                    window.location.href = '/search' + queryString;
+                }
+            });
+
+            // Enter 키로도 검색할 수 있게 추가
+            document.getElementById('searchKeyword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('searchBtn').click();
+                }
+            });
         }
     }
+
 })();

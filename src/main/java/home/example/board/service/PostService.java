@@ -262,7 +262,7 @@ public class PostService {
             result.put("postList", new ArrayList<>());
             return result;
         }
-        List<Post> postList = postMapper.getPostList(post_seq_list);
+        List<PostPagingDTO> postList = postMapper.getPostList(post_seq_list);
         Map<Long, String> subjectMap = subjectService.getSubjectMap();
 
         List<JSONObject> postJsonList = postList.stream()
@@ -276,7 +276,9 @@ public class PostService {
                     postJson.put("insert_ts", post.getInsert_ts());
                     postJson.put("update_ts", post.getUpdate_ts());
                     postJson.put("user_seq", post.getUser_seq());
-                    postJson.put("category", subjectMap.get(post.getSubject_seq()));
+                    postJson.put("category", post.getCategory());
+                    postJson.put("like_count", post.getLike_count());
+                    postJson.put("dislike_count", post.getDislike_count());
                     return postJson;
                 }).collect(Collectors.toList());
 

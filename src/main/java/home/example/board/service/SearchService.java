@@ -33,7 +33,7 @@ public class SearchService {
         try {
             // 검색 요청을 생성 하고 실행
             // type == "all" 인 경우, posts와 comments를 모두 검색
-            if(type.equals("all")) {
+            if(type.equalsIgnoreCase("all")) {
 //                result = getMultiSearchRequest(keyword, offset, limit);
                 searchResult = getPostSearchRequest(keyword, offset, limit);
                 postSeqList = getPostSeqList(searchResult);
@@ -41,26 +41,30 @@ public class SearchService {
                 result.put("search_result", searchResult);
             }
             // type == "title" 인 경우, posts의 title만 검색
-            else if (type.equals("title")) {
+            else if (type.equalsIgnoreCase("title")) {
                 result = getPostTitleSearchRequest(keyword, offset, limit);
+                postSeqList = getPostSeqList(searchResult);
                 result.put("post_seq_list", postSeqList);
                 result.put("search_result", searchResult);
             }
             // type == "content" 인 경우, posts의 content만 검색
-            else if (type.equals("content")) {
+            else if (type.equalsIgnoreCase("content")) {
                 result = getPostContentSearchRequest(keyword, offset, limit);
+                postSeqList = getPostSeqList(searchResult);
                 result.put("post_seq_list", postSeqList);
                 result.put("search_result", searchResult);
             }
             // type == "comment" 인 경우, comments만 검색
-            else if (type.equals("comment")) {
+            else if (type.equalsIgnoreCase("comment")) {
                 result = getCommentSearchRequest(keyword, offset, limit);
+                postSeqList = getPostSeqList(searchResult);
                 result.put("post_seq_list", postSeqList);
                 result.put("search_result", searchResult);
             }
             else {
 //                result = getMultiSearchRequest(keyword, offset, limit);
                 result = getPostSearchRequest(keyword, offset, limit);
+                postSeqList = getPostSeqList(searchResult);
                 result.put("post_seq_list", postSeqList);
                 result.put("search_result", searchResult);
             }
@@ -157,13 +161,13 @@ public class SearchService {
 
         // 요청 실행 및 응답 처리
         HttpResponse response = httpClient.execute(post);
-        System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
+        //System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
 
         StringBuilder resultBuilder = new StringBuilder();
         BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
         String line;
         while ((line = rd.readLine()) != null) {
-            System.out.println(line);
+            //System.out.println(line);
             resultBuilder.append(line);
         }
         httpClient.close();
@@ -194,13 +198,13 @@ public class SearchService {
 
         // 요청 실행 및 응답 처리
         HttpResponse response = httpClient.execute(post);
-        System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
+        //System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
 
         StringBuilder resultBuilder = new StringBuilder();
         BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
         String line;
         while ((line = rd.readLine()) != null) {
-            System.out.println(line);
+            //System.out.println(line);
             resultBuilder.append(line);
         }
         httpClient.close();
@@ -231,13 +235,13 @@ public class SearchService {
 
         // 요청 실행 및 응답 처리
         HttpResponse response = httpClient.execute(post);
-        System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
+        //System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
 
         StringBuilder resultBuilder = new StringBuilder();
         BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
         String line;
         while ((line = rd.readLine()) != null) {
-            System.out.println(line);
+            //System.out.println(line);
             resultBuilder.append(line);
         }
         httpClient.close();
@@ -272,13 +276,13 @@ public class SearchService {
 
         // 요청 실행 및 응답 처리
         HttpResponse response = httpClient.execute(post);
-        System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
+        //System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
 
         StringBuilder resultBuilder = new StringBuilder();
         BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
         String line;
         while ((line = rd.readLine()) != null) {
-            System.out.println(line);
+            //System.out.println(line);
             resultBuilder.append(line);
         }
         httpClient.close();
