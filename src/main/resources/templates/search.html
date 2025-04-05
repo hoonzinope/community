@@ -36,7 +36,7 @@
 <!-- Main Content -->
 <div class="container mt-4">
 
-    <h1 class="text-center mb-4" id="subject_name">"[[${keyword}]]" 검색결과</h1>
+    <h1 class="text-center mb-4" id="search_result"> 검색결과</h1>
 
     <!-- Navigation -->
     <ul class="nav nav-pills mb-4">
@@ -52,7 +52,7 @@
                     <option value="content">내용</option>
                     <option value="comment">댓글</option>
                 </select>
-                <input type="text" class="form-control" id="searchKeyword" placeholder="검색어를 입력하세요..." th:value="${keyword}">
+                <input type="text" class="form-control" id="searchKeyword" placeholder="검색어를 입력하세요...">
                 <button class="btn btn-sky" id="searchBtn">
                     <i class="ri-search-line"></i> 검색
                 </button>
@@ -63,28 +63,23 @@
     <!-- Posts Table -->
     <div class="card shadow-sm">
         <div class="card-body">
+            <!-- 검색 결과가 없을 때 표시할 메시지 -->
+            <div id="noData" class="text-center py-4 fs-5 text-secondary" style="display: none;">
+                검색 결과가 없습니다.
+            </div>
+
             <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>Category</th>
-                    <th>Title</th>
-                    <th>Views</th>
-                    <th>Date</th>
-                    <th>Reactions</th>
-                </tr>
+                <thead id="tableHead">
+                    <tr>
+                        <th>Category</th>
+                        <th>Title</th>
+                        <th>Views</th>
+                        <th>Date</th>
+                        <th>Reactions</th>
+                    </tr>
                 </thead>
                 <tbody id="rows">
-                <tr>
-                    <td><span class="badge bg-info">General</span></td>
-                    <td><a href="post.html" class="text-decoration-none text-dark">Welcome to board.io</a></td>
-                    <td><i class="ri-eye-line"></i> 1.2k</td>
-                    <td>2024-01-31</td>
-                    <td>
-                        <i class="ri-thumb-up-line text-primary"></i> 24
-                        <i class="ri-thumb-down-line text-secondary ms-2"></i> 3
-                    </td>
-                </tr>
-                <!-- More rows... -->
+                    <!-- More rows... -->
                 </tbody>
             </table>
         </div>
@@ -115,6 +110,7 @@
 <script th:inline="javascript">
     let data = [[${data}]];
 </script>
+<script type="text/javascript" th:src="@{/js/common/utils.js}"></script>
 <script type="text/javascript" th:src="@{/js/searchPage.js}"></script>
 </body>
 </html>

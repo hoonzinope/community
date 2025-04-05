@@ -13,7 +13,8 @@ public interface PostMapper {
     int getPostTotalSizeByCategory(Map<String, Object> requestMap);
     List<PostPagingDTO> getPostListPaging(Map<String, Object> paging);
     List<PostPagingDTO> getPostListByCategory(Map<String, Object> requestMap);
-    Post getPost(long post_seq);
+    PostPagingDTO getPost(long post_seq);
+    Post getPostById(long post_seq);
     void insertPost(Post post);
     void updatePost(Post post);
     void deletePost(long post_seq);

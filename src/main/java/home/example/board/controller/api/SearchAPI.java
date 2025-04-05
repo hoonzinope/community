@@ -50,13 +50,6 @@ public class SearchAPI {
         result.put("type", type);
         try{
             result = searchService.search(keyword, offset, limit, type);
-            // 검색 결과에 게시물 목록이 포함되어 있는 경우
-            if(result != null && result.containsKey("post_seq_list")){
-                // 게시물 목록을 가져오기 위해 post_seq_list를 사용하여 게시물 조회
-                List<Long> postSeqList = (List<Long>) result.get("post_seq_list");
-                JSONObject postList = postService.getPostList(postSeqList);
-                result.put("post_list", postList);
-            }
             return ResponseEntity.ok().body(result);
         } catch (Exception e) {
             e.printStackTrace();

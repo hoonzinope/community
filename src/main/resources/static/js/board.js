@@ -124,6 +124,7 @@
             let postList = data.postList;
             let rows = '';
             postList.forEach(post => {
+                post.insert_ts = board.convertTime(post.insert_ts);
                 rows += `
                     <tr>
                         <td><span class="badge bg-info">${post.category}</span></td>
@@ -160,6 +161,9 @@
                     document.getElementById('searchBtn').click();
                 }
             });
+        },
+        convertTime : function(insert_ts) {
+            return utils.convertTime(insert_ts);
         }
     }
 

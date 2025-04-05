@@ -1,5 +1,6 @@
 package home.example.board.service;
 
+import home.example.board.dao.PostDAO;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -10,6 +11,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,13 @@ public class SearchService {
     @Value("${spring.elasticsearch.uris}")
     private String url;
 
+    private final PostDAO postDAO;
+
+    @Autowired
+    public SearchService(PostDAO postDAO) {
+        this.postDAO = postDAO;
+    }
+
     public JSONObject search(String keyword, int offset, int limit, String type) {
         JSONObject result = new JSONObject();
         JSONObject searchResult = new JSONObject();
@@ -34,39 +43,57 @@ public class SearchService {
             // 검색 요청을 생성 하고 실행
             // type == "all" 인 경우, posts와 comments를 모두 검색
             if(type.equalsIgnoreCase("all")) {
-//                result = getMultiSearchRequest(keyword, offset, limit);
                 searchResult = getPostSearchRequest(keyword, offset, limit);
                 postSeqList = getPostSeqList(searchResult);
-                result.put("post_seq_list", postSeqList);
-                result.put("search_result", searchResult);
+                result.put("post_list", postDAO.getPostListByPostSeqList(postSeqList));
+                result.put("total", getTotalSize(searchResult));
+                result.put("keyword", keyword);
+                result.put("offset", offset);
+                result.put("limit", limit);
+                result.put("type", type);
             }
             // type == "title" 인 경우, posts의 title만 검색
             else if (type.equalsIgnoreCase("title")) {
                 result = getPostTitleSearchRequest(keyword, offset, limit);
                 postSeqList = getPostSeqList(searchResult);
-                result.put("post_seq_list", postSeqList);
-                result.put("search_result", searchResult);
+                result.put("post_list", postDAO.getPostListByPostSeqList(postSeqList));
+                result.put("total", getTotalSize(searchResult));
+                result.put("keyword", keyword);
+                result.put("offset", offset);
+                result.put("limit", limit);
+                result.put("type", type);
             }
             // type == "content" 인 경우, posts의 content만 검색
             else if (type.equalsIgnoreCase("content")) {
                 result = getPostContentSearchRequest(keyword, offset, limit);
                 postSeqList = getPostSeqList(searchResult);
-                result.put("post_seq_list", postSeqList);
-                result.put("search_result", searchResult);
+                result.put("post_list", postDAO.getPostListByPostSeqList(postSeqList));
+                result.put("total", getTotalSize(searchResult));
+                result.put("keyword", keyword);
+                result.put("offset", offset);
+                result.put("limit", limit);
+                result.put("type", type);
             }
             // type == "comment" 인 경우, comments만 검색
             else if (type.equalsIgnoreCase("comment")) {
                 result = getCommentSearchRequest(keyword, offset, limit);
                 postSeqList = getPostSeqList(searchResult);
-                result.put("post_seq_list", postSeqList);
-                result.put("search_result", searchResult);
+                result.put("post_list", postDAO.getPostListByPostSeqList(postSeqList));
+                result.put("total", getTotalSize(searchResult));
+                result.put("keyword", keyword);
+                result.put("offset", offset);
+                result.put("limit", limit);
+                result.put("type", type);
             }
             else {
-//                result = getMultiSearchRequest(keyword, offset, limit);
                 result = getPostSearchRequest(keyword, offset, limit);
                 postSeqList = getPostSeqList(searchResult);
-                result.put("post_seq_list", postSeqList);
-                result.put("search_result", searchResult);
+                result.put("post_list", postDAO.getPostListByPostSeqList(postSeqList));
+                result.put("total", getTotalSize(searchResult));
+                result.put("keyword", keyword);
+                result.put("offset", offset);
+                result.put("limit", limit);
+                result.put("type", type);
             }
             return result;
         } catch (Exception e) {
@@ -95,49 +122,21 @@ public class SearchService {
         return postSeqList;
     }
 
-    /*
-    post /_msearch
-    { "index": "posts" }
-    { "query": { "multi_match": { "query": "검색어", "fields": ["title", "content"] } }, "_source": ["title", "content"], "from": 0, "size": 10 }
-    { "index": "comments" }
-    { "query": { "match": { "content": "검색어" } }, "_source": ["content"], "from": 0, "size": 10 }
-    * */
-    @Deprecated
-    private JSONObject getMultiSearchRequest(String keyword, int offset, int limit) throws IOException, ParseException {
-        String url = this.url + "/_msearch";
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpPost post = new HttpPost(url);
-
-        // NDJSON 형식으로 요청 본문 구성 (각 JSON 객체는 줄바꿈으로 구분)
-        String ndjsonBody =
-                buildPostSearchRequest(keyword, offset, limit) + "\n" +
-                buildCommentSearchRequest(keyword, offset, limit)+"\n";
-        System.out.println("ndjsonBody: " + ndjsonBody);
-        // 헤더에 Content-Type을 application/x-ndjson으로 설정
-        post.setHeader("Content-Type", "application/x-ndjson");
-        post.setEntity(new StringEntity(ndjsonBody, "UTF-8"));
-
-        // 요청 실행 및 응답 처리
-        HttpResponse response = httpClient.execute(post);
-        System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
-
-        StringBuilder resultBuilder = new StringBuilder();
-        BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-        String line;
-        while ((line = rd.readLine()) != null) {
-            System.out.println(line);
-            resultBuilder.append(line);
+    private int getTotalSize(JSONObject result) {
+        int totalSize = 0;
+        if(result.get("hits") != null) {
+            JSONObject hits = (JSONObject) result.get("hits");
+            if(hits.get("total") != null) {
+                Long total = (Long) hits.get("total");
+                totalSize = (total).intValue();
+            }
         }
-        httpClient.close();
-
-        // 응답을 JSON 객체로 변환
-        JSONParser parser = new JSONParser();
-        return (JSONObject) parser.parse(resultBuilder.toString());
+        return totalSize;
     }
 
     /*
     GET /posts/post/_search
-    { "query": { "multi_match": { "query": "검색어", "fields": ["title", "content"] } }, "_source": ["title", "content"], "from": 0, "size": 10 }
+    { "query": { "multi_match": { "query": "검색어", "fields": ["title", "content"] } }, "_source": ["post_seq"], "from": 0, "size": 10 }
      */
     private JSONObject getPostSearchRequest(String keyword, int offset, int limit) throws IOException, ParseException {
         String url = this.url + "/posts/post/_search";
@@ -267,6 +266,7 @@ public class SearchService {
         query.put("match", match);
         searchRequest.put("query", query);
         searchRequest.put("_source", Arrays.asList("post_seq"));
+        searchRequest.put("collapse", new JSONObject().put("field", "post_seq"));
         searchRequest.put("from", offset);
         searchRequest.put("size", limit);
 
@@ -290,42 +290,5 @@ public class SearchService {
         // 응답을 JSON 객체로 변환
         JSONParser parser = new JSONParser();
         return (JSONObject) parser.parse(resultBuilder.toString());
-    }
-
-    private String buildPostSearchRequest(String keyword, int offset, int limit) {
-        JSONObject post = new JSONObject();
-        post.put("index", "posts");
-
-        JSONObject searchRequest = new JSONObject();
-        JSONObject query = new JSONObject();
-        JSONObject multiMatch = new JSONObject();
-        multiMatch.put("query", keyword);
-        multiMatch.put("fields", Arrays.asList("title", "content"));
-        query.put("multi_match", multiMatch);
-        searchRequest.put("query", query);
-        searchRequest.put("_source", Arrays.asList("post_seq"));
-        searchRequest.put("from", offset);
-        searchRequest.put("size", limit);
-
-        String result = post.toString()+"\n" + searchRequest.toString();
-        return result;
-    }
-
-    private String buildCommentSearchRequest(String keyword, int offset, int limit) {
-        JSONObject comment = new JSONObject();
-        comment.put("index", "comments");
-
-        JSONObject searchRequest = new JSONObject();
-        JSONObject query = new JSONObject();
-        JSONObject match = new JSONObject();
-        match.put("content", keyword);
-        query.put("match", match);
-        searchRequest.put("_source", Arrays.asList("post_seq"));
-        searchRequest.put("from", offset);
-        searchRequest.put("size", limit);
-
-        searchRequest.put("query", query);
-        String result = comment.toString()+"\n" + searchRequest.toString();
-        return result;
     }
 }

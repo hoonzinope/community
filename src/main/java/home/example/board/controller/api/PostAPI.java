@@ -41,11 +41,7 @@ public class PostAPI {
             @Parameter(description = "주제", required = false) @RequestParam(value = "subject_seq", defaultValue = "0") long subject_seq
     ) {
         JSONObject postListPaging = new JSONObject();
-        if (subject_seq != 0) {
-            postListPaging = postService.getPostListPaging(offset, limit, subject_seq);
-        }else{
-            postListPaging = postService.getPostListPaging(offset, limit);
-        }
+        postListPaging = postService.getPostListPaging(offset, limit, subject_seq);
         return ResponseEntity.ok().body(postListPaging);
     }
 

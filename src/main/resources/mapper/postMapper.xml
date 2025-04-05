@@ -66,6 +66,25 @@
 
     <select id="getPost"
             parameterType="long"
+            resultType="home.example.board.DTO.PostPagingDTO">
+        SELECT
+            post_seq,
+            title,
+            content,
+            insert_ts,
+            update_ts,
+            view_count,
+            user_seq,
+            (select subject_name from subject s where s.subject_seq = p.subject_seq) as category,
+            (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "LIKE") as like_count,
+            (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "DISLIKE") as dislike_count
+        FROM
+            post p
+        WHERE
+            post_seq = #{post_seq}
+    </select>
+
+    <select id="getPostById" parameterType="long"
             resultType="home.example.board.domain.Post">
         SELECT
             post_seq,
@@ -190,15 +209,15 @@
         (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "LIKE") as like_count,
         (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "DISLIKE") as dislike_count
         FROM
-            post
+            post p
         where
-            <if test="post_seq_list != null">
+            <if test="post_seq_list != null and post_seq_list.size() > 0">
                 post_seq in
                 <foreach item="item" index="index" collection="post_seq_list"
                          open="(" separator="," close=")">
                     #{item}
                 </foreach>
             </if>
-
+        order by insert_ts desc
     </select>
 </mapper>
