@@ -62,7 +62,7 @@ public class PostService {
 
     @Transactional
     public void modifyPost(long post_seq, String title, String content) {
-        if(postDAO.isExistPost(post_seq)) {
+        if(!postDAO.isExistPost(post_seq)) {
             throw new IllegalArgumentException("해당 게시글이 존재하지 않습니다.");
         }else{
             postHistoryDAO.insertPostHistory(post_seq);
@@ -73,7 +73,7 @@ public class PostService {
 
     @Transactional
     public void removePost(long post_seq) {
-        if(postDAO.isExistPost(post_seq)) {
+        if(!postDAO.isExistPost(post_seq)) {
             throw new IllegalArgumentException("해당 게시글이 존재하지 않습니다.");
         }else{
             postHistoryDAO.insertPostHistory(post_seq);
