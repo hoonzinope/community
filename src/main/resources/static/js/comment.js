@@ -83,6 +83,8 @@
         `;
         }
 
+        comment.insert_ts = convertTime(comment.insert_ts);
+
         return `
             <div class="comment-item p-3 border-bottom">
                 <div class="row align-items-start">
@@ -408,5 +410,9 @@
                     });
             });
         });
+    }
+
+    function convertTime(timestamp) {
+        return utils.convertTime(timestamp);
     }
 })();

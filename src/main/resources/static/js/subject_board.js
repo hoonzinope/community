@@ -133,6 +133,7 @@
         drawRow : function(post) {
             let category =
                 `<span class="badge bg-info">${post.category}</span>`;
+            post.insert_ts = subject_board.convertTime(post.insert_ts);
             return `<tr>
                 <td>${category}</td>
                 <td><a href="/post/${post.post_seq}" class="text-decoration-none text-dark">${post.title}</a></td>
@@ -160,6 +161,9 @@
                     subject_board.drawSubjectPosts(subject_seq, limit, (page - 1) * limit);
                 }
             });
+        },
+        convertTime : function(timestamp) {
+            return utils.convertTime(timestamp);
         }
     }
 })();

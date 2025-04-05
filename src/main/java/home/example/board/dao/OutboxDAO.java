@@ -6,23 +6,25 @@ import home.example.board.domain.Post;
 import home.example.board.repository.OutboxMapper;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-@Service
+@Repository
 public class OutboxDAO {
 
     @Autowired
     private OutboxMapper outboxMapper;
 
-    public void insertOutbox(Post post, String eventType) {
+    public void insertPost(long post_seq, String title, String content, String eventType) {
+        JSONObject payload = postToJson(post_seq, title, content);
         // convert Post to Outbox
         Outbox outbox = Outbox.builder()
                 .aggregate_type("POST")
-                .aggregate_id(post.getPost_seq())
+                .aggregate_id(post_seq)
                 .event_type(eventType)
-                .payload(postToJson(post).toJSONString())
+                .payload(payload.toJSONString())
                 .created_ts(LocalDateTime.now())
                 .status("PENDING")
                 .build();
@@ -30,11 +32,11 @@ public class OutboxDAO {
         outboxMapper.insertOutbox(outbox);
     }
 
-    private JSONObject postToJson(Post post) {
+    private JSONObject postToJson(long post_seq, String title, String content) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("post_seq", post.getPost_seq());
-        jsonObject.put("title", post.getTitle());
-        jsonObject.put("content", post.getContent());
+        jsonObject.put("post_seq", post_seq);
+        jsonObject.put("title", title);
+        jsonObject.put("content", content);
         return jsonObject;
     }
 
