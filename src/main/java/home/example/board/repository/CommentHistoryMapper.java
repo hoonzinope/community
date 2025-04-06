@@ -6,5 +6,5 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface CommentHistoryMapper {
-    public void insertCommentHistory(Comment comment);
+    public void insertCommentHistory(long comment_seq);
 }

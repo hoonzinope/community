@@ -1,13 +1,12 @@
-package home.example.board.service;
+package home.example.board.service.comment;
 
 import home.example.board.DTO.CommentDTO;
+import home.example.board.dao.CommentDAO;
+import home.example.board.dao.CommentHistoryDAO;
 import home.example.board.dao.OutboxDAO;
-import home.example.board.domain.Comment;
 import home.example.board.domain.CommentLike;
 import home.example.board.domain.User;
-import home.example.board.repository.CommentHistoryMapper;
 import home.example.board.repository.CommentLikeMapper;
-import home.example.board.repository.CommentMapper;
 import home.example.board.repository.UserMapper;
 import home.example.board.utils.NickNameUtils;
 import org.json.simple.JSONObject;
@@ -21,37 +20,21 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class CommentService {
-    @Autowired
-    private CommentMapper commentMapper;
+public class ReadCommentService {
+
+    private final CommentDAO commentDAO;
+    private final CommentLikeMapper commentLikeMapper;
+    private final UserMapper userMapper;
 
     @Autowired
-    private CommentLikeMapper commentLikeMapper;
-
-    @Autowired
-    private CommentHistoryMapper commentHistoryMapper;
-
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private OutboxDAO outboxDAO;
-
-    @Transactional
-    public void insertComment(long post_seq, String content, Long parent_comment_seq, long user_seq) {
-        Comment comment = Comment.builder()
-                .post_seq(post_seq)
-                .content(content)
-                .parent_comment_seq(parent_comment_seq)
-                .user_seq(user_seq)
-                .build();
-        commentMapper.insertComment(comment);
-        outboxDAO.insertComment(comment, "INSERT");
+    public ReadCommentService(CommentDAO commentDAO, CommentLikeMapper commentLikeMapper, UserMapper userMapper) {
+        this.commentDAO = commentDAO;
+        this.commentLikeMapper = commentLikeMapper;
+        this.userMapper = userMapper;
     }
 
     public JSONObject selectComments(long post_seq, long user_seq) {
-        JSONObject jsonObject = new JSONObject();
-        List<CommentDTO> comments = commentMapper.selectComments(post_seq);
+        List<CommentDTO> comments = commentDAO.selectComments(post_seq);
 
         if(user_seq != -1) {
             checkLikeClick(user_seq, comments);
@@ -60,6 +43,7 @@ public class CommentService {
             setUserNickName(comments);
         }
 
+        JSONObject jsonObject = new JSONObject();
         jsonObject.put("comments", comments);
         jsonObject.put("comment_count", comments.size());
         return jsonObject;
@@ -124,28 +108,5 @@ public class CommentService {
                 comment.setP_user_name("");
             }
         });
-    }
-
-    @Transactional
-    public void updateComment(long comment_seq, String content, long user_seq) throws IllegalAccessException {
-        Comment comment = commentMapper.selectComment(comment_seq);
-        if(user_seq != comment.getUser_seq()) {
-            throw new IllegalAccessException("user not matched");
-        }
-        commentHistoryMapper.insertCommentHistory(comment);
-        comment.setContent(content);
-        commentMapper.updateComment(comment);
-        outboxDAO.insertComment(comment, "UPDATE");
-    }
-
-    @Transactional
-    public void deleteComment(long comment_seq, long user_seq) throws IllegalAccessException {
-        Comment comment = commentMapper.selectComment(comment_seq);
-        if(user_seq != comment.getUser_seq()) {
-            throw new IllegalAccessException("user not matched");
-        }
-        commentHistoryMapper.insertCommentHistory(comment);
-        commentMapper.deleteComment(comment_seq);
-        outboxDAO.insertComment(comment, "DELETE");
     }
 }

@@ -1,8 +1,9 @@
 package home.example.board.controller.page;
 
-import home.example.board.service.PostService;
 import home.example.board.service.SearchService;
 import home.example.board.service.UserService;
+import home.example.board.service.post.CheckPostService;
+import home.example.board.service.post.ReadPostService;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 @Controller
 public class PageController {
 
     @Autowired
-    PostService postService;
+    ReadPostService readPostService;
+
+    @Autowired
+    CheckPostService checkPostService;
 
     @Autowired
     UserService userService;
@@ -71,7 +74,7 @@ public class PageController {
     public String modify(@PathVariable long post_seq, Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
         long user_seq = Long.parseLong(session.getAttribute("user_seq").toString());
-        if(postService.getPostByUser(post_seq, user_seq)){
+        if(checkPostService.getPostByUser(post_seq, user_seq)){
             model.addAttribute("post_seq", post_seq);
             return "modify";
         }
@@ -83,7 +86,7 @@ public class PageController {
 
     @GetMapping("/post/{post_seq}")
     public String post(@PathVariable long post_seq, Model model) {
-        JSONObject post = postService.getPost(post_seq);
+        JSONObject post = readPostService.getPost(post_seq);
         model.addAttribute("data", post);
         model.addAttribute("post_seq", post_seq);
         return "post";
