@@ -76,7 +76,7 @@
             searchKeyword.value = data.keyword;
         },
         renderRows : function(data) {
-            let postList = data.postList;
+            let postList = data.post_list;
             let rows = '';
             postList.forEach(post => {
                 post.insert_ts = searchPage.convertTime(post.insert_ts);
