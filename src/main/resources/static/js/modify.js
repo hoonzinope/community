@@ -26,7 +26,7 @@
 
     function settingData(data) {
         // category
-        let category_seq = data.post.category_seq;
+        let category_seq = data.post.subject_seq;
         callSubjects(category_seq);
 
         // title
@@ -125,7 +125,8 @@
     }
 
     function callSubjects(category_seq){
-        fetch('/api/subjects',{
+        const url = `/api/subjects/${category_seq}`;
+        fetch(url,{
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

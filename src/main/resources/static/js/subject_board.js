@@ -11,6 +11,7 @@
             subject_board.getSubjectName(subject_seq);
             subject_board.getSubjects(subject_seq);
             subject_board.drawSubjectPosts(subject_seq, 5, 0);
+            subject_board.search(subject_seq, 0, 5);
         },
         getSubjectName : function(subject_seq) {
             const url = '/api/subject/name';
@@ -121,8 +122,6 @@
                 });
         },
         renderSubjectColumn : function(tbody, data) {
-            let total = data.total;
-            let size = data.size;
             let posts = data.postList;
 
             let rows = posts.map(function(post) {
@@ -148,8 +147,10 @@
         drawPagination : function(subject_seq, data, offset, limit) {
             let total = data.total;
             let totalPages = Math.ceil(total / limit);
-            let currentPage = Math.floor(offset / limit) + 1;
+            let currentPage = offset + 1;
 
+            $("#search_pagination_div").hide();
+            $("#pagination_div").show();
             $("#pagination").twbsPagination({
                 first : null,
                 last : null,
@@ -164,6 +165,73 @@
         },
         convertTime : function(timestamp) {
             return utils.convertTime(timestamp);
+        },
+        search : function(subject_seq, offset, limit) {
+            let searchBtn = document.getElementById("searchBtn");
+            let tbody = document.getElementById("rows");
+            searchBtn.addEventListener("click", function(){
+                let searchKeyword = document.getElementById("searchKeyword").value;
+                let searchType = document.getElementById('searchType').value;
+                let subject_seq = category;
+                let endpoint = '/api/search';
+                let data = {
+                    subject_seq: subject_seq,
+                    keyword: searchKeyword,
+                    offset: offset != undefined ? offset : 0,
+                    limit: limit != undefined ? limit : 5,
+                    type: searchType,
+                    subject_seq : subject_seq
+                }
+                console.log(data);
+                fetch(endpoint,{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        subject_board.drawSearchBar(searchType, searchKeyword);
+                        subject_board.renderSubjectColumn(tbody, data);
+                        subject_board.drawSearchPagination(data, subject_seq, offset, limit);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching subjects:', error);
+                    });
+            });
+        },
+        drawSearchBar : function(type, keyword) {
+            let searchType = document.getElementById("searchType");
+            let searchKeyword = document.getElementById("searchKeyword");
+
+            searchType.value = type;
+            searchKeyword.value = keyword;
+        },
+        drawSearchPagination : function(data, subject_seq, offset, limit) {
+            let total = data.total;
+            let totalPages = Math.ceil(total / limit);
+            let currentPage = offset + 1;
+
+            $("#pagination_div").hide();
+            $("#search_pagination_div").show();
+            $("#search_pagination").twbsPagination({
+                first : null,
+                last : null,
+                totalPages: totalPages,
+                visiblePages: 5,
+                startPage: currentPage,
+                initiateStartPageClick: false,
+                onPageClick: function (event, page) {
+                    subject_board.drawSubjectPosts(subject_seq, limit, (page - 1) * limit);
+                }
+            });
         }
     }
 })();

@@ -2,15 +2,13 @@ package home.example.board.controller.api;
 
 import home.example.board.service.SubjectService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class SubjectAPI {
@@ -34,9 +32,13 @@ public class SubjectAPI {
                             )
             })
     })
-    @GetMapping("/api/subjects")
-    public ResponseEntity<JSONObject> getSubjects() {
-        JSONObject subjectList = subjectService.selectSubjectList();
+    @GetMapping("/api/subjects/{subject_seq}")
+    public ResponseEntity<JSONObject> getSubjects(
+            @Parameter(description = "게시판 메뉴 ID", required = true)
+            @PathVariable Long subject_seq
+    )
+    {
+        JSONObject subjectList = subjectService.selectSiblingSubject(subject_seq);
         return ResponseEntity.ok().body(subjectList);
     }
 
@@ -58,7 +60,7 @@ public class SubjectAPI {
     })
     @GetMapping("/api/subject/majorSubjects")
     public ResponseEntity<JSONObject> getMajorSubjects() {
-        JSONObject subjectList = subjectService.getParentSubjectList();
+        JSONObject subjectList = subjectService.getMajorSubjectList();
         return ResponseEntity.ok().body(subjectList);
     }
 
@@ -98,7 +100,7 @@ public class SubjectAPI {
     ) {
         // Extract the subject_seq from the request body
         long subject_seq = Long.parseLong(subjectId.get("major_seq").toString());
-        JSONObject subjectList = subjectService.getChildSubjectList(subject_seq);
+        JSONObject subjectList = subjectService.getMinorSubjectList(subject_seq);
         return ResponseEntity.ok().body(subjectList);
     }
 
@@ -138,7 +140,7 @@ public class SubjectAPI {
     ) {
         // Extract the subject_seq from the request body
         long subject_seq = Long.parseLong(subjectId.get("subject_seq").toString());
-        JSONObject subjectName = subjectService.getSubjectName(subject_seq);
+        JSONObject subjectName = subjectService.getSubTopicAndMainTopic(subject_seq);
         return ResponseEntity.ok().body(subjectName);
     }
 }

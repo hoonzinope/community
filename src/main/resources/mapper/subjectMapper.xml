@@ -26,10 +26,26 @@
         FROM
             subject
         WHERE
-            id = #{id}
+            subject_seq = #{subject_seq}
     </select>
 
-    <select id="getParentsSubjectList" parameterType="long" resultType="home.example.board.domain.Subject">
+    <select id="getSiblingSubjectList" parameterType="long" resultType="home.example.board.domain.Subject">
+        SELECT
+            subject_seq,
+            subject_name,
+            insert_ts,
+            parent_subject_seq
+        FROM
+            subject
+        WHERE
+            subject_seq = #{subject_seq}
+            or
+            subject_seq in (SELECT subject_seq FROM subject where parent_subject_seq = #{subject_seq})
+            or
+            parent_subject_seq = (SELECT parent_subject_seq FROM subject WHERE subject_seq = #{subject_seq})
+    </select>
+
+    <select id="getParentsSubjectList" resultType="home.example.board.domain.Subject">
         SELECT
             subject_seq,
             subject_name,
@@ -51,5 +67,17 @@
             subject
         WHERE
             parent_subject_seq = #{parent_subject_seq}
+    </select>
+
+    <select id="getSubjectAllBySeq" parameterType="long" resultType="home.example.board.domain.Subject">
+        SELECT
+            subject_seq,
+            subject_name,
+            insert_ts,
+            parent_subject_seq
+        FROM
+            subject
+        WHERE
+            subject_seq = #{subject_seq} or parent_subject_seq = #{subject_seq}
     </select>
 </mapper>
