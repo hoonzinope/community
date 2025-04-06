@@ -88,8 +88,23 @@
             </table>
         </div>
         <!-- Pagination -->
-        <nav class="mt-4">
+        <nav class="mt-4" id="pagination_div">
             <ul class="pagination justify-content-center" id="pagination">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#"><i class="ri-arrow-left-s-line"></i></a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#"><i class="ri-arrow-right-s-line"></i></a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- search Pagination -->
+        <nav class="mt-4" id="search_pagination_div" style="display: none;">
+            <ul class="pagination justify-content-center" id="search_pagination">
                 <li class="page-item disabled">
                     <a class="page-link" href="#"><i class="ri-arrow-left-s-line"></i></a>
                 </li>
