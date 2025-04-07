@@ -1,6 +1,7 @@
 package home.example.board.controller.api;
 
 import home.example.board.config.MinioConfig;
+import home.example.board.service.image.ImageService;
 import io.minio.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,11 +26,12 @@ import java.util.UUID;
 @RestController
 public class ImageAPI {
 
-    @Autowired
-    private MinioConfig minioConfig;
+    private final ImageService imageService;
 
     @Autowired
-    private MinioClient minioClient;
+    public ImageAPI(ImageService imageService) {
+        this.imageService = imageService;
+    }
 
     @Operation(summary = "이미지 업로드", description = "이미지를 업로드합니다.")
     @ApiResponses(value = {
@@ -82,37 +84,7 @@ public class ImageAPI {
         }
 
         try {
-            // 원본 파일명에서 확장자 추출
-            String originalFilename = StringUtils.cleanPath(imageFile.getOriginalFilename());
-            String ext = "";
-            int dotIndex = originalFilename.lastIndexOf('.');
-            if (dotIndex > 0) {
-                ext = originalFilename.substring(dotIndex);
-            }
-
-            // UUID를 이용해 고유 파일명 생성
-            String fileName = UUID.randomUUID().toString() + ext;
-            String bucketName = minioConfig.getBucketName();
-            String minIOUrl = minioConfig.getMinioUrl();
-
-            // 버킷이 존재하는지 확인하고 없으면 생성
-            boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
-            if (!found) {
-                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
-            }
-
-            // 이미지 파일을 minIO에 업로드
-            minioClient.putObject(
-                    PutObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(fileName)
-                            .stream(imageFile.getInputStream(), imageFile.getSize(), -1)
-                            .contentType(imageFile.getContentType())
-                            .build()
-            );
-
-            // 저장된 파일에 접근 가능한 URL 구성 (버킷을 정적 리소스로 공개했다고 가정)
-            String imageUrl = minIOUrl + "/" + bucketName + "/" + fileName;
+            String imageUrl = imageService.uploadImage(imageFile);
             response.put("url", imageUrl);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -179,18 +151,7 @@ public class ImageAPI {
         }
 
         try {
-            String bucketName = minioConfig.getBucketName();
-            String minIOUrl = minioConfig.getMinioUrl();
-            // 이미지 URL에서 파일명 추출 (예: http://172.30.1.86:9001/uploads/uuid.jpg)
-            String basePath = minIOUrl + "/" + bucketName + "/";
-            if (!imageUrl.startsWith(basePath)) {
-                response.put("error", "올바른 이미지 URL이 아닙니다.");
-                return ResponseEntity.badRequest().body(response);
-            }
-            String fileName = imageUrl.substring(basePath.length());
-
-            // minIO에서 객체 삭제
-            minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(fileName).build());
+            imageService.deleteImage(imageUrl);
             response.put("message", "이미지가 성공적으로 삭제되었습니다.");
             return ResponseEntity.ok(response);
         } catch (Exception e) {

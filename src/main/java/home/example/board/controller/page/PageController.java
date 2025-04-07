@@ -1,9 +1,9 @@
 package home.example.board.controller.page;
 
 import home.example.board.service.SearchService;
-import home.example.board.service.UserService;
 import home.example.board.service.post.CheckPostService;
 import home.example.board.service.post.ReadPostService;
+import home.example.board.service.user.ReadUserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class PageController {
     CheckPostService checkPostService;
 
     @Autowired
-    UserService userService;
+    ReadUserService readUserService;
 
     @Autowired
     SearchService searchService;
@@ -61,7 +61,7 @@ public class PageController {
     @GetMapping("/profile")
     public String profile(HttpServletRequest request, Model model) {
         long user_seq = Long.parseLong(request.getSession().getAttribute("user_seq").toString());
-        userService.insertUserInfo(model, user_seq);
+        readUserService.getUserInfo(model, user_seq);
         return "profile";
     }
 
