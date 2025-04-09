@@ -27,8 +27,7 @@
                     location.href = '/';
                 },
                 error: function(err){
-                    console.log(err);
-                    alert('회원가입 실패' + err);
+                    alert('회원가입 실패');
                 }
             });
         });

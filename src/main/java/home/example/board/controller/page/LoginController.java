@@ -31,11 +31,11 @@ public class LoginController {
             session.setAttribute("referer", referer);
         }
 
-        return "login";
+        return "member/login";
     }
 
     @GetMapping("/signup")
     public String signup(){
-        return "signup";
+        return "member/signup";
     }
 }
