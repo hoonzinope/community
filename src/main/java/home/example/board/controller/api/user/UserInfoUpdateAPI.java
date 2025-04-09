@@ -78,7 +78,6 @@ public class UserInfoUpdateAPI {
         long user_seq = (long) request.getSession().getAttribute("user_seq");
         String user_nickname = (String) userInfo.get("user_nickname");
         String user_email = (String) userInfo.get("user_email");
-        System.out.println(user_nickname + " "+ user_email);
         try{
             updateUserService.updateUserInfo(user_seq, user_nickname, user_email);
             request.getSession().setAttribute("user_nickname", user_nickname);
