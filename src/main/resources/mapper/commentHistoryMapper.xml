@@ -6,13 +6,16 @@
 <!-- SQL Mapping -->
 <mapper namespace="home.example.board.repository.CommentHistoryMapper">
     <insert id="insertCommentHistory"
-            parameterType="home.example.board.domain.Comment">
+            parameterType="long">
         insert into comment_history (
             comment_seq,
             content
-        ) values (
-            #{comment_seq},
-            #{content}
         )
+        select
+            comment_seq, content
+        from
+            comment
+        where
+            comment_seq = #{comment_seq}
     </insert>
 </mapper>

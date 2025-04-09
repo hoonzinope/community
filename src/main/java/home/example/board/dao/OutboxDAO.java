@@ -40,13 +40,16 @@ public class OutboxDAO {
         return jsonObject;
     }
 
-    public void insertComment(Comment comment, String eventType) {
+    public void insertComment(long comment_seq, String content, String eventType) {
+        // convert Comment to JSON
+        JSONObject payload = commentToJson(comment_seq, content);
+
         // convert Comment to Outbox
         Outbox outbox = Outbox.builder()
                 .aggregate_type("COMMENT")
-                .aggregate_id(comment.getComment_seq())
+                .aggregate_id(comment_seq)
                 .event_type(eventType)
-                .payload(commentToJson(comment).toJSONString())
+                .payload(payload.toJSONString())
                 .created_ts(LocalDateTime.now())
                 .status("PENDING")
                 .build();
@@ -54,11 +57,10 @@ public class OutboxDAO {
         outboxMapper.insertOutbox(outbox);
     }
 
-    private JSONObject commentToJson(Comment comment) {
+    private JSONObject commentToJson(long comment_seq, String content) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("comment_seq", comment.getComment_seq());
-        jsonObject.put("post_seq", comment.getPost_seq());
-        jsonObject.put("content", comment.getContent());
+        jsonObject.put("comment_seq", comment_seq);
+        jsonObject.put("content", content);
         return jsonObject;
     }
 }

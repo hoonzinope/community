@@ -30,10 +30,6 @@ public class PostLikeService {
         postLikeMapper.deletePostLike(postLike);
     }
 
-    public int countPostLike(long post_seq, String like_type) {
-        return postLikeMapper.countPostLike(post_seq, like_type);
-    }
-
     public PostLike getPostLike(long post_seq, long user_seq) {
         PostLike postLike = PostLike.builder()
                 .post_seq(post_seq)

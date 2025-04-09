@@ -16,9 +16,6 @@ import java.util.Optional;
 public class SubjectService {
 
     @Autowired
-    SubjectMapper subjectMapper;
-
-    @Autowired
     SubjectDAO subjectDAO;
 
     public JSONObject selectSiblingSubject(long subject_seq) {
