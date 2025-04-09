@@ -79,7 +79,7 @@ public class UserPwChangeAPI {
         String new_pw = (String) userInfo.get("new_pw");
 
         try{
-            updateUserService.userPasswordReset(user_seq);
+            updateUserService.userPasswordUpdate(user_seq, new_pw);
             jsonObject.put("success", true);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
