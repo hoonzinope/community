@@ -56,4 +56,7 @@ public class SubjectDAO {
         return subjectMapper.getSubjectAllBySeq(subject_seq);
     }
 
+    public List<Subject> getSubjectAll() {
+        return subjectMapper.getSubjectList();
+    }
 }

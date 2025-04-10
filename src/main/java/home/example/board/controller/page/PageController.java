@@ -38,7 +38,7 @@ public class PageController {
 
     @GetMapping("/board")
     public String board() {
-        return "board";
+        return "community/mainBoard";
     }
 
     @GetMapping("/board/{category}")
