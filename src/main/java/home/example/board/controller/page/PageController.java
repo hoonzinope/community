@@ -41,12 +41,12 @@ public class PageController {
         return "community/mainBoard";
     }
 
-    @GetMapping("/board/{category}")
+    @GetMapping("/board/{subject_seq}")
     public String boardCategory(
-            @PathVariable long category,
+            @PathVariable Long subject_seq,
             Model model) {
-        model.addAttribute("category", category);
-        return "subject_board";
+        model.addAttribute("subject_seq", subject_seq);
+        return "community/mainBoard";
     }
 
     @GetMapping("/write/{subject_seq}")
@@ -89,7 +89,7 @@ public class PageController {
         JSONObject post = readPostService.getPost(post_seq);
         model.addAttribute("data", post);
         model.addAttribute("post_seq", post_seq);
-        return "post";
+        return "community/detailPost";
     }
 
     @GetMapping("/search")

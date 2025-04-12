@@ -1,6 +1,7 @@
 package home.example.board.service.post;
 
 import home.example.board.DTO.PostPagingDTO;
+import home.example.board.config.MinioConfig;
 import home.example.board.dao.PostDAO;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,12 @@ public class ReadPostService {
 
     private final PostDAO postDAO;
 
+    private final MinioConfig minioConfig;
+
     @Autowired
-    public ReadPostService(PostDAO postDAO) {
+    public ReadPostService(PostDAO postDAO, MinioConfig minioConfig) {
         this.postDAO = postDAO;
+        this.minioConfig = minioConfig;
     }
 
     public JSONObject getPost(long post_seq) {
@@ -60,7 +64,13 @@ public class ReadPostService {
                     JSONObject postJson = new JSONObject();
                     postJson.put("post_seq", post.getPost_seq());
                     postJson.put("title", post.getTitle());
-                    postJson.put("content", post.getContent());
+
+                    // Convert image server name in content
+                    String content = post.getContent();
+                    if (content != null) {
+                        content = convertImageServername(content);
+                    }
+                    postJson.put("content", content);
                     postJson.put("insert_ts", post.getInsert_ts());
                     postJson.put("update_ts", post.getUpdate_ts());
                     postJson.put("view_count", post.getView_count());
@@ -71,5 +81,9 @@ public class ReadPostService {
                     return postJson;
                 })
                 .collect(Collectors.toList());
+    }
+
+    private String convertImageServername(String content) {
+        return content.replace("http://imageStorage", minioConfig.getMinioUrl());
     }
 }
