@@ -36,6 +36,19 @@ public class CommentDAO {
     }
 
     @Transactional
+    public Long insertComment(long post_seq, String content, Long parent_comment_seq, Long reply_user_seq, long user_seq) {
+        Comment comment = Comment.builder()
+                .post_seq(post_seq)
+                .content(content)
+                .parent_comment_seq(parent_comment_seq)
+                .reply_user_seq(reply_user_seq)
+                .user_seq(user_seq)
+                .build();
+        commentMapper.insertComment(comment);
+        return comment.getComment_seq();
+    }
+
+    @Transactional
     public void updateComment(long comment_seq, String content, long user_seq) {
         Comment comment = commentMapper.selectComment(comment_seq);
         if (comment == null) {

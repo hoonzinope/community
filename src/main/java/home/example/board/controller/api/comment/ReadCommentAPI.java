@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ReadAPI {
+public class ReadCommentAPI {
 
     private final ReadCommentService readCommentService;
     @Autowired
-    public ReadAPI(ReadCommentService readCommentService) {
+    public ReadCommentAPI(ReadCommentService readCommentService) {
         this.readCommentService = readCommentService;
     }
 

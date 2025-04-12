@@ -60,6 +60,7 @@
 <body>
 
 <!-- 상단 내비게이션 바 -->
+<!-- 상단 내비게이션 바 -->
 <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">board.io</a>
@@ -67,7 +68,18 @@
             <input class="form-control me-2" type="search" placeholder="검색어를 입력하세요..." aria-label="Search">
             <button class="btn btn-outline-secondary" type="submit"><i class="ri-search-line"></i></button>
         </form>
-        <div>
+        <div th:if="${session.user_seq != null}" class="dropdown">
+            <a href="#" class="btn btn-outline-primary btn-sm dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span th:text="${session.user_nickname}">사용자</span>님
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="/member/me">내 정보</a></li>
+                <li><a class="dropdown-item" href="/member/posts">내 게시글</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="/auth/logout">로그아웃</a></li>
+            </ul>
+        </div>
+        <div th:if="${session.user_seq == null}">
             <a href="/login" class="btn btn-outline-primary btn-sm me-2">로그인</a>
             <a href="/signup" class="btn btn-primary btn-sm">회원가입</a>
         </div>
@@ -132,8 +144,8 @@
             </div>
 
             <!-- 댓글 리스트 -->
-            <div class="mt-4">
-                <h5 class="mb-3">댓글 4개</h5>
+            <div class="mt-4" id="commentList">
+                <h5 class="mb-3" id="comment_cnt">댓글 4개</h5>
 
                 <!-- 🔹 부모 댓글 -->
                 <div class="bg-white p-3 rounded mb-3">
@@ -141,13 +153,17 @@
                     <div class="mb-2">이 글 정말 공감되네요!</div>
                     <a href="#" class="text-decoration-none text-primary small">답글 달기</a>
                     <!-- 대댓글 작성 폼 (답글 달기 클릭 시 표시) -->
-                    <form th:action="@{/posts/{postId}/comments}" method="post" class="ms-4 ps-3 mt-2">
-                        <input type="hidden" name="parentId" value="부모댓글ID">
-                        <textarea class="form-control mb-2" name="content" rows="2" placeholder="답글을 입력하세요..."></textarea>
+                    <div class="reply-form ms-4 ps-3 mt-2">
+                        <textarea class="form-control mb-2"
+                                  data-parent-comment-seq=""
+                                  data-reply-user-seq=""
+                                  name="content"
+                                  rows="2" placeholder="답글을 입력하세요...">
+                        </textarea>
                         <div class="text-end">
-                            <button type="submit" class="btn btn-sm btn-outline-primary">답글 작성</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary">답글 작성</button>
                         </div>
-                    </form>
+                    </div>
 
                     <!-- 🔸 대댓글 (들여쓰기 + 회색선) -->
                     <div class="ms-4 ps-3 border-start border-2 mt-3">
@@ -155,17 +171,11 @@
                         <div class="mb-2">저도요! 특히 마지막 문장이 좋았어요.</div>
                         <a href="#" class="text-decoration-none text-primary small">답글 달기</a>
                         <!-- 대댓글 작성 폼 (답글 달기 클릭 시 표시) -->
-                        <form th:action="@{/posts/{postId}/comments}" method="post" class="ms-4 ps-3 mt-2">
-                            <input type="hidden" name="parentId" value="부모댓글ID">
+                        <div class="reply-form ms-4 ps-3 mt-2" data-parent-comment-seq="" data-reply-user-seq="">
                             <textarea class="form-control mb-2" name="content" rows="2" placeholder="답글을 입력하세요..."></textarea>
                             <div class="text-end">
-                                <button type="submit" class="btn btn-sm btn-outline-primary">답글 작성</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary">답글 작성</button>
                             </div>
-                        </form>
-                        <!-- 🔹 대댓글의 대댓글도 가능 (optional) -->
-                        <div class="ms-4 ps-3 border-start border-2 mt-3">
-                            <div class="small text-muted mb-1">작성자 • 5분 전</div>
-                            <div class="mb-2">감사합니다 :)</div>
                         </div>
                     </div>
                 </div>
@@ -175,20 +185,28 @@
                     <div class="small text-muted mb-1">다른유저 • 3시간 전</div>
                     <div class="mb-2">저는 좀 다른 의견이에요.</div>
                     <a href="#" class="text-decoration-none text-primary small">답글 달기</a>
+                    <!-- 대댓글 작성 폼 (답글 달기 클릭 시 표시) -->
+                    <div class="reply-form ms-4 ps-3 mt-2" data-parent-comment-seq="" data-reply-user-seq="">
+                        <textarea class="form-control mb-2" name="content" rows="2" placeholder="답글을 입력하세요..."></textarea>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-sm btn-outline-primary">답글 작성</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
 
             <!-- 댓글 작성 폼 -->
-            <div class="bg-white p-3 rounded">
-                <form th:action="@{/posts/{id}/comments}" method="post">
-                    <div class="mb-2">
-                        <textarea class="form-control" name="content" rows="3" placeholder="댓글을 입력하세요..."></textarea>
-                    </div>
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-sm btn-primary">댓글 작성</button>
-                    </div>
-                </form>
+            <div class="bg-white p-3 rounded" id="newCommentSection">
+                <div class="mb-2">
+                    <textarea class="form-control" id="newCommentContent" rows="3"
+                              data-parent-comment-seq=""
+                              data-reply-user-seq=""
+                              placeholder="댓글을 입력하세요..."></textarea>
+                </div>
+                <div class="text-end">
+                    <button type="button" class="btn btn-sm btn-primary" id="submitCommentBtn">댓글 작성</button>
+                </div>
             </div>
         </div>
 

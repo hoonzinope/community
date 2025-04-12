@@ -32,7 +32,7 @@ public class UserDAO {
                 .user_name(user_name)
                 .user_pw(user_pw)
                 .user_email(user_email)
-                .user_nickname(UUID.randomUUID().toString())
+                .user_nickname(UUID.randomUUID().toString().substring(0, 8))
                 .insert_ts(LocalDateTime.now())
                 .build();
         userMapper.addUser(newUser);

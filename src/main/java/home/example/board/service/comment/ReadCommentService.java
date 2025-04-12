@@ -36,12 +36,12 @@ public class ReadCommentService {
     public JSONObject selectComments(long post_seq, long user_seq) {
         List<CommentDTO> comments = commentDAO.selectComments(post_seq);
 
-        if(user_seq != -1) {
-            checkLikeClick(user_seq, comments);
-        }
-        if (!comments.isEmpty()) {
-            setUserNickName(comments);
-        }
+//        if(user_seq != -1) {
+//            checkLikeClick(user_seq, comments);
+//        }
+//        if (!comments.isEmpty()) {
+//            setUserNickName(comments);
+//        }
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("comments", comments);
@@ -49,64 +49,64 @@ public class ReadCommentService {
         return jsonObject;
     }
 
-    private void checkLikeClick(long user_seq, List<CommentDTO> comments) {
-        // get commentSeqList
-        List<Long> commentSeqList = comments.stream().map(comment-> {
-            long comment_seq = comment.getComment_seq();
-            return comment_seq;
-        }).collect(Collectors.toList());
+//    private void checkLikeClick(long user_seq, List<CommentDTO> comments) {
+//        // get commentSeqList
+//        List<Long> commentSeqList = comments.stream().map(comment-> {
+//            long comment_seq = comment.getComment_seq();
+//            return comment_seq;
+//        }).collect(Collectors.toList());
+//
+//        // get commentLikes by commentSeqList
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("commentSeqList", commentSeqList);
+//        params.put("user_seq", user_seq);
+//        List<CommentLike> commentLikes = commentLikeMapper.selectCommentLikes(params);
+//
+//        // check like click
+//        commentLikes.stream().forEach(commentLike -> {
+//            long comment_seq = commentLike.getComment_seq();
+//            comments.stream().forEach(comment -> {
+//                if(comment.getComment_seq() == comment_seq) {
+//                    comment.setClick_like(true);
+//                    comment.setClick_like_type(commentLike.getLike_type());
+//                }
+//            });
+//        });
+//    }
 
-        // get commentLikes by commentSeqList
-        Map<String, Object> params = new HashMap<>();
-        params.put("commentSeqList", commentSeqList);
-        params.put("user_seq", user_seq);
-        List<CommentLike> commentLikes = commentLikeMapper.selectCommentLikes(params);
-
-        // check like click
-        commentLikes.stream().forEach(commentLike -> {
-            long comment_seq = commentLike.getComment_seq();
-            comments.stream().forEach(comment -> {
-                if(comment.getComment_seq() == comment_seq) {
-                    comment.setClick_like(true);
-                    comment.setClick_like_type(commentLike.getLike_type());
-                }
-            });
-        });
-    }
-
-    private void setUserNickName(List<CommentDTO> comments) {
-        List<Long> userSeqList = comments.stream().map(CommentDTO::getUser_seq)
-                .collect(Collectors.toList());
-
-        // get user list by userSeqList
-        Map<Long, Integer> userSeqDeleteFlagMap = userMapper.getUserBySeqList(userSeqList).stream()
-                .collect(Collectors.toMap(User::getUser_seq, User::getDelete_flag));
-        Map<Long, String> userSeqNicknameMap = userMapper.getUserBySeqList(userSeqList).stream()
-                .collect(Collectors.toMap(User::getUser_seq, User::getUser_nickname));
-        // blind delete user nickname
-        comments.stream().forEach(comment -> {
-            long user_seq = comment.getUser_seq();
-            long parent_user_seq = comment.getP_user_seq();
-
-            if(userSeqDeleteFlagMap.get(user_seq) == 1) {
-                comment.setUser_name("비활성 사용자");
-            }else{
-                String nickname = userSeqNicknameMap.get(user_seq);
-                nickname = NickNameUtils.nickNameTrim(nickname);
-                comment.setUser_name(nickname);
-            }
-
-            if(parent_user_seq != 0) {
-                if(userSeqDeleteFlagMap.get(parent_user_seq) == 1) {
-                    comment.setP_user_name("비활성 사용자");
-                }else{
-                    String nickname = userSeqNicknameMap.get(parent_user_seq);
-                    nickname = NickNameUtils.nickNameTrim(nickname);
-                    comment.setP_user_name(nickname);
-                }
-            }else{
-                comment.setP_user_name("");
-            }
-        });
-    }
+//    private void setUserNickName(List<CommentDTO> comments) {
+//        List<Long> userSeqList = comments.stream().map(CommentDTO::getUser_seq)
+//                .collect(Collectors.toList());
+//
+//        // get user list by userSeqList
+//        Map<Long, Integer> userSeqDeleteFlagMap = userMapper.getUserBySeqList(userSeqList).stream()
+//                .collect(Collectors.toMap(User::getUser_seq, User::getDelete_flag));
+//        Map<Long, String> userSeqNicknameMap = userMapper.getUserBySeqList(userSeqList).stream()
+//                .collect(Collectors.toMap(User::getUser_seq, User::getUser_nickname));
+//        // blind delete user nickname
+//        comments.stream().forEach(comment -> {
+//            long user_seq = comment.getUser_seq();
+//            long parent_user_seq = comment.getP_user_seq();
+//
+//            if(userSeqDeleteFlagMap.get(user_seq) == 1) {
+//                comment.setUser_name("비활성 사용자");
+//            }else{
+//                String nickname = userSeqNicknameMap.get(user_seq);
+//                nickname = NickNameUtils.nickNameTrim(nickname);
+//                comment.setUser_name(nickname);
+//            }
+//
+//            if(parent_user_seq != 0) {
+//                if(userSeqDeleteFlagMap.get(parent_user_seq) == 1) {
+//                    comment.setP_user_name("비활성 사용자");
+//                }else{
+//                    String nickname = userSeqNicknameMap.get(parent_user_seq);
+//                    nickname = NickNameUtils.nickNameTrim(nickname);
+//                    comment.setP_user_name(nickname);
+//                }
+//            }else{
+//                comment.setP_user_name("");
+//            }
+//        });
+//    }
 }

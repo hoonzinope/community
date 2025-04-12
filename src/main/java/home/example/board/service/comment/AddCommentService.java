@@ -28,8 +28,8 @@ public class AddCommentService {
     public void addComment(
             long post_seq,
             String content,
-            Long parent_comment_seq, long user_seq) {
-        long comment_seq = commentDAO.insertComment(post_seq, content, parent_comment_seq, user_seq);
-        outboxDAO.insertComment(comment_seq, content,"INSERT");
+            Long parent_comment_seq, Long reply_user_seq, long user_seq) {
+        long comment_seq = commentDAO.insertComment(post_seq, content, parent_comment_seq, reply_user_seq, user_seq);
+        //outboxDAO.insertComment(comment_seq, content,"INSERT");
     }
 }

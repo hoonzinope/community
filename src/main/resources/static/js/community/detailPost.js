@@ -2,6 +2,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         let post_seq = window.location.href.split('/').pop();
         postObj.init(post_seq);
+        commentObj.init(post_seq);
     });
 
     const postObj = {
@@ -123,7 +124,6 @@
                 })
                 .then(data => {
                     // 게시물 상세보기 처리
-                    console.log(data);
                     postObj.appendPost(data.post);
                 })
                 .catch(error => {
@@ -132,6 +132,7 @@
         },
         // 불러온 게시물 main feed에 표시
         appendPost : function(post) {
+            console.log(post);
             const mainFeed = document.getElementById('mainFeed');
 
             const postElement = document.createElement('div');
@@ -158,7 +159,7 @@
             postContent.innerHTML = `
                 <h5>${post.title}</h5>
                 <div class="post-meta mb-1">
-                    <span>${post.user_seq}</span> ·
+                    <span>${post.user_nickname}</span> ·
                     <span>${formattedDate}</span> ·
                     <span class="badge bg-light text-dark">${post.category}</span>
                 </div>
@@ -199,7 +200,6 @@
                 })
                 .then(data => {
                     // seenList 처리
-                    console.log(data);
                     postObj.appendSeenList(data.postList);
                 })
                 .catch(error => {
@@ -219,5 +219,202 @@
                 seenPost.appendChild(li);
             });
         },
+    }
+
+    const commentObj = {
+        init : function (post_seq) {
+            //commentObj.requestComment(post_seq);
+            commentObj.requestComment(post_seq);
+            commentObj.writeNewParentComment(post_seq);
+        },
+        addCommentApi : async function(content, parent_comment_seq, reply_user_seq, post_seq) {
+            const url = `/api/post/${post_seq}/comment`;
+            const data = {
+                content: content,
+                parent_comment_seq: parent_comment_seq,
+                reply_user_seq: reply_user_seq
+            };
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                const result = await response.json();
+                console.log(result);
+                // 댓글 작성 성공 시 댓글 목록 갱신
+                commentObj.requestComment(post_seq);
+            } else {
+                alert('댓글 작성에 실패했습니다.');
+            }
+        },
+        writeNewParentComment : function(post_seq) {
+            document.getElementById('submitCommentBtn').addEventListener('click', async function(e) {
+                e.preventDefault();
+                const textarea = document.getElementById("newCommentContent");
+                const content = textarea.value.trim();
+                const parentCommentSeq = textarea.dataset.parentCommentSeq || null;
+                const replyToUserSeq = textarea.dataset.replyUserSeq || null;
+
+                if (content.trim() === '') {
+                    alert('댓글을 입력하세요.');
+                    return;
+                }
+
+                commentObj.addCommentApi(content, parentCommentSeq, replyToUserSeq, post_seq);
+            })
+        },
+        requestComment : function(post_seq) {
+            const url = `/api/post/${post_seq}/comments`;
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답에 문제가 있습니다.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    commentObj.appendComment(data.comment_count, data.comments, post_seq);
+                })
+                .catch(error => {
+                    console.error('댓글 요청 중 에러 발생: ', error);
+                });
+        },
+        appendComment : function(comment_count, commentList, post_seq) {
+            document.getElementById('commentList').innerHTML = '';
+
+            let h5 = document.createElement('h5');
+            h5.setAttribute('id', 'comment_cnt');
+            h5.innerHTML = "댓글 "+comment_count+"개";
+            document.getElementById('commentList').appendChild(h5);
+
+            let commentElement = document.createElement('div');
+            commentList.forEach(comment => {
+                let commentContent = comment.content;
+                let commentUserSeq = comment.user_seq;
+                let commentUserName = comment.user_name;
+                let insert_ts = new Date(comment.insert_ts);
+                let formattedDate = utils.timeSince(insert_ts);
+                let reply_to_user_name = comment.reply_to_user_name;
+                if(comment.parent_comment_seq == 0) {
+                    commentElement = document.createElement('div');
+                    commentElement.className = 'bg-white p-3 rounded mb-3';
+
+                    let div = `
+                    <div class="small text-muted mb-1">${commentUserName} • ${formattedDate}</div>
+                    <div class="mb-2">${commentContent}</div>
+                    `;
+                    commentElement.innerHTML = div;
+
+                    let a = document.createElement('a');
+                    a.className = 'text-decoration-none text-primary small';
+                    a.innerText = '답글 달기';
+                    commentElement.appendChild(a);
+
+                    let reply_div = document.createElement('div');
+                    reply_div.className = 'reply-form ms-4 ps-3 mt-2';
+                    reply_div.setAttribute("style","display:none");
+
+                    let reply_textarea = document.createElement('textarea');
+                    reply_textarea.className = 'form-control mb-2';
+                    reply_textarea.setAttribute('data-parent-comment-seq', comment.comment_seq);
+                    reply_textarea.setAttribute('date-reply-user-seq', commentUserSeq);
+                    reply_textarea.setAttribute('name', 'content');
+                    reply_textarea.setAttribute('row','2');
+                    reply_textarea.setAttribute('placeholder','답글을 입력하세요...');
+                    reply_div.appendChild(reply_textarea);
+
+                    let reply_button_div = document.createElement('div');
+                    reply_button_div.className = 'text-end'
+                    reply_button_div.innerHTML = `
+                    <button type="button" class="btn btn-sm btn-outline-primary replySubmitBtn">답글 작성</button>
+                    `;
+                    reply_div.appendChild(reply_button_div);
+                    reply_button_div.querySelector('.replySubmitBtn').addEventListener('click', async function() {
+                        const content = reply_textarea.value.trim();
+                        const parentCommentSeq = reply_textarea.getAttribute('data-parent-comment-seq');
+                        const replyToUserSeq = reply_textarea.getAttribute('date-reply-user-seq');
+
+                        if (content === '') {
+                            alert('답글 내용을 입력하세요.');
+                            return;
+                        }
+                        commentObj.addCommentApi(content, parentCommentSeq, replyToUserSeq, post_seq);
+                    });
+
+                    commentElement.appendChild(reply_div);
+
+                    a.addEventListener("click", function() {
+                        if(reply_div.style.display == "none") {
+                            reply_div.style.display = 'block';
+                        }else{
+                            reply_div.style.display = 'none';
+                        }
+                    });
+                }else{
+                    let replyElement = document.createElement('div');
+                    replyElement.className = 'ms-4 ps-3 border-start border-2 mt-3';
+                    let div = `
+                    <div class="small text-muted mb-1">${commentUserName} • ${formattedDate}</div>
+                    <div class="mb-2">
+                        <span class="badge bg-light text-dark">@${reply_to_user_name}</span> 
+                        ${commentContent}
+                    </div>
+                    `;
+                    replyElement.innerHTML = div;
+
+                    let a = document.createElement('a');
+                    a.className = 'text-decoration-none text-primary small';
+                    a.innerText = '답글 달기';
+                    replyElement.appendChild(a);
+
+                    let reply_div = document.createElement('div');
+                    reply_div.className = 'reply-form ms-4 ps-3 mt-2';
+                    reply_div.setAttribute("style","display:none");
+
+                    let reply_textarea = document.createElement('textarea');
+                    reply_textarea.className = 'form-control mb-2';
+                    reply_textarea.setAttribute('data-parent-comment-seq', comment.parent_comment_seq);
+                    reply_textarea.setAttribute('date-reply-user-seq', commentUserSeq);
+                    reply_textarea.setAttribute('name', 'content');
+                    reply_textarea.setAttribute('row','2');
+                    reply_textarea.setAttribute('placeholder','답글을 입력하세요...');
+                    reply_div.appendChild(reply_textarea);
+
+                    let reply_button_div = document.createElement('div');
+                    reply_button_div.className = 'text-end'
+                    reply_button_div.innerHTML = `
+                    <button type="button" class="btn btn-sm btn-outline-primary replySubmitBtn">답글 작성</button>
+                    `;
+                    reply_div.appendChild(reply_button_div);
+                    reply_button_div.querySelector('.replySubmitBtn').addEventListener('click', async function() {
+                        const content = reply_textarea.value.trim();
+                        const parentCommentSeq = reply_textarea.getAttribute('data-parent-comment-seq');
+                        const replyToUserSeq = reply_textarea.getAttribute('date-reply-user-seq');
+
+                        if (content === '') {
+                            alert('답글 내용을 입력하세요.');
+                            return;
+                        }
+                        commentObj.addCommentApi(content, parentCommentSeq, replyToUserSeq, post_seq);
+                    });
+
+                    replyElement.appendChild(reply_div);
+
+                    a.addEventListener("click", function() {
+                        if(reply_div.style.display == "none") {
+                            reply_div.style.display = 'block';
+                        }else{
+                            reply_div.style.display = 'none';
+                        }
+                    });
+                    commentElement.appendChild(replyElement);
+                }
+
+                document.getElementById('commentList').appendChild(commentElement);
+            })
+        }
     }
 })();

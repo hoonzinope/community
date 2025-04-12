@@ -1,5 +1,6 @@
 package home.example.board.controller.api.comment;
 
+import home.example.board.DTO.CustomUserDetail;
 import home.example.board.service.comment.AddCommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -7,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,11 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-public class AddAPI {
+public class AddCommentAPI {
 
     private final AddCommentService addCommentService;
     @Autowired
-    public AddAPI(AddCommentService addCommentService) {
+    public AddCommentAPI(AddCommentService addCommentService) {
         this.addCommentService = addCommentService;
     }
 
@@ -70,24 +72,36 @@ public class AddAPI {
                             examples = {
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "댓글 정보",
-                                            value = "{\"content\" : \"댓글 내용\", \"parent_comment_seq\" : 1, \"user_seq\" : 1}"
+                                            description = "댓글 내용, 부모 댓글 번호, 사용자 번호",
+                                            summary = "댓글 정보",
+                                            value = "{\"content\" : \"댓글 내용\", \"parent_comment_seq\" : 1, \"reply_user_seq\" : 1}"
                                     )
                             }
                     )
             )
-            @RequestBody Map<String, Object> requestBody) {
+            @RequestBody Map<String, Object> requestBody, @AuthenticationPrincipal CustomUserDetail userDetail) {
+
         String content = (String) requestBody.get("content");
         Long parent_comment_seq =
                 requestBody.get("parent_comment_seq") == null ?
                         null : Long.parseLong(requestBody.get("parent_comment_seq").toString());
-        long user_seq = Long.parseLong(requestBody.get("user_seq").toString());
+        Long reply_user_seq =
+                requestBody.get("reply_user_seq") == null ?
+                        null : Long.parseLong(requestBody.get("reply_user_seq").toString());
+
+        Long user_seq = userDetail != null ? userDetail.getUserSeq() : null;//Long.parseLong(requestBody.get("user_seq").toString());
         JSONObject jsonObject = new JSONObject();
         try{
+            System.out.println("user_seq = "+user_seq+" content = " + content+", parent_comment_seq = " + parent_comment_seq + ", reply_user_seq = " + reply_user_seq);
+            if(user_seq == null){
+                jsonObject.put("message", "로그인 후 이용해주세요.");
+                return ResponseEntity.badRequest().body(jsonObject);
+            }
             if(content == null || content.isEmpty()){
                 jsonObject.put("message", "댓글 내용을 입력해주세요.");
                 return ResponseEntity.badRequest().body(jsonObject);
             }
-            addCommentService.addComment(post_seq, content, parent_comment_seq, user_seq);
+            addCommentService.addComment(post_seq, content, parent_comment_seq, reply_user_seq, user_seq);
             jsonObject.put("message", "댓글이 등록되었습니다.");
             return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e){

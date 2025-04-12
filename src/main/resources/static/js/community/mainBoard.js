@@ -310,7 +310,7 @@
             postContent.innerHTML = `
                 <h5>${post.title}</h5>
                 <div class="post-meta mb-1">
-                    <span>${post.user_seq}</span> ·
+                    <span>${post.user_nickname}</span> ·
                     <span>${formattedDate}</span> ·
                     <span class="badge bg-light text-dark">${post.category}</span>
                 </div>

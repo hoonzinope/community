@@ -22,10 +22,12 @@ public class LoginController {
             model.addAttribute("message", message);
         }else{
             HttpSession session = request.getSession();
-            // Referer 헤더를 통해 이전 페이지 URL 획득
-            String referer = request.getHeader("Referer");
-            // referer 값이 null일 경우를 대비한 기본값 설정 (예: 메인 페이지)
-            if(referer == null || referer.isEmpty() || referer.contains("signup") || referer.contains("login")){
+            String referer = request.getHeader("referer");
+            if (referer != null && !referer.contains("/login")) {
+                request.getSession().setAttribute("referer", referer);
+            } else if(session.getAttribute("referer") != null) {
+                referer = (String) session.getAttribute("referer");
+            } else{
                 referer = "/";
             }
             session.setAttribute("referer", referer);

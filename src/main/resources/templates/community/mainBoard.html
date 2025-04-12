@@ -77,7 +77,18 @@
             <input class="form-control me-2" type="search" placeholder="검색어를 입력하세요..." aria-label="Search">
             <button class="btn btn-outline-secondary" type="submit"><i class="ri-search-line"></i></button>
         </form>
-        <div>
+        <div th:if="${session.user_seq != null}" class="dropdown">
+            <a href="#" class="btn btn-outline-primary btn-sm dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span th:text="${session.user_nickname}">사용자</span>님
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="/member/me">내 정보</a></li>
+                <li><a class="dropdown-item" href="/member/posts">내 게시글</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="/auth/logout">로그아웃</a></li>
+            </ul>
+        </div>
+        <div th:if="${session.user_seq == null}">
             <a href="/login" class="btn btn-outline-primary btn-sm me-2">로그인</a>
             <a href="/signup" class="btn btn-primary btn-sm">회원가입</a>
         </div>
