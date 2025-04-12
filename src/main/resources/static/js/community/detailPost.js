@@ -156,9 +156,22 @@
             let formattedDate = utils.timeSince(insertDate);
             const postContent = document.createElement('div');
             postContent.className = 'post-content';
-            postContent.innerHTML = `
-                <h5>${post.title}</h5>
-                <div class="post-meta mb-1">
+            postContent.setAttribute('style', 'flex: 1');
+            postContent.innerHTML = `<h5>${post.title}</h5>`;
+            if(user_seq != undefined && post.user_seq == user_seq) {
+                postContent.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <h5>${post.title}</h5>
+                      <div class="d-flex gap-2">
+                        <a id='editPostBtn' class="btn btn-sm btn-outline-secondary">수정</a>
+                        <a id='deletePostBtn' class="btn btn-sm btn-outline-danger">삭제</a>
+                      </div>
+                    </div>
+                `;
+            }
+
+            postContent.innerHTML += `
+                <div class="post-meta mb-2">
                     <span>${post.user_nickname}</span> ·
                     <span>${formattedDate}</span> ·
                     <span class="badge bg-light text-dark">${post.category}</span>
@@ -170,6 +183,17 @@
             postElement.appendChild(postContent);
 
             mainFeed.insertBefore(postElement, mainFeed.firstChild);
+            if(user_seq != undefined && post.user_seq == user_seq) {
+                // 수정 버튼 이벤트
+                document.getElementById('editPostBtn').addEventListener('click', function () {
+                    postObj.editPost(post.post_seq);
+                });
+
+                // 삭제 버튼 이벤트
+                document.getElementById('deletePostBtn').addEventListener('click', function () {
+                    postObj.deletePost(post.post_seq);
+                });
+            }
         },
 
         // seenList 요청
@@ -219,11 +243,34 @@
                 seenPost.appendChild(li);
             });
         },
+        editPost : function(post_seq) {
+            window.location.href = '/modify/' + post_seq;
+        },
+        deletePost : function(post_seq) {
+            let check = confirm("게시물을 삭제하시겠습니까?");
+            if(!check) return;
+            let endpoint = `/api/post/${post_seq}`;
+            fetch(endpoint, {
+                method : "DELETE",
+                headers : {
+                    "Content-Type" : "application/json",
+                    "Accept" : "application/json"
+                }
+            }).then(function(response) {
+                response.json().then(function(data) {
+                    location.href = '/board';
+                });
+            }).catch(function(err) {
+                console.log(err);
+            });
+        }
     }
 
     const commentObj = {
+        post_seq : 0,
         init : function (post_seq) {
             //commentObj.requestComment(post_seq);
+            commentObj.post_seq = post_seq;
             commentObj.requestComment(post_seq);
             commentObj.writeNewParentComment(post_seq);
         },
@@ -307,6 +354,9 @@
                     <div class="mb-2">${commentContent}</div>
                     `;
                     commentElement.innerHTML = div;
+                    if(user_seq != undefined && comment.user_seq == user_seq) {
+                        commentObj.manipulateCommentByUser(commentElement, comment, user_seq);
+                    }
 
                     let a = document.createElement('a');
                     a.className = 'text-decoration-none text-primary small';
@@ -364,6 +414,9 @@
                     </div>
                     `;
                     replyElement.innerHTML = div;
+                    if(user_seq != undefined && comment.user_seq == user_seq) {
+                        commentObj.manipulateCommentByUser(replyElement, comment, user_seq);
+                    }
 
                     let a = document.createElement('a');
                     a.className = 'text-decoration-none text-primary small';
@@ -415,6 +468,128 @@
 
                 document.getElementById('commentList').appendChild(commentElement);
             })
+        },
+        manipulateCommentByUser : function(commentElement, comment, user_seq) {
+            let comment_edit_form = document.createElement('div');
+            comment_edit_form.className = 'comment-edit-form mb-2 d-none';
+
+                let edit_textarea = document.createElement('textarea');
+                edit_textarea.className = 'form-control';
+                edit_textarea.setAttribute('rows', '2');
+                edit_textarea.innerText = comment.content;
+
+                let edit_button_div = document.createElement('div');
+                edit_button_div.className = 'text-end mt-1';
+
+                    let edit_complete_button = document.createElement('button');
+                    edit_complete_button.className = 'btn btn-sm btn-outline-primary me-2 comment-update-btn';
+                    edit_complete_button.innerText = '수정 완료';
+
+                    let edit_cancel_button = document.createElement('button');
+                    edit_cancel_button.className = 'btn btn-sm btn-outline-secondary comment-cancel-btn';
+                    edit_cancel_button.innerText = '취소';
+
+                    edit_button_div.appendChild(edit_complete_button);
+                    edit_button_div.appendChild(edit_cancel_button);
+
+                comment_edit_form.appendChild(edit_textarea);
+                comment_edit_form.appendChild(edit_button_div);
+
+            commentElement.appendChild(comment_edit_form);
+
+            // 수정 취소 버튼 동작
+            edit_cancel_button.addEventListener('click', function() {
+                comment_edit_form.classList.add('d-none');
+                comment_update_div.classList.remove('d-none');
+            });
+
+            // 수정 완료 버튼 동작
+            edit_complete_button.addEventListener('click', function() {
+                let updatedContent = edit_textarea.value.trim();
+                if (updatedContent === '') {
+                    alert('댓글 내용을 입력하세요.');
+                    return;
+                }
+                console.log(user_seq, updatedContent, comment.comment_seq);
+                // 댓글 수정 API 호출
+                //commentObj.updateComment(comment.comment_seq, updatedContent);
+                commentObj.update_comment(user_seq, updatedContent, comment.comment_seq);
+            });
+
+            // ---------------------------------
+
+            let comment_update_div = document.createElement('div');
+            comment_update_div.className = 'text-end small mt-1';
+
+                let update_button = document.createElement('a');
+                update_button.className = 'text-secondary me-2';
+                update_button.innerText = '수정';
+
+                let delete_button = document.createElement('a');
+                delete_button.className = 'text-danger';
+                delete_button.innerText = '삭제';
+
+                comment_update_div.appendChild(update_button);
+                comment_update_div.appendChild(delete_button);
+
+            commentElement.appendChild(comment_update_div);
+
+            // 수정 클릭시 동작
+            update_button.addEventListener('click', function() {
+                comment_update_div.classList.add('d-none');
+                comment_edit_form.classList.remove('d-none');
+            });
+
+            // 삭제 클릭시 동작
+            delete_button.addEventListener('click', function() {
+                let check = confirm("댓글을 삭제하시겠습니까?");
+                if(!check) return;
+                console.log(user_seq, comment.comment_seq);
+                // 댓글 삭제 API 호출
+                //commentObj.deleteComment(comment.comment_seq);
+                commentObj.delete_comment(user_seq, comment.comment_seq);
+            });
+        },
+        update_comment : function(user_seq, content, comment_seq) {
+            const data = {
+                "user_seq": user_seq,
+                "content": content,
+                "comment_seq": comment_seq
+            };
+            fetch(`/api/comment/update/${comment_seq}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // 댓글 변경 성공 시 댓글 목록 갱신
+                    commentObj.requestComment(commentObj.post_seq);
+            });
+        },
+        delete_comment : function(user_seq, comment_seq) {
+            const data = {
+                "user_seq": user_seq,
+                "comment_seq": comment_seq
+            };
+            fetch(`/api/comment/delete/${comment_seq}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // 댓글 삭제 성공 시 댓글 목록 갱신
+                    commentObj.requestComment(commentObj.post_seq);
+            });
         }
     }
 })();

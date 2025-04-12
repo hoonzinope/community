@@ -24,6 +24,6 @@ public class RemoveCommentService {
     public void deleteComment(long comment_seq, long user_seq) throws IllegalAccessException {
         commentHistoryDAO.insertCommentHistory(comment_seq);
         commentDAO.deleteComment(comment_seq, user_seq);
-        outboxDAO.insertComment(comment_seq, "", "DELETE");
+        //outboxDAO.insertComment(comment_seq, "", "DELETE");
     }
 }

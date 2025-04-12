@@ -77,7 +77,7 @@ public class PageController {
         long user_seq = Long.parseLong(session.getAttribute("user_seq").toString());
         if(checkPostService.getPostByUser(post_seq, user_seq)){
             model.addAttribute("post_seq", post_seq);
-            return "modify";
+            return "community/modifyPost";
         }
         else{
             return "redirect:/board";

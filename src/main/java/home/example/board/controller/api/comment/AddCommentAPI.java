@@ -92,7 +92,6 @@ public class AddCommentAPI {
         Long user_seq = userDetail != null ? userDetail.getUserSeq() : null;//Long.parseLong(requestBody.get("user_seq").toString());
         JSONObject jsonObject = new JSONObject();
         try{
-            System.out.println("user_seq = "+user_seq+" content = " + content+", parent_comment_seq = " + parent_comment_seq + ", reply_user_seq = " + reply_user_seq);
             if(user_seq == null){
                 jsonObject.put("message", "로그인 후 이용해주세요.");
                 return ResponseEntity.badRequest().body(jsonObject);

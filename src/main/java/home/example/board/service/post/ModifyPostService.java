@@ -35,6 +35,6 @@ public class ModifyPostService {
         // 게시물 수정
         postDAO.modifyPost(post_seq, title, content);
         // Outbox에 게시물 수정 내용 추가
-        outboxDAO.insertPost(post_seq, title, content, "UPDATE");
+        //outboxDAO.insertPost(post_seq, title, content, "UPDATE");
     }
 }

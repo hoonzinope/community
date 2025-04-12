@@ -14,47 +14,6 @@
             (#{post_seq}, #{content}, #{parent_comment_seq}, #{reply_user_seq}, #{user_seq})
     </insert>
 
-<!--    <select id="selectComments" parameterType="long"-->
-<!--        resultType="home.example.board.DTO.CommentDTO">-->
-<!--        <![CDATA[-->
-<!--        WITH RECURSIVE cte_comment AS (-->
-<!--            SELECT-->
-<!--                c.comment_seq,-->
-<!--                IF(c.delete_flag > 0, 'delete comment', c.content ) as content,-->
-<!--                c.parent_comment_seq,-->
-<!--                c.insert_ts,-->
-<!--                c.user_seq,-->
-<!--                &#45;&#45; CAST(LEFT((SELECT user_nickname FROM user WHERE user_seq = c.user_seq), 8) AS CHAR(8)) AS user_name,-->
-<!--                CAST(LPAD(c.comment_seq, 5, '0') AS CHAR(1024)) AS sort_path,-->
-<!--                &#45;&#45; CAST('' AS CHAR(8)) AS p_user_name,-->
-<!--                CAST(NULL as UNSIGNED) AS p_user_seq,-->
-<!--                (SELECT count(*) FROM comment_like WHERE comment_like.comment_seq = c.comment_seq AND like_type = 1) AS like_cnt,-->
-<!--                (SELECT count(*) FROM comment_like WHERE comment_like.comment_seq = c.comment_seq AND like_type = 0) AS dislike_cnt-->
-<!--            FROM comment c-->
-<!--            WHERE c.post_seq = #{post_seq} AND c.parent_comment_seq IS NULL-->
-
-<!--            UNION ALL-->
-
-<!--            SELECT-->
-<!--                c.comment_seq,-->
-<!--                IF(c.delete_flag > 0, 'delete comment', c.content ) as content,-->
-<!--                c.parent_comment_seq,-->
-<!--                c.insert_ts,-->
-<!--                c.user_seq,-->
-<!--                &#45;&#45; CAST(LEFT((SELECT user_nickname FROM user WHERE user_seq = c.user_seq), 8) AS CHAR(8)) AS user_name,-->
-<!--                CONCAT(cc.sort_path, '-', LPAD(c.comment_seq, 5, '0')) AS sort_path,-->
-<!--                &#45;&#45; CAST(LEFT((SELECT user_nickname FROM user WHERE user_seq = cc.user_seq), 8) AS CHAR(8)) AS p_user_name,-->
-<!--                CAST(cc.user_seq AS UNSIGNED) AS p_user_seq,-->
-<!--                (SELECT count(*) FROM comment_like WHERE comment_like.comment_seq = c.comment_seq AND like_type = 1) AS like_cnt,-->
-<!--                (SELECT count(*) FROM comment_like WHERE comment_like.comment_seq = c.comment_seq AND like_type = 0) AS dislike_cnt-->
-<!--            FROM comment c-->
-<!--                     JOIN cte_comment cc ON c.parent_comment_seq = cc.comment_seq-->
-<!--        )-->
-<!--        SELECT * FROM cte_comment-->
-<!--        ORDER BY sort_path;-->
-<!--        ]]>-->
-<!--    </select>-->
-
     <select id="selectComments" parameterType="long"
         resultType="home.example.board.DTO.CommentDTO">
         SELECT
@@ -106,7 +65,8 @@
             delete_ts,
             delete_flag,
             parent_comment_seq,
-            user_seq
+            user_seq,
+            reply_user_seq
         from comment
         where
             comment_seq = #{comment_seq}
@@ -139,7 +99,8 @@
             c.delete_ts,
             c.delete_flag,
             c.parent_comment_seq,
-            c.user_seq
+            c.user_seq,
+            c.reply_user_seq
         FROM comment c
     </select>
 </mapper>
