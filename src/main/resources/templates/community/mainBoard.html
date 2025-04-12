@@ -164,7 +164,7 @@
 </div>
 
 <!-- 플로팅 글쓰기 버튼 -->
-<a href="/write" class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-4 shadow">
+<a th:href="@{/write/{subject_seq}(subject_seq=${subject_seq})}" class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-4 shadow">
     <i class="ri-pencil-line"></i>
 </a>
 

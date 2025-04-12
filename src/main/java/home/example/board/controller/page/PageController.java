@@ -37,7 +37,8 @@ public class PageController {
     }
 
     @GetMapping("/board")
-    public String board() {
+    public String board(Model model) {
+        model.addAttribute("subject_seq", 0);
         return "community/mainBoard";
     }
 
@@ -55,7 +56,7 @@ public class PageController {
             Model model)
     {
         model.addAttribute("subject_seq", subject_seq);
-        return "write";
+        return "community/writePost";
     }
 
     @GetMapping("/profile")

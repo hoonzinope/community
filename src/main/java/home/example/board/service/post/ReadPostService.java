@@ -75,6 +75,7 @@ public class ReadPostService {
                     postJson.put("update_ts", post.getUpdate_ts());
                     postJson.put("view_count", post.getView_count());
                     postJson.put("user_seq", post.getUser_seq());
+                    postJson.put("user_nickname", post.getUser_nickname());
                     postJson.put("category", post.getCategory());
                     postJson.put("like_count", post.getLike_count());
                     postJson.put("dislike_count", post.getDislike_count());

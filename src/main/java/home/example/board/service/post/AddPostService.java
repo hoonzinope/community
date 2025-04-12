@@ -24,6 +24,6 @@ public class AddPostService {
     @Transactional
     public void addPost(String title, String content, long user_seq, int subject_seq) {
         long post_seq = postDAO.addPost(title, content, user_seq, subject_seq);
-        outboxDAO.insertPost(post_seq,title,content,"INSERT");
+        //outboxDAO.insertPost(post_seq,title,content,"INSERT");
     }
 }
