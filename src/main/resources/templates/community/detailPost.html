@@ -62,6 +62,13 @@
             height: auto;      /* 비율을 유지하면서 높이 자동 조절 */
             aspect-ratio: 16 / 9; /* modern 브라우저에서 비율 유지 */
         }
+        .vote-btn {
+            color: #bbb;
+            transition: color 0.2s ease;
+        }
+        .vote-btn.active {
+            color: #0d6efd; /* 파란색 강조 */
+        }
     </style>
 </head>
 <body>
@@ -162,6 +169,14 @@
                 <div class="bg-white p-3 rounded mb-3">
                     <div class="small text-muted mb-1">댓글작성자1 • 2시간 전</div>
                     <div class="mb-2">이 글 정말 공감되네요!</div>
+
+                    <!-- 댓글 추천 영역 -->
+                    <div class="comment-vote d-flex align-items-center gap-2 text-muted small mt-1">
+                        <i class="ri-arrow-up-line vote-btn" data-type="like" style="cursor:pointer;"></i>
+                        <span class="like-count">3</span>
+                        <i class="ri-arrow-down-line vote-btn" data-type="dislike" style="cursor:pointer;"></i>
+                        <span class="dislike-count">1</span>
+                    </div>
 
                     <!-- ✅ 댓글 수정 폼 (초기 숨김) -->
                     <div class="comment-edit-form mb-2 d-none">

@@ -336,7 +336,7 @@
             h5.setAttribute('id', 'comment_cnt');
             h5.innerHTML = "댓글 "+comment_count+"개";
             document.getElementById('commentList').appendChild(h5);
-
+            console.log(commentList);
             let commentElement = document.createElement('div');
             commentList.forEach(comment => {
                 let commentContent = comment.content;
@@ -354,6 +354,7 @@
                     <div class="mb-2">${commentContent}</div>
                     `;
                     commentElement.innerHTML = div;
+                    commentObj.drawCommentLikeVote(commentElement, comment);
                     if(user_seq != undefined && comment.user_seq == user_seq) {
                         commentObj.manipulateCommentByUser(commentElement, comment, user_seq);
                     }
@@ -403,7 +404,8 @@
                             reply_div.style.display = 'none';
                         }
                     });
-                }else{
+                }
+                else{
                     let replyElement = document.createElement('div');
                     replyElement.className = 'ms-4 ps-3 border-start border-2 mt-3';
                     let div = `
@@ -414,6 +416,7 @@
                     </div>
                     `;
                     replyElement.innerHTML = div;
+                    commentObj.drawCommentLikeVote(replyElement, comment);
                     if(user_seq != undefined && comment.user_seq == user_seq) {
                         commentObj.manipulateCommentByUser(replyElement, comment, user_seq);
                     }
@@ -469,6 +472,121 @@
                 document.getElementById('commentList').appendChild(commentElement);
             })
         },
+        // 댓글 좋아요, 싫어요 기능
+        drawCommentLikeVote: function(commentElement, comment) {
+            let voteDiv = document.createElement('div');
+            voteDiv.className = 'comment-vote d-flex align-items-center gap-2 text-muted small mt-1';
+
+            let iconUp = document.createElement('i');
+            iconUp.className = 'ri-arrow-up-line vote-btn';
+            iconUp.setAttribute('data-type', 'like');
+            iconUp.setAttribute('data-comment-seq', comment.comment_seq);
+            iconUp.setAttribute('style', 'cursor:pointer;');
+
+            let likeCountSpan = document.createElement('span');
+            likeCountSpan.className = 'like-count';
+            likeCountSpan.innerText = comment.like_cnt;
+
+            let iconDown = document.createElement('i');
+            iconDown.className = 'ri-arrow-down-line vote-btn';
+            iconDown.setAttribute('data-type', 'dislike');
+            iconDown.setAttribute('data-comment-seq', comment.comment_seq);
+            iconDown.setAttribute('style', 'cursor:pointer;');
+
+            let dislikeCountSpan = document.createElement('span');
+            dislikeCountSpan.className = 'dislike-count';
+            dislikeCountSpan.innerText = comment.dislike_cnt;
+
+            voteDiv.appendChild(iconUp);
+            voteDiv.appendChild(likeCountSpan);
+            voteDiv.appendChild(iconDown);
+            voteDiv.appendChild(dislikeCountSpan);
+
+            commentElement.appendChild(voteDiv);
+
+            // 좋아요 클릭 이벤트
+            iconUp.addEventListener('click', function() {
+                let comment_seq = iconUp.getAttribute('data-comment-seq');
+                let type = iconUp.getAttribute('data-type');
+
+                if(user_seq != -1) {
+                    if (iconUp.classList.contains('active')) {
+                        iconUp.classList.remove('active');
+                        commentObj.deleteLike(comment.comment_seq, user_seq);
+                        likeCountSpan.innerText = parseInt(likeCountSpan.innerText) - 1;
+                    } else {
+                        iconUp.classList.add('active');
+                        iconDown.classList.remove('active');
+                        commentObj.addLikeType(comment.comment_seq, user_seq, "LIKE");
+                        likeCountSpan.innerText = parseInt(likeCountSpan.innerText) + 1;
+                    }
+                }else{
+                    alert("로그인 후 이용 가능합니다.");
+                    return;
+                }
+            });
+
+            // 싫어요 클릭 이벤트
+            iconDown.addEventListener('click', function() {
+                let comment_seq = iconDown.getAttribute('data-comment-seq');
+                let type = iconDown.getAttribute('data-type');
+
+                if(user_seq != -1) {
+                    if(iconDown.classList.contains('active')) {
+                        iconDown.classList.remove('active');
+                        commentObj.deleteLike(comment.comment_seq, user_seq);
+                        dislikeCountSpan.innerText = parseInt(dislikeCountSpan.innerText) - 1;
+                    }
+                    else {
+                        iconDown.classList.add('active');
+                        iconUp.classList.remove('active');
+                        commentObj
+                            .addLikeType(comment.comment_seq, user_seq, "DISLIKE");
+                        dislikeCountSpan.innerText = parseInt(dislikeCountSpan.innerText) + 1;
+                    }
+                }
+                else{
+                    alert("로그인 후 이용 가능합니다.");
+                    return;
+                }
+            });
+        },
+        addLikeType : function(comment_seq, user_seq, type) {
+            let data = {
+                "user_seq" : user_seq,
+                "comment_seq" : comment_seq,
+                "like_type" : type
+            }
+
+            fetch("/api/comment/like", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {});
+        },
+        deleteLike : function(comment_seq, user_seq) {
+            let data = {
+                "user_seq" : user_seq,
+                "comment_seq" : comment_seq,
+            };
+
+            fetch("/api/comment/like/delete", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {});
+        },
+        // 댓글 수정 및 삭제 기능
         manipulateCommentByUser : function(commentElement, comment, user_seq) {
             let comment_edit_form = document.createElement('div');
             comment_edit_form.className = 'comment-edit-form mb-2 d-none';

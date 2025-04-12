@@ -37,7 +37,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             referer = session.getAttribute("referer").toString();
             session.removeAttribute("referer"); // 한 번 쓰고 지우는 게 좋음
         }
-        System.out.println("referer: " + referer);
         CustomUserDetail userDetails = (CustomUserDetail) authentication.getPrincipal();
         String userNickname = userDetails.getUserNickName().split("-")[0];
 
@@ -72,7 +71,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         if (userDetails.getTempPassword()) {
             referer = "/changePassword";
         }
-        System.out.println("login success name: " + userNickname);
         getRedirectStrategy().sendRedirect(request, response, referer);
     }
 }
