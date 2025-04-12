@@ -131,7 +131,8 @@
                     <h5>제목</h5>
                     <div class="post-meta mb-1">
                         <span>작성자</span> ·
-                        <span>1시간 전</span>
+                        <span>1시간 전</span> ·
+                        <span class="badge bg-light text-dark">IT</span>
                     </div>
                     <p class="text-truncate">게시글 내용</p>
                     <a href="#" class="text-decoration-none text-primary small">댓글 보기</a>
@@ -142,11 +143,9 @@
         <!-- 우측 사이드바 -->
         <div class="col-lg-3 d-none d-lg-block">
             <div class="sidebar">
-                <h6 class="mb-3">인기 글</h6>
-                <ul class="list-unstyled">
-                    <li><a href="#" class="text-decoration-none">🔥 요즘 뜨는 글</a></li>
-                    <li><a href="#" class="text-decoration-none">개발자가 만든 툴 추천</a></li>
-                    <li><a href="#" class="text-decoration-none">이 영화 봤어?</a></li>
+                <h6 class="mb-3">본 게시물</h6>
+                <ul class="list-unstyled" id="seenPost">
+                    <li style="display: none"><a href="#" class="text-decoration-none">🔥 요즘 뜨는 글</a></li>
                 </ul>
             </div>
         </div>

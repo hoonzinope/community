@@ -186,4 +186,12 @@ public class PostDAO {
         postMapper.deletePost(post_seq);
     }
 
+    public List<PostPagingDTO> getSeenPostListByPostSeqList(List<Long> postSeqList) {
+        // 게시물 목록 조회
+        if(postSeqList == null || postSeqList.isEmpty()) {
+            return new ArrayList<PostPagingDTO>();
+        }
+        List<PostPagingDTO> postList = postMapper.getPostList(postSeqList);
+        return postList;
+    }
 }

@@ -86,4 +86,14 @@ public class ReadPostService {
     private String convertImageServername(String content) {
         return content.replace("http://imageStorage", minioConfig.getMinioUrl());
     }
+
+    public JSONObject getSeenPostListByPostSeqList(List<Long> postSeqList) {
+        List<PostPagingDTO> postListPaging = postDAO.getSeenPostListByPostSeqList(postSeqList);
+        List<JSONObject> postList = convertToJsonList(postListPaging);
+
+        JSONObject result = new JSONObject();
+        result.put("postList", postList);
+
+        return result;
+    }
 }

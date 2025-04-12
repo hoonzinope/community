@@ -25,6 +25,7 @@
             board.requestSubjects();
             board.subject_seq = subject_seq;
             board.requestPosts(board.subject_seq);
+            board.requestSeenList();
         },
         // 주제 요청
         requestSubjects : function() {
@@ -185,7 +186,8 @@
                     <h5>${post.title}</h5>
                     <div class="post-meta mb-1">
                         <span>${post.user_seq}</span> ·
-                        <span>${formattedDate}</span>
+                        <span>${formattedDate}</span> ·
+                        <span class="badge bg-light text-dark">${post.category}</span>
                     </div>
                     <p class="text-truncate">
                         <div>${post.content} </div>
@@ -204,11 +206,65 @@
         },
         // 게시물 상세보기 요청
         redirectPost : function(post_seq) {
+            localStorage.getItem("seenPostList") == null ? localStorage.setItem("seenPostList", JSON.stringify([])) : null;
+            let seenPostList = JSON.parse(localStorage.getItem("seenPostList"));
+            if(!seenPostList.includes(post_seq)) {
+                seenPostList.push(post_seq);
+                localStorage.setItem("seenPostList", JSON.stringify(seenPostList));
+            }
             window.location.href = `/post/${post_seq}`;
         },
 
+        // seenList 요청
+        requestSeenList : function() {
+            // localStorage에서 seenPost 가져오기
+            let seenPostList = JSON.parse(localStorage.getItem("seenPostList"));
+            if (seenPostList == null || seenPostList.length == 0) {
+                console.log('seenPost가 없습니다.');
+                return;
+            }
+            // seenPost를 서버에 전송
+            let data = {
+                'seenPostList' : seenPostList
+            }
+            const url = '/api/post/seen';
+            fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답에 문제가 있습니다.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // seenList 처리
+                    //console.log(data);
+                    board.appendSeenList(data.postList);
+                })
+                .catch(error => {
+                    console.error('게시물 요청 중 에러 발생: ', error);
+                });
+        },
+        // seenList 처리
+        appendSeenList : function(postList) {
+            const seenPost = document.getElementById('seenPost');
+            postList.forEach(post => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.className = 'text-decoration-none mb-3';
+                a.innerHTML = `<span>${post.title}</span>`;
+                a.setAttribute('href', `/post/${post.post_seq}`);
+                li.appendChild(a);
+                seenPost.appendChild(li);
+            });
+        },
 
-        // 게시물 클릭 시 main feed에 표시
+        // 게시물 클릭 시 main feed에 표시 - deprecated
         requestPost : function(post_seq) {
             const url = `/api/post/${post_seq}`;
             fetch(url)
@@ -227,7 +283,7 @@
                     console.error('게시물 요청 중 에러 발생: ', error);
                 });
         },
-        // 불러온 게시물 main feed에 표시
+        // 불러온 게시물 main feed에 표시 - deprecated
         appendPost : function(post) {
             const mainFeed = document.getElementById('mainFeed');
             mainFeed.innerHTML = '';

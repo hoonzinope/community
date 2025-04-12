@@ -9,6 +9,7 @@
         init : function(post_seq) {
             postObj.requestSubjects();
             postObj.requestPost(post_seq);
+            postObj.requestSeenList();
         },
         // 주제 요청
         requestSubjects : function() {
@@ -168,6 +169,55 @@
             postElement.appendChild(postContent);
 
             mainFeed.insertBefore(postElement, mainFeed.firstChild);
+        },
+
+        // seenList 요청
+        requestSeenList : function() {
+            // localStorage에서 seenPost 가져오기
+            let seenPostList = JSON.parse(localStorage.getItem("seenPostList"));
+            if (seenPostList == null || seenPostList.length == 0) {
+                console.log('seenPost가 없습니다.');
+                return;
+            }
+            // seenPost를 서버에 전송
+            let data = {
+                'seenPostList' : seenPostList
+            }
+            const url = '/api/post/seen';
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답에 문제가 있습니다.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // seenList 처리
+                    console.log(data);
+                    postObj.appendSeenList(data.postList);
+                })
+                .catch(error => {
+                    console.error('게시물 요청 중 에러 발생: ', error);
+                });
+        },
+        // seenList 처리
+        appendSeenList : function(postList) {
+            const seenPost = document.getElementById('seenPost');
+            postList.forEach(post => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.className = 'text-decoration-none mb-3';
+                a.innerHTML = `<span>${post.title}</span>`;
+                a.setAttribute('href', `/post/${post.post_seq}`);
+                li.appendChild(a);
+                seenPost.appendChild(li);
+            });
         },
     }
 })();
