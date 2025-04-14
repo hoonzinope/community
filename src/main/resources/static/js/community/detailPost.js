@@ -274,6 +274,7 @@
             commentObj.requestComment(post_seq);
             commentObj.writeNewParentComment(post_seq);
         },
+        // 댓글 작성 API
         addCommentApi : async function(content, parent_comment_seq, reply_user_seq, post_seq) {
             const url = `/api/post/${post_seq}/comment`;
             const data = {
@@ -313,6 +314,7 @@
                 commentObj.addCommentApi(content, parentCommentSeq, replyToUserSeq, post_seq);
             })
         },
+        // 댓글 요청
         requestComment : function(post_seq) {
             const url = `/api/post/${post_seq}/comments`;
             fetch(url)
@@ -323,13 +325,14 @@
                     return response.json();
                 })
                 .then(data => {
-                    commentObj.appendComment(data.comment_count, data.comments, post_seq);
+                    console.log(data);
+                    commentObj.appendComment(data.comment_count, data.comments, post_seq, data.user_comment_click);
                 })
                 .catch(error => {
                     console.error('댓글 요청 중 에러 발생: ', error);
                 });
         },
-        appendComment : function(comment_count, commentList, post_seq) {
+        appendComment : function(comment_count, commentList, post_seq, user_comment_click) {
             document.getElementById('commentList').innerHTML = '';
 
             let h5 = document.createElement('h5');
@@ -354,7 +357,7 @@
                     <div class="mb-2">${commentContent}</div>
                     `;
                     commentElement.innerHTML = div;
-                    commentObj.drawCommentLikeVote(commentElement, comment);
+                    commentObj.drawCommentLikeVote(commentElement, comment, user_comment_click);
                     if(user_seq != undefined && comment.user_seq == user_seq) {
                         commentObj.manipulateCommentByUser(commentElement, comment, user_seq);
                     }
@@ -416,7 +419,7 @@
                     </div>
                     `;
                     replyElement.innerHTML = div;
-                    commentObj.drawCommentLikeVote(replyElement, comment);
+                    commentObj.drawCommentLikeVote(replyElement, comment, user_comment_click);
                     if(user_seq != undefined && comment.user_seq == user_seq) {
                         commentObj.manipulateCommentByUser(replyElement, comment, user_seq);
                     }
@@ -473,12 +476,19 @@
             })
         },
         // 댓글 좋아요, 싫어요 기능
-        drawCommentLikeVote: function(commentElement, comment) {
+        drawCommentLikeVote: function(commentElement, comment, user_comment_click) {
             let voteDiv = document.createElement('div');
             voteDiv.className = 'comment-vote d-flex align-items-center gap-2 text-muted small mt-1';
 
             let iconUp = document.createElement('i');
             iconUp.className = 'ri-arrow-up-line vote-btn';
+            // 댓글 좋아요 클릭 여부
+            if(user_comment_click != undefined) {
+                let clickInfo = user_comment_click[comment.comment_seq];
+                if(clickInfo[0] == true && clickInfo[1] == 1) {
+                    iconUp.className = 'ri-arrow-up-line vote-btn active';
+                }
+            }
             iconUp.setAttribute('data-type', 'like');
             iconUp.setAttribute('data-comment-seq', comment.comment_seq);
             iconUp.setAttribute('style', 'cursor:pointer;');
@@ -489,6 +499,12 @@
 
             let iconDown = document.createElement('i');
             iconDown.className = 'ri-arrow-down-line vote-btn';
+            if(user_comment_click != undefined && user_comment_click.length > 0) {
+                let clickInfo = user_comment_click[comment.comment_seq];
+                if(clickInfo[0] == true && clickInfo[1] == 0) {
+                    iconDown.className = 'ri-arrow-down-line vote-btn active';
+                }
+            }
             iconDown.setAttribute('data-type', 'dislike');
             iconDown.setAttribute('data-comment-seq', comment.comment_seq);
             iconDown.setAttribute('style', 'cursor:pointer;');
