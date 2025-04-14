@@ -139,17 +139,18 @@
             postElement.className = 'post-card';
 
             // vote section
-            let voteCount = post.like_count - post.dislike_count;
-            const voteSection = document.createElement('div');
-            voteSection.className = 'vote-section';
-            voteSection.innerHTML = `
-                <div class="vote-section">
-                    <i class="ri-arrow-up-line"></i>
-                    <div>${voteCount}</div>
-                    <i class="ri-arrow-down-line"></i>
-                </div>
-            `;
-            postElement.appendChild(voteSection);
+            postObj.appendVoteSection(postElement, post);
+            // let voteCount = post.like_count - post.dislike_count;
+            // const voteSection = document.createElement('div');
+            // voteSection.className = 'vote-section';
+            // voteSection.innerHTML = `
+            //     <div class="vote-section">
+            //         <i class="ri-arrow-up-line"></i>
+            //         <div>${voteCount}</div>
+            //         <i class="ri-arrow-down-line"></i>
+            //     </div>
+            // `;
+            // postElement.appendChild(voteSection);
 
             // post content
             let insertDate = new Date(post.insert_ts);
@@ -263,6 +264,143 @@
             }).catch(function(err) {
                 console.log(err);
             });
+        },
+
+        // vote section 추가
+        appendVoteSection : function(postElement, post) {
+
+            let voteDiv = document.createElement('div');
+            voteDiv.className = 'vote-section';
+            let iconUp = document.createElement('i');
+            iconUp.className = 'ri-arrow-up-line vote-btn';
+            iconUp.setAttribute('data-type', 'like');
+
+            let voteCount = post.like_count - post.dislike_count;
+            let likeCountDiv = document.createElement('div');
+            likeCountDiv.innerText = voteCount;
+
+            let iconDown = document.createElement('i');
+            iconDown.className = 'ri-arrow-down-line vote-btn';
+            iconDown.setAttribute('data-type', 'dislike');
+
+            voteDiv.appendChild(iconUp);
+            voteDiv.appendChild(likeCountDiv);
+            voteDiv.appendChild(iconDown);
+
+            postElement.appendChild(voteDiv);
+
+            // 좋아요 클릭 이벤트
+            iconUp.addEventListener('click', function() {
+                let type = iconUp.getAttribute('data-type');
+                if(user_seq != -1) {
+                    if (iconUp.classList.contains('active')) {
+                        iconUp.classList.remove('active');
+                        postObj.deleteLikeType(post.post_seq, user_seq);
+                        likeCountDiv.innerText = parseInt(likeCountDiv.innerText) - 1;
+                    } else {
+                        iconUp.classList.add('active');
+                        iconDown.classList.remove('active');
+                        postObj.addLikeType(post.post_seq, user_seq, 'LIKE');
+                        likeCountDiv.innerText = parseInt(likeCountDiv.innerText) + 1;
+                    }
+                }else{
+                    alert("로그인 후 이용 가능합니다.");
+                    return;
+                }
+            });
+
+            // 싫어요 클릭 이벤트
+            iconDown.addEventListener('click', function() {
+                let type = iconDown.getAttribute('data-type');
+                let count = parseInt(likeCountDiv.innerText);
+                if(user_seq != -1) {
+                    if(iconDown.classList.contains('active')) {
+                        iconDown.classList.remove('active');
+                        postObj.deleteLikeType(post.post_seq, user_seq);
+                        likeCountDiv.innerText = parseInt(likeCountDiv.innerText) + 1;
+                    }
+                    else {
+                        iconDown.classList.add('active');
+                        iconUp.classList.remove('active');
+                        postObj.addLikeType(post.post_seq, user_seq, "DISLIKE");
+                        likeCountDiv.innerText = parseInt(likeCountDiv.innerText) - 1;
+                    }
+                }
+                else{
+                    alert("로그인 후 이용 가능합니다.");
+                    return;
+                }
+            });
+
+            // 게시물 좋아요 클릭여부
+            if(user_seq != undefined) {
+                postObj.requestLikeType(post.post_seq, user_seq);
+            }
+        },
+        // user post like 조회
+        requestLikeType : function(post_seq, user_seq) {
+            let data = {
+                "user_seq" : user_seq,
+                "post_seq" : post_seq
+            }
+            const url = `/api/like/get`;
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답에 문제가 있습니다.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if(data.like_type === "LIKE") {
+                        document.querySelector('.vote-btn[data-type="like"]').classList.add('active');
+                    } else if (data.like_type === "DISLIKE") {
+                        document.querySelector('.vote-btn[data-type="dislike"]').classList.add('active');
+                    }
+                });
+        },
+        // 게시물 좋아요/싫어요 기능
+        addLikeType : function(post_seq, user_seq, type) {
+            let data = {
+                "user_seq" : user_seq,
+                "post_seq" : post_seq,
+                "like_type" : type
+            }
+
+            fetch("/api/like/add", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {});
+        },
+        deleteLikeType : function(post_seq, user_seq) {
+            let data = {
+                "user_seq" : user_seq,
+                "post_seq" : post_seq,
+            };
+
+            fetch("/api/like/delete", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {});
         }
     }
 
@@ -325,7 +463,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data);
                     commentObj.appendComment(data.comment_count, data.comments, post_seq, data.user_comment_click);
                 })
                 .catch(error => {
@@ -700,7 +837,6 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
                     // 댓글 변경 성공 시 댓글 목록 갱신
                     commentObj.requestComment(commentObj.post_seq);
             });
@@ -720,7 +856,6 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
                     // 댓글 삭제 성공 시 댓글 목록 갱신
                     commentObj.requestComment(commentObj.post_seq);
             });

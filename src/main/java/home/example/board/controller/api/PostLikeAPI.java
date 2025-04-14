@@ -170,7 +170,7 @@ public class PostLikeAPI {
                             }
                     )
     })
-    @PostMapping("/like/get")
+    @PostMapping("/api/like/get")
     public ResponseEntity<JSONObject> getPostLike(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "유저별 게시글 좋아요/싫어요 정보",

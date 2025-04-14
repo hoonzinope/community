@@ -167,12 +167,13 @@
                 const postElement = document.createElement('div');
                 postElement.className = 'post-card';
 
+                let voteCount = post.like_count - post.dislike_count;
                 const voteSection = document.createElement('div');
                 voteSection.className = 'vote-section';
                 voteSection.innerHTML = `
                     <div class="vote-section">
                         <i class="ri-arrow-up-line"></i>
-                        <div>${post.like_count}</div>
+                        <div>${voteCount}</div>
                         <i class="ri-arrow-down-line"></i>
                     </div>
                 `;
