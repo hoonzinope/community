@@ -24,6 +24,7 @@
                 .then(data => {
                     //postObj.appendSubjectMenu(data.subjectList);
                     modify.appendSubject(data.subjectList, subject_seq);
+                    modify.appendSlideMenu(data.subjectList);
                 })
                 .catch(error => {
                     console.error('주제 요청 중 에러 발생: ', error);
@@ -53,6 +54,114 @@
                 $('#subject').append(optgroup);
             });
         },
+        // slideMenu 그리기
+        appendSlideMenu : function(subjectList) {
+            let slideMenu = document.getElementById('slideMenu');
+            subjectList.forEach(subject => {
+                let subjectItem = document.createElement('li');
+                subjectItem.className = 'mt-3';
+                let subject_name = subject.subject_name;
+                let subject_seq = subject.subject_seq;
+                let chid_subject_list = subject.child_subject_list;
+
+                let sub_id = `subject_slide_${subject_seq}`;
+                let a = document.createElement('a');
+                a.className = 'text-decoration-none d-block collapsed';
+                a.setAttribute('data-bs-toggle', 'collapse');
+                a.setAttribute('href', '');
+                a.setAttribute('role', 'button');
+                a.setAttribute('aria-expanded', 'false');
+                a.setAttribute('aria-controls', sub_id);
+                if(chid_subject_list != undefined && chid_subject_list.length > 0) {
+                    a.innerHTML = `${subject_name} <i class="ri-arrow-down-s-line float-end"></i>`;
+                }else{
+                    a.innerHTML = `${subject_name}`;
+                }
+                subjectItem.appendChild(a);
+
+                if(chid_subject_list != undefined && chid_subject_list.length > 0) {
+                    const childSubjectList = document.createElement('ul');
+                    childSubjectList.className = 'list-unstyled collapse ps-3 mt-2';
+                    childSubjectList.setAttribute('name', 'child_subject_list');
+                    childSubjectList.id = sub_id;
+                    chid_subject_list.forEach(child_subject => {
+                        let child_subject_seq = child_subject.subject_seq;
+                        let child_subject_name = child_subject.subject_name;
+                        let li = document.createElement('li');
+                        li.innerHTML = `<a class="text-decoration-none small">${child_subject_name}</a>`;
+                        if(child_subject_seq == modify.subject_seq || subject_seq == modify.subject_seq) {
+                            li.className = 'active';
+                            childSubjectList.className += ' show';
+                        }
+                        childSubjectList.appendChild(li);
+
+                        li.addEventListener('click', function() {
+                            // 클릭된 주제의 게시물 요청
+                            modify.redirectPostsBySubject(child_subject_seq);
+                        })
+
+                    });
+                    subjectItem.appendChild(childSubjectList);
+                }
+                slideMenu.appendChild(subjectItem);
+
+                a.addEventListener('click', function(e) {
+                    //e.preventDefault();
+                    a.className = 'text-decoration-none d-block' + (a.getAttribute('aria-expanded') === 'true' ? '' : 'collapsed');
+                    a.setAttribute('aria-expanded',
+                        a.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
+
+                    let childSubjectList = document.getElementsByName('child_subject_list');
+                    if (childSubjectList) {
+                        for (let i = 0; i < childSubjectList.length; i++) {
+                            if (childSubjectList[i].id !== sub_id) {
+                                childSubjectList[i].classList.remove('show');
+                            }
+                        }
+                        if(document.getElementById(sub_id) != undefined) {
+                            document.getElementById(sub_id).classList.add('show');
+                        }
+                    }
+                    // 클릭된 주제의 게시물 요청
+                    modify.redirectPostsBySubject(subject_seq);
+                });
+            });
+
+            modify.slideMenuToggle();
+        },
+        slideMenuToggle : function() {
+            const toggleBtn = document.getElementById("sidebarToggleBtn");
+            const drawer = document.getElementById("slideSidebar");
+            const backdrop = document.getElementById("sidebarBackdrop");
+
+            function openSidebar() {
+                drawer.classList.add("show");
+                drawer.classList.remove("d-none");
+                backdrop.classList.remove("d-none");
+            }
+
+            function closeSidebar() {
+                drawer.classList.remove("show");
+                setTimeout(() => drawer.classList.add("d-none"), 300); // 애니메이션 후 숨김
+                backdrop.classList.add("d-none");
+            }
+
+            toggleBtn.addEventListener("click", () => {
+                if (drawer.classList.contains("show")) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            });
+
+            backdrop.addEventListener("click", closeSidebar);
+        },
+        // 주제 클릭 시 게시물 요청
+        redirectPostsBySubject : function(subject_seq) {
+            window.location.href = "/board/" + subject_seq;
+        },
+
+
         loadPostData : function (post_seq) {
             let endpoint = `/api/post/${post_seq}`;
             fetch(endpoint,{

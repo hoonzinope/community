@@ -69,6 +69,33 @@
         .vote-btn.active {
             color: #0d6efd; /* 파란색 강조 */
         }
+
+        .sidebar-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+            z-index: 1045;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-drawer.show {
+            transform: translateX(0);
+        }
+
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 1040;
+        }
     </style>
 </head>
 <body>
@@ -76,6 +103,42 @@
 <!-- 상단 내비게이션 바 -->
 <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container-fluid">
+        <!-- 상단 navbar 안의 board.io 왼쪽에 삽입 -->
+        <button class="btn d-flex align-items-center me-2" id="sidebarToggleBtn" type="button">
+            <i class="ri-menu-line fs-4"></i>
+        </button>
+        <!-- 사이드 메뉴 슬라이드 영역 -->
+        <div id="slideSidebar" class="sidebar-drawer d-none">
+            <div class="p-4">
+                <h5><a href="/" class="text-decoration-none">🏠 Home</a></h5>
+                <ul class="list-unstyled mt-3" id="slideMenu">
+                    <li style="display: none">
+                        <a class="text-decoration-none d-block" data-bs-toggle="collapse" href="#itSub" role="button" aria-expanded="false" aria-controls="itSub">
+                            IT <i class="ri-arrow-down-s-line float-end"></i>
+                        </a>
+                        <ul class="list-unstyled collapse ps-3 mt-2" id="itSub">
+                            <li><a href="#" class="text-decoration-none small">AI</a></li>
+                            <li><a href="#" class="text-decoration-none small">비트코인</a></li>
+                            <li><a href="#" class="text-decoration-none small">양자컴퓨터</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="mt-3" style="display: none">
+                        <a class="text-decoration-none d-block" data-bs-toggle="collapse" href="#movieSub" role="button" aria-expanded="false" aria-controls="movieSub">
+                            영화 <i class="ri-arrow-down-s-line float-end"></i>
+                        </a>
+                        <ul class="list-unstyled collapse ps-3 mt-2" id="movieSub">
+                            <li><a href="#" class="text-decoration-none small">SF</a></li>
+                            <li><a href="#" class="text-decoration-none small">드라마</a></li>
+                            <li><a href="#" class="text-decoration-none small">액션</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 검은 반투명 배경 (닫기용) -->
+        <div id="sidebarBackdrop" class="sidebar-backdrop d-none"></div>
         <a class="navbar-brand" href="/">board.io</a>
         <form class="d-flex mx-auto search-input">
             <input class="form-control me-2" type="search" placeholder="검색어를 입력하세요..." aria-label="Search">
