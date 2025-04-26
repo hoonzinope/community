@@ -1,7 +1,7 @@
 (function() {
     document.addEventListener('DOMContentLoaded', function() {
-        write.init();
         searchObj.searchPosts();
+        write.init();
     });
 
     const searchObj = {
