@@ -53,4 +53,62 @@
             post_seq = #{post_seq}
         AND user_seq = #{user_seq}
     </select>
+
+    <select id="selectLikePostsByUser"
+            parameterType="map"
+            resultType="home.example.board.domain.PostLike">
+        SELECT
+            post_like_seq,
+            post_seq,
+            user_seq,
+            like_type,
+            insert_ts
+        FROM
+            post_like
+        WHERE
+          user_seq = #{user_seq} and like_type = 'LIKE'
+        order by
+            insert_ts desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="selectLikePostsCountByUser"
+            parameterType="long"
+            resultType="int">
+        SELECT
+            count(post_like_seq)
+        FROM
+            post_like
+        WHERE
+            user_seq = #{user_seq} AND like_type = 'LIKE'
+    </select>
+
+    <select id="selectDisLikePostsByUser"
+            parameterType="map"
+            resultType="home.example.board.domain.PostLike">
+        SELECT
+            post_like_seq,
+            post_seq,
+            user_seq,
+            like_type,
+            insert_ts
+        FROM
+            post_like
+        WHERE
+          user_seq = #{user_seq} and like_type = 'DISLIKE'
+        order by
+            insert_ts desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="selectDisLikePostsCountByUser"
+            parameterType="long"
+            resultType="int">
+        SELECT
+            count(post_like_seq)
+        FROM
+            post_like
+        WHERE
+            user_seq = #{user_seq} AND like_type = 'DISLIKE'
+    </select>
 </mapper>

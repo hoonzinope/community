@@ -31,14 +31,12 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
 
-        String referer;
-        HttpSession session = request.getSession();
-        if (session == null || session.getAttribute("referer") == null) {
-            referer = "/";
-        } else {
+        HttpSession session = request.getSession(false);
+        String referer = "/";
+        if (session != null && session.getAttribute("referer") != null) {
             referer = session.getAttribute("referer").toString();
+            session.removeAttribute("referer"); // 한 번 쓰고 지우는 게 좋음
         }
-
         CustomUserDetail userDetails = (CustomUserDetail) authentication.getPrincipal();
         String userNickname = userDetails.getUserNickName().split("-")[0];
 
@@ -58,7 +56,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
             // 세션 쿠키 명시적 설정
             Cookie sessionCookie = new Cookie("JSESSIONID", session.getId());
-            sessionCookie.setPath("/");
+            // sessionCookie.setPath("/");
             // 프로덕션 환경에서는 secure 속성 적용 고려
             // sessionCookie.setSecure(true);
             // sessionCookie.setHttpOnly(true);
@@ -69,11 +67,9 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         session.setAttribute("user_seq", userDetails.getUserSeq());
         session.setAttribute("user_nickname", userNickname);
-
         if (userDetails.getTempPassword()) {
             referer = "/changePassword";
         }
-        System.out.println("login success name: " + userNickname);
         getRedirectStrategy().sendRedirect(request, response, referer);
     }
 }

@@ -44,17 +44,17 @@ public class CustomUserDetail implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return user.getDelete_flag() == 0;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return user.getDelete_flag() == 0;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return user.getDelete_flag() == 0;
     }
 
     @Override

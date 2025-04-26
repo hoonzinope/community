@@ -1,93 +1,90 @@
-package home.example.board.controller.api.comment;
+package home.example.board.controller.api.postLike;
 
-import home.example.board.service.comment.RemoveCommentService;
+import home.example.board.service.PostLikeService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 @RestController
-public class DeleteAPI {
+public class DeletePostLikeAPI {
 
-    private final RemoveCommentService removeCommentService;
+    private final PostLikeService postLikeService;
+
     @Autowired
-    public DeleteAPI(RemoveCommentService removeCommentService) {
-        this.removeCommentService = removeCommentService;
+    public DeletePostLikeAPI(PostLikeService postLikeService) {
+        this.postLikeService = postLikeService;
     }
 
-    @Operation(summary = "댓글 삭제", description = "댓글을 삭제 처리합니다.")
+    // postLike table row 삭제
+    @Operation(summary = "게시글 좋아요/싫어요 삭제", description = "게시글에 좋아요 또는 싫어요를 삭제합니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode="200",
-                    description = "댓글 삭제 처리 성공",
+                    description = "좋아요/싫어요 삭제 성공",
                     content = {
                             @io.swagger.v3.oas.annotations.media.Content(
                                     mediaType = "application/json",
                                     examples = {
                                             @io.swagger.v3.oas.annotations.media.ExampleObject(
                                                     name = "정상 response",
-                                                    value = "{\"success\" : true}"
+                                                    value = "{\"result\" : \"success\"}"
                                             )
                                     }
                             )
                     }),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode="400",
-                    description = "댓글 삭제 처리 실패",
+                    description = "좋아요/싫어요 삭제 실패",
                     content = {
                             @io.swagger.v3.oas.annotations.media.Content(
                                     mediaType = "application/json",
                                     examples = {
                                             @io.swagger.v3.oas.annotations.media.ExampleObject(
                                                     name = "에러 response",
-                                                    value = "{\"message\" : \"error message\"}"
+                                                    value = "{\"result\" : \"fail\", \"message\" : \"error message\"}"
                                             )
                                     }
                             )
                     })
     })
-    @DeleteMapping("/api/comment/delete/{comment_seq}")
-    public ResponseEntity<JSONObject> deleteComment(
-            @Parameter(description = "댓글 번호", required = true)
-            @PathVariable long comment_seq,
+    @PostMapping("/api/like/delete")
+    public ResponseEntity<JSONObject> removePostLike(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "유저 정보",
+                    description = "게시글 좋아요/싫어요 정보",
                     required = true,
                     content = @io.swagger.v3.oas.annotations.media.Content(
                             mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(
-                                    type = "object",
-                                    implementation = Map.class
+                                    implementation = JSONObject.class
                             ),
                             examples = {
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                            name = "유저 정보",
-                                            value = "{\"user_seq\" : 1}"
+                                            name = "좋아요/싫어요 정보",
+                                            value = "{\"post_seq\" : 1, \"user_seq\" : 1}"
                                     )
                             }
                     )
             )
-            @RequestBody Map<String, Object> requestBody
-    ){
-        long user_seq = Long.parseLong(requestBody.get("user_seq").toString());
-        JSONObject jsonObject = new JSONObject();
+            @RequestBody JSONObject data) {
+        long post_seq = Long.parseLong(data.get("post_seq").toString());
+        long user_seq = Long.parseLong(data.get("user_seq").toString());
+
         try{
-            removeCommentService.deleteComment(comment_seq, user_seq);
-            jsonObject.put("success", true);
-            return ResponseEntity.ok().body(jsonObject);
-        } catch (IllegalAccessException e) {
+            postLikeService.removePostLike(post_seq, user_seq);
+            JSONObject result = new JSONObject();
+            result.put("result", "success");
+            return ResponseEntity.ok(result);
+        }catch (Exception e) {
             e.printStackTrace();
-            jsonObject.put("message", e.getMessage());
-            jsonObject.put("error", e.getMessage());
-            return ResponseEntity.badRequest().body(jsonObject);
+            JSONObject result = new JSONObject();
+            result.put("result", "fail");
+            result.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(result);
         }
     }
 }

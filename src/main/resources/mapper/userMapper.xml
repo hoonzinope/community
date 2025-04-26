@@ -66,6 +66,23 @@
         where user_name = #{user_name}
     </select>
 
+    <select id="getUserByNickname" parameterType="String"
+            resultType="home.example.board.domain.User">
+        select
+            user_seq,
+            user_name,
+            user_pw,
+            user_email,
+            user_nickname,
+            insert_ts,
+            role,
+            delete_flag,
+            delete_ts,
+            force_password_change
+        from user
+        where user_nickname = #{user_nickname}
+    </select>
+
     <select id="getUserAll"
             resultType="home.example.board.domain.User">
         select
@@ -89,7 +106,8 @@
                 user_pw = #{user_pw},
                 user_email = #{user_email},
                 user_nickname = #{user_nickname},
-                role = #{role}
+                role = #{role},
+                force_password_change = #{force_password_change}
             where
                 user_seq = #{user_seq}
     </update>

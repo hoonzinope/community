@@ -37,16 +37,17 @@ public class PageController {
     }
 
     @GetMapping("/board")
-    public String board() {
-        return "board";
+    public String board(Model model) {
+        model.addAttribute("subject_seq", 0);
+        return "community/mainBoard";
     }
 
-    @GetMapping("/board/{category}")
+    @GetMapping("/board/{subject_seq}")
     public String boardCategory(
-            @PathVariable long category,
+            @PathVariable Long subject_seq,
             Model model) {
-        model.addAttribute("category", category);
-        return "subject_board";
+        model.addAttribute("subject_seq", subject_seq);
+        return "community/mainBoard";
     }
 
     @GetMapping("/write/{subject_seq}")
@@ -55,19 +56,7 @@ public class PageController {
             Model model)
     {
         model.addAttribute("subject_seq", subject_seq);
-        return "write";
-    }
-
-    @GetMapping("/profile")
-    public String profile(HttpServletRequest request, Model model) {
-        long user_seq = Long.parseLong(request.getSession().getAttribute("user_seq").toString());
-        readUserService.getUserInfo(model, user_seq);
-        return "profile";
-    }
-
-    @GetMapping("/changePassword")
-    public String changePassword() {
-        return "changePassword";
+        return "community/writePost";
     }
 
     @GetMapping("/modify/{post_seq}")
@@ -76,7 +65,7 @@ public class PageController {
         long user_seq = Long.parseLong(session.getAttribute("user_seq").toString());
         if(checkPostService.getPostByUser(post_seq, user_seq)){
             model.addAttribute("post_seq", post_seq);
-            return "modify";
+            return "community/modifyPost";
         }
         else{
             return "redirect:/board";
@@ -89,7 +78,7 @@ public class PageController {
         JSONObject post = readPostService.getPost(post_seq);
         model.addAttribute("data", post);
         model.addAttribute("post_seq", post_seq);
-        return "post";
+        return "community/detailPost";
     }
 
     @GetMapping("/search")
@@ -104,8 +93,8 @@ public class PageController {
             @RequestParam(value = "searchType", defaultValue = "all") String searchType,
             Model model
     ) {
-        JSONObject result = searchService.search(keyword, offset, limit, searchType);
-        model.addAttribute("data", result);
-        return "search";
+        //JSONObject result = searchService.search(keyword, offset, limit, searchType);
+        //model.addAttribute("data", result);
+        return "community/searchResult";
     }
 }

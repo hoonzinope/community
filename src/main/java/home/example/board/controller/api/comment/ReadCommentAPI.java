@@ -1,5 +1,6 @@
 package home.example.board.controller.api.comment;
 
+import home.example.board.DTO.CustomUserDetail;
 import home.example.board.service.comment.ReadCommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -7,17 +8,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ReadAPI {
+public class ReadCommentAPI {
 
     private final ReadCommentService readCommentService;
     @Autowired
-    public ReadAPI(ReadCommentService readCommentService) {
+    public ReadCommentAPI(ReadCommentService readCommentService) {
         this.readCommentService = readCommentService;
     }
 
@@ -56,9 +58,24 @@ public class ReadAPI {
     public ResponseEntity<JSONObject> getComments(
             @Parameter(description = "게시글 번호", required = true)
             @PathVariable long post_seq,
-            @Parameter(description = "사용자 번호", required = false)
-            @RequestParam(value="user_seq", defaultValue = "-1") long user_seq) {
+            @Parameter(description = "댓글 작성자 번호", required = false, example = "-1")
+            @AuthenticationPrincipal CustomUserDetail userDetail) {
+
+        Long user_seq = userDetail != null ? userDetail.getUserSeq() : -1L;
         JSONObject jsonObject = readCommentService.selectComments(post_seq, user_seq);
+        return ResponseEntity.ok().body(jsonObject);
+    }
+
+    @GetMapping("/api/comment/user")
+    public ResponseEntity<JSONObject> getUserComments(
+            @Parameter(description = "댓글 작성자 번호", required = true)
+            @RequestParam long user_seq,
+            @Parameter(description = "페이징 offset", required = true)
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @Parameter(description = "페이징 limit", required = true)
+            @RequestParam(value = "limit", defaultValue = "10") int limit) {
+
+        JSONObject jsonObject = readCommentService.selectUserComments(user_seq, offset, limit);
         return ResponseEntity.ok().body(jsonObject);
     }
 }

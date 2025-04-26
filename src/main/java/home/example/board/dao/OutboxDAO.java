@@ -63,4 +63,32 @@ public class OutboxDAO {
         jsonObject.put("content", content);
         return jsonObject;
     }
+
+    public void removePostAllByUser(long user_seq) {
+        // convert Post to Outbox
+        Outbox outbox = Outbox.builder()
+                .aggregate_type("POST")
+                .aggregate_id(user_seq)
+                .event_type("UserSoftDeleted")
+                .payload("")
+                .created_ts(LocalDateTime.now())
+                .status("PENDING")
+                .build();
+        // insert Outbox into database
+        outboxMapper.insertOutbox(outbox);
+    }
+
+    public void removeCommentAllByUser(long user_seq) {
+        // convert Comment to Outbox
+        Outbox outbox = Outbox.builder()
+                .aggregate_type("COMMENT")
+                .aggregate_id(user_seq)
+                .event_type("UserSoftDeleted")
+                .payload("")
+                .created_ts(LocalDateTime.now())
+                .status("PENDING")
+                .build();
+        // insert Outbox into database
+        outboxMapper.insertOutbox(outbox);
+    }
 }

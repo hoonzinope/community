@@ -10,4 +10,5 @@ public class Subject {
     private String subject_name;
     private LocalDateTime insert_ts;
     private long parent_subject_seq;
+    private String use_yn;
 }

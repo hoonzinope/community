@@ -27,9 +27,6 @@ public class PostDAO {
     @Autowired
     PostMapper postMapper;
 
-    @Autowired
-    UserMapper userMapper;
-
     public List<PostPagingDTO> getPostListPaging(int offset, int limit, long subject_seq) {
         // offset: 시작 위치, limit: 가져올 데이터 개수
         Map<String, Object> paging = new HashMap<>();
@@ -52,71 +49,14 @@ public class PostDAO {
         return postMapper.getPostTotalSize();
     }
 
-    public JSONObject getPost(long post_seq) {
+    public PostPagingDTO getPost(long post_seq) {
         // 게시물 상세 조회
         PostPagingDTO post = postMapper.getPost(post_seq);
         if(post == null) {
             throw new IllegalArgumentException("해당 게시글이 존재하지 않습니다.");
         }
-
         postMapper.updateViewCount(post_seq);
-
-        User user = userMapper.getUserBySeq(post.getUser_seq());
-        int deleteFlag = user.getDelete_flag();
-        String userNickname = user.getUser_nickname();
-        if (deleteFlag == 1) {
-            userNickname = "비활성 사용자";
-        }else{
-            userNickname = NickNameUtils.nickNameTrim(userNickname);
-        }
-
-        JSONObject postJson = new JSONObject();
-        postJson.put("user_nickname", userNickname);
-        postJson.put("post_seq", post.getPost_seq());
-        postJson.put("title", post.getTitle());
-        String content_html = getContentHtml(post.getContent());
-        postJson.put("content", content_html);
-        postJson.put("insert_ts", post.getInsert_ts());
-        postJson.put("update_ts", post.getUpdate_ts());
-        postJson.put("view_count", post.getView_count());
-        postJson.put("user_seq", post.getUser_seq());
-        postJson.put("subject_seq", post.getSubject_seq());
-        postJson.put("category", post.getCategory());
-        postJson.put("like_count", post.getLike_count());
-        postJson.put("dislike_count", post.getDislike_count());
-
-        JSONObject result = new JSONObject();
-        result.put("post", postJson);
-
-        return result;
-    }
-
-    @NotNull
-    private static String getContentHtml(String rawContent) {
-        List<String> allowedHosts = Arrays.asList(
-                "www.youtube.com", "youtube.com", "youtu.be",
-                "vimeo.com", "vine.co", "instagram.com",
-                "dailymotion.com", "youku.com"
-        );
-        Safelist safelist = Safelist.basicWithImages()
-                .addTags("iframe")
-                .addAttributes("iframe", "src", "width", "height", "frameborder", "allow", "allowfullscreen");
-        String cleanedContent = Jsoup.clean(rawContent, safelist);
-        Document doc = Jsoup.parseBodyFragment(cleanedContent);
-        Elements iframes = doc.select("iframe");
-        for (Element iframe : iframes) {
-            String src = iframe.attr("src");
-            try {
-                URL url = new URL(src);
-                String host = url.getHost().toLowerCase();
-                if (!allowedHosts.contains(host)) {
-                    iframe.remove();
-                }
-            } catch (MalformedURLException e) {
-                iframe.remove();
-            }
-        }
-        return doc.body().html();
+        return post;
     }
 
     public boolean isExistPost(long post_seq) {
@@ -186,4 +126,16 @@ public class PostDAO {
         postMapper.deletePost(post_seq);
     }
 
+    public List<PostPagingDTO> getSeenPostListByPostSeqList(List<Long> postSeqList) {
+        // 게시물 목록 조회
+        if(postSeqList == null || postSeqList.isEmpty()) {
+            return new ArrayList<PostPagingDTO>();
+        }
+        List<PostPagingDTO> postList = postMapper.getPostList(postSeqList);
+        return postList;
+    }
+
+    public void removePostAllByUser(long user_seq) {
+        postMapper.deletePostAllByUser(user_seq);
+    }
 }

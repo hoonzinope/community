@@ -43,6 +43,23 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
 
+        // 계정이 삭제된 경우
+        if (!userDetails.isEnabled()) {
+            throw new BadCredentialsException("계정이 삭제되었습니다.");
+        }
+
+        // 유효한 계정 여부 확인
+        if (!userDetails.isAccountNonExpired()) {
+            throw new BadCredentialsException("계정이 만료되었습니다.");
+        }
+        if (!userDetails.isAccountNonLocked()) {
+            throw new BadCredentialsException("계정이 잠겨있습니다.");
+        }
+        if (!userDetails.isCredentialsNonExpired()) {
+            throw new BadCredentialsException("비밀번호가 만료되었습니다.");
+        }
+
+
         // 동시 로그인 체크
         List<Object> principals = sessionRegistry.getAllPrincipals();
         for (Object principal : principals) {

@@ -143,4 +143,27 @@ public class SubjectAPI {
         JSONObject subjectName = subjectService.getSubTopicAndMainTopic(subject_seq);
         return ResponseEntity.ok().body(subjectName);
     }
+
+    @Operation(summary = "모든 게시판 메뉴 목록 조회", description = "모든 게시판 메뉴 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode="200",
+                    description = "모든 게시판 메뉴 목록 조회 성공",
+                    content = {
+                            @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                                    name = "정상 response",
+                                                    value = "{\"subjectList\" : [{\"subject_seq\" : 1, \"subject_name\" : \"자유게시판\"}, {\"subject_seq\" : 2, \"subject_name\" : \"질문게시판\"}]}")
+                                    }
+                            )
+            })
+    })
+    @GetMapping("/api/subjects/all")
+    public ResponseEntity<JSONObject> getAllSubject() {
+        JSONObject subjectList = new JSONObject();
+        subjectList.put("subjectList", subjectService.getAllSubject());
+        return ResponseEntity.ok().body(subjectList);
+    }
 }

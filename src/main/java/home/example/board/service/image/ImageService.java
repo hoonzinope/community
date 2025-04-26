@@ -4,6 +4,7 @@ import home.example.board.config.MinioConfig;
 import io.minio.*;
 import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -57,6 +58,7 @@ public class ImageService {
         );
 
         // 저장된 파일에 접근 가능한 URL 구성 (버킷을 정적 리소스로 공개했다고 가정)
+        minIOUrl = "http://imageStorage";
         String imageUrl = minIOUrl + "/" + bucketName + "/" + fileName;
         return imageUrl;
     }
@@ -64,6 +66,7 @@ public class ImageService {
     public void deleteImage(String imageUrl) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         String bucketName = minioConfig.getBucketName();
         String minIOUrl = minioConfig.getMinioUrl();
+        imageUrl = imageUrl.replace("http://imageStorage", minIOUrl);
         // 이미지 URL에서 파일명 추출 (예: http://172.30.1.86:9001/uploads/uuid.jpg)
         String basePath = minIOUrl + "/" + bucketName + "/";
         if(!imageUrl.startsWith(basePath)) {

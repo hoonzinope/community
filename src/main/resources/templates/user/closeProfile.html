@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원 정보 관리 - board.io</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    body { background-color: #f6f7f8; }
+    .sidebar {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      position: sticky;
+      top: 90px;
+    }
+    .profile-card {
+      background: white;
+      padding: 32px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    .navbar {
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .search-input {
+      max-width: 400px;
+      width: 100%;
+    }
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+    }
+    .form-control {
+      padding-left: 2.2rem;
+    }
+    .btn-primary:hover {
+      filter: brightness(1.1);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sidebar-drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100vh;
+      background-color: white;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+      z-index: 1045;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar-drawer.show {
+      transform: translateX(0);
+    }
+
+    .sidebar-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.4);
+      z-index: 1040;
+    }
+  </style>
+</head>
+<body class="bg-light">
+<!-- 상단 내비게이션 바 -->
+<nav class="navbar navbar-expand-lg fixed-top">
+  <div class="container-fluid">
+    <!-- 상단 navbar 안의 board.io 왼쪽에 삽입 -->
+    <button class="btn d-flex align-items-center me-2" id="sidebarToggleBtn" type="button">
+      <i class="ri-menu-line fs-4"></i>
+    </button>
+    <!-- 사이드 메뉴 슬라이드 영역 -->
+    <div id="slideSidebar" class="sidebar-drawer d-none">
+      <div class="p-4">
+        <h6 class="mb-3"><a href="/" class="text-decoration-none">Home</a></h6>
+        <ul class="list-unstyled" id="slideMenu">
+
+          <li style="display: none">
+            <a class="text-decoration-none d-block" data-bs-toggle="collapse" href="#itSub" role="button" aria-expanded="false" aria-controls="itSub">
+              IT <i class="ri-arrow-down-s-line float-end"></i>
+            </a>
+            <ul class="list-unstyled collapse ps-3 mt-2" id="itSub">
+              <li><a href="#" class="text-decoration-none small">AI</a></li>
+              <li><a href="#" class="text-decoration-none small">비트코인</a></li>
+              <li><a href="#" class="text-decoration-none small">양자컴퓨터</a></li>
+            </ul>
+          </li>
+
+          <li class="mt-3" style="display: none">
+            <a class="text-decoration-none d-block" data-bs-toggle="collapse" href="#movieSub" role="button" aria-expanded="false" aria-controls="movieSub">
+              영화 <i class="ri-arrow-down-s-line float-end"></i>
+            </a>
+            <ul class="list-unstyled collapse ps-3 mt-2" id="movieSub">
+              <li><a href="#" class="text-decoration-none small">SF</a></li>
+              <li><a href="#" class="text-decoration-none small">드라마</a></li>
+              <li><a href="#" class="text-decoration-none small">액션</a></li>
+            </ul>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+
+    <!-- 검은 반투명 배경 (닫기용) -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop d-none"></div>
+    <a class="navbar-brand" href="/">board.io</a>
+    <div class="d-flex mx-auto search-input">
+      <input id="search-input" class="form-control me-2" type="search" placeholder="검색어를 입력하세요..." aria-label="Search">
+      <button id="search-button" class="btn btn-outline-secondary" type="submit"><i class="ri-search-line"></i></button>
+    </div>
+    <div th:if="${session.user_seq != null}" class="dropdown">
+      <a href="#" class="btn btn-outline-primary btn-sm dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <span th:text="${session.user_nickname}">사용자</span>님
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" th:href="@{/member/closeProfile}">내 정보</a></li>
+        <li><a class="dropdown-item" th:href="@{/member/openProfile?user_nickname={user_nickname}(user_nickname=${session.user_nickname})}">내 게시글</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" href="/auth/logout">로그아웃</a></li>
+      </ul>
+    </div>
+    <div th:if="${session.user_seq == null}">
+      <a href="/login" class="btn btn-outline-primary btn-sm me-2">로그인</a>
+      <a href="/signup" class="btn btn-primary btn-sm">회원가입</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-5 pt-4">
+  <div class="row">
+    <div class="col-lg-3 d-none d-lg-block">
+      <div class="sidebar">
+        <h6 class="mb-3">설정</h6>
+        <ul class="nav flex-column nav-pills">
+          <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="pill" href="#profile">
+              <i class="ri-user-settings-line me-2"></i> 정보 수정
+            </a>
+          </li>
+<!--          <li class="nav-item">-->
+<!--            <a class="nav-link" data-bs-toggle="pill" href="#posts">-->
+<!--              <i class="ri-file-list-line me-2"></i> 작성 게시글-->
+<!--            </a>-->
+<!--          </li>-->
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-lg-9">
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="profile">
+          <div class="profile-card">
+            <h4 class="mb-4">회원 정보 관리</h4>
+            <div>
+              <div class="mb-3 position-relative">
+                <i class="ri-user-line input-icon"></i>
+                <input type="text" class="form-control" id="nickname" name="nickname" placeholder="닉네임" th:value="${user_nickname}" required>
+              </div>
+              <div class="mb-3 position-relative">
+                <i class="ri-mail-line input-icon"></i>
+                <input type="email" class="form-control" id="email" name="email" placeholder="이메일" th:value="${user_email}" required>
+              </div>
+              <div class="d-grid mb-3">
+                <button type="submit" class="btn btn-primary" id="updateUserInfo">정보 수정</button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <button class="btn btn-outline-secondary w-100" id="passwordReset">비밀번호 초기화/수정</button>
+            </div>
+            <div class="text-center">
+              <button type="button" class="btn btn-danger" id="deleteAccount">회원 비활성화</button>
+            </div>
+          </div>
+        </div>
+
+<!--        <div class="tab-pane fade" id="posts">-->
+<!--          <div class="profile-card">-->
+<!--            <h4 class="mb-4">내가 작성한 게시글</h4>-->
+<!--            <table class="table table-hover mb-0">-->
+<!--              <thead>-->
+<!--              <tr>-->
+<!--                <th>주제</th>-->
+<!--                <th>제목</th>-->
+<!--                <th>조회수</th>-->
+<!--                <th>작성일</th>-->
+<!--              </tr>-->
+<!--              </thead>-->
+<!--              <tbody id="postList">-->
+<!--              <tr>-->
+<!--                <td><span class="badge bg-info">일상</span></td>-->
+<!--                <td><a href="#" class="text-decoration-none text-dark">게시물 제목</a></td>-->
+<!--                <td><i class="ri-eye-line"></i> 1.2k</td>-->
+<!--                <td>2024-01-31</td>-->
+<!--              </tr>-->
+<!--              </tbody>-->
+<!--            </table>-->
+<!--            <nav class="mt-4">-->
+<!--              <ul class="pagination justify-content-center" id="pagination"></ul>-->
+<!--            </nav>-->
+<!--          </div>-->
+<!--        </div>-->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  let user_seq = `[[${user_seq}]]`;
+</script>
+<script type="text/javascript" th:src="@{/js/member/closeProfile.js}"></script>
+</body>
+</html>

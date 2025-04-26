@@ -7,17 +7,21 @@
 <mapper namespace="home.example.board.repository.PostMapper">
     <select id="getPostTotalSize"
     resultType="int">
-        select count(*)
-        from post
-        where delete_flag = 0
+        select count(p.post_seq)
+        from post p
+        JOIN
+             subject s ON p.subject_seq = s.subject_seq
+        where delete_flag = 0 and s.use_yn = 'Y'
     </select>
 
     <select id="getPostTotalSizeByCategory" parameterType="map"
     resultType="int">
-        select count(*)
-        from post
-        where delete_flag = 0
-        and subject_seq in (select subject_seq from subject s where s.subject_seq = #{subject_seq} or s.parent_subject_seq = #{subject_seq})
+        select count(p.post_seq)
+        from post p
+        JOIN
+             subject s ON p.subject_seq = s.subject_seq
+        where delete_flag = 0 and s.use_yn = 'Y'
+        and p.subject_seq in (select subject_seq from subject s where s.subject_seq = #{subject_seq} or s.parent_subject_seq = #{subject_seq})
     </select>
 
     <select id="getPostListPaging"
@@ -27,18 +31,22 @@
             post_seq,
             title,
             content,
-            insert_ts,
-            update_ts,
-            view_count,
-            user_seq,
-            subject_seq,
-            (select subject_name from subject s where s.subject_seq = p.subject_seq) as category,
+            p.insert_ts,
+            p.update_ts,
+            p.view_count,
+            p.user_seq,
+            (select user_nickname from user where user.user_seq = p.user_seq) as user_nickname,
+            s.subject_seq,
+            s.subject_name as category,
             (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "LIKE") as like_count,
             (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "DISLIKE") as dislike_count
         FROM
             post p
+        JOIN
+             subject s ON p.subject_seq = s.subject_seq
         WHERE
-            delete_flag = 0
+            delete_flag = 0 and s.use_yn = 'Y'
+
         order by post_seq desc
         limit #{offset}, #{limit}
     </select>
@@ -49,19 +57,22 @@
             post_seq,
             title,
             content,
-            insert_ts,
-            update_ts,
-            view_count,
-            user_seq,
-            subject_seq,
-            (select subject_name from subject s where s.subject_seq = p.subject_seq) as category,
+            p.insert_ts,
+            p.update_ts,
+            p.view_count,
+            p.user_seq,
+            (select user_nickname from user where user.user_seq = p.user_seq) as user_nickname,
+            s.subject_seq,
+            (s.subject_name) as category,
             (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "LIKE") as like_count,
             (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "DISLIKE") as dislike_count
         FROM
             post p
+        JOIN
+            subject s ON p.subject_seq = s.subject_seq
         WHERE
-            delete_flag = 0
-        AND subject_seq in (select subject_seq from subject s where s.subject_seq = #{subject_seq} or s.parent_subject_seq = #{subject_seq})
+            delete_flag = 0 and s.use_yn = 'Y'
+        AND p.subject_seq in (select subject_seq from subject s where s.subject_seq = #{subject_seq} or s.parent_subject_seq = #{subject_seq})
         order by post_seq desc
         limit #{offset}, #{limit}
     </select>
@@ -73,17 +84,22 @@
             post_seq,
             title,
             content,
-            insert_ts,
-            update_ts,
-            view_count,
-            user_seq,
-            subject_seq,
+            p.insert_ts,
+            p.update_ts,
+            p.view_count,
+            p.user_seq,
+            (select user_nickname from user where user.user_seq = p.user_seq) as user_nickname,
+            p.subject_seq,
             (select subject_name from subject s where s.subject_seq = p.subject_seq) as category,
             (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "LIKE") as like_count,
             (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "DISLIKE") as dislike_count
         FROM
             post p
+        JOIN
+             subject s ON p.subject_seq = s.subject_seq
         WHERE
+            delete_flag = 0 and s.use_yn = 'Y'
+        and
             post_seq = #{post_seq}
     </select>
 
@@ -93,16 +109,20 @@
             post_seq,
             title,
             content,
-            insert_ts,
-            update_ts,
-            view_count,
-            delete_ts,
-            delete_flag,
-            user_seq,
-            subject_seq
+            p.insert_ts,
+            p.update_ts,
+            p.view_count,
+            p.delete_ts,
+            p.delete_flag,
+            p.user_seq,
+            s.subject_seq
         FROM
-            post
+            post p
+        JOIN
+            subject s ON p.subject_seq = s.subject_seq
         WHERE
+            delete_flag = 0 and s.use_yn = 'Y'
+            and
             post_seq = #{post_seq}
     </select>
 
@@ -154,8 +174,10 @@
     <select id="getUserPostTotalSize" parameterType="map"
     resultType="int">
         select count(*)
-        from post
-        where delete_flag = 0
+        from post p
+        JOIN
+             subject s ON p.subject_seq = s.subject_seq
+        where delete_flag = 0 and s.use_yn = 'Y'
         and user_seq = #{user_seq}
     </select>
     <select id="getUserPostListPaging" parameterType="map"
@@ -164,18 +186,21 @@
             post_seq,
             title,
             content,
-            insert_ts,
-            update_ts,
-            view_count,
-            user_seq,
-            subject_seq,
-            (select subject_name from subject s where s.subject_seq = p.subject_seq) as category,
+            p.insert_ts,
+            p.update_ts,
+            p.view_count,
+            p.user_seq,
+            (select user_nickname from user where user.user_seq = p.user_seq) as user_nickname,
+            p.subject_seq,
+            (s.subject_name) as category,
             (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "LIKE") as like_count,
             (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "DISLIKE") as dislike_count
         FROM
             post p
+        JOIN
+             subject s ON p.subject_seq = s.subject_seq
         WHERE
-            delete_flag = 0
+            delete_flag = 0 and s.use_yn = 'Y'
         AND user_seq = #{user_seq}
         order by post_seq desc
         limit #{offset}, #{limit}
@@ -187,15 +212,19 @@
             post_seq,
             title,
             content,
-            insert_ts,
-            update_ts,
-            view_count,
-            delete_ts,
-            delete_flag,
-            user_seq,
-            subject_seq
+            p.insert_ts,
+            p.update_ts,
+            p.view_count,
+            p.delete_ts,
+            p.delete_flag,
+            p.user_seq,
+            s.subject_seq
         FROM
-            post
+            post p
+        JOIN
+             subject s ON p.subject_seq = s.subject_seq
+        WHERE
+            s.use_yn = 'Y'
     </select>
 
     <select id="getPostList"
@@ -205,17 +234,20 @@
         post_seq,
         title,
         content,
-        insert_ts,
-        update_ts,
-        view_count,
-        user_seq,
-        subject_seq,
-        (select subject_name from subject s where s.subject_seq = p.subject_seq) as category,
+        p.insert_ts,
+        p.update_ts,
+        p.view_count,
+        p.user_seq,
+        (select user_nickname from user where user.user_seq = p.user_seq) as user_nickname,
+        s.subject_seq,
+        s.subject_name as category,
         (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "LIKE") as like_count,
         (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "DISLIKE") as dislike_count
         FROM
             post p
-        where
+        JOIN
+             subject s ON p.subject_seq = s.subject_seq
+        WHERE
             <if test="post_seq_list != null and post_seq_list.size() > 0">
                 post_seq in
                 <foreach item="item" index="index" collection="post_seq_list"
@@ -223,6 +255,18 @@
                     #{item}
                 </foreach>
             </if>
-        order by insert_ts desc
+            and
+            delete_flag = 0 and s.use_yn = 'Y'
+        order by p.insert_ts desc
     </select>
+
+    <update id="deletePostAllByUser" parameterType="long">
+        update post
+        set
+            delete_flag = 1,
+            delete_ts = now()
+        WHERE
+            user_seq = #{user_seq}
+    </update>
+
 </mapper>

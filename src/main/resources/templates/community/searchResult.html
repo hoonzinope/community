@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>board.io - 검색 결과</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f6f7f8;
+        }
+        .post-card {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 16px;
+        }
+        .post-content {
+            display: inline-block;
+        }
+        .vote-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 1.2rem;
+            color: #888;
+        }
+        .post-meta {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .sidebar {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            position: sticky;
+            top: 90px;
+        }
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .search-input {
+            max-width: 400px;
+            width: 100%;
+        }
+        .sidebar a {
+            color: #2c3e50;
+        }
+        .sidebar a:hover {
+            color: #0d6efd;
+            text-decoration: underline;
+        }
+
+        /* 예시: .note-video-clip 클래스가 적용된 iframe에 한해서 스타일 적용 */
+        iframe {
+            width: 100%;       /* 컨테이너 폭에 맞게 반응형 처리 */
+            max-width: 640px;  /* 최대 폭 제한 */
+            height: auto;      /* 비율을 유지하면서 높이 자동 조절 */
+            aspect-ratio: 16 / 9; /* modern 브라우저에서 비율 유지 */
+        }
+
+        .sidebar-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+            z-index: 1045;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-drawer.show {
+            transform: translateX(0);
+        }
+
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 1040;
+        }
+
+        .comment-thread {
+            display: flex;
+            align-items: flex-start;
+            margin-left: 20px;
+            /* 들여쓰기 */
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+<!-- 상단 내비게이션 바 -->
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <!-- 상단 navbar 안의 board.io 왼쪽에 삽입 -->
+        <button class="btn d-flex align-items-center me-2" id="sidebarToggleBtn" type="button">
+            <i class="ri-menu-line fs-4"></i>
+        </button>
+        <!-- 사이드 메뉴 슬라이드 영역 -->
+        <div id="slideSidebar" class="sidebar-drawer d-none">
+            <div class="p-4">
+                <h6 class="mb-3"><a href="/" class="text-decoration-none">Home</a></h6>
+                <ul class="list-unstyled" id="slideMenu">
+
+                    <li style="display: none">
+                        <a class="text-decoration-none d-block" data-bs-toggle="collapse" href="#itSub" role="button" aria-expanded="false" aria-controls="itSub">
+                            IT <i class="ri-arrow-down-s-line float-end"></i>
+                        </a>
+                        <ul class="list-unstyled collapse ps-3 mt-2" id="itSub">
+                            <li><a href="#" class="text-decoration-none small">AI</a></li>
+                            <li><a href="#" class="text-decoration-none small">비트코인</a></li>
+                            <li><a href="#" class="text-decoration-none small">양자컴퓨터</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="mt-3" style="display: none">
+                        <a class="text-decoration-none d-block" data-bs-toggle="collapse" href="#movieSub" role="button" aria-expanded="false" aria-controls="movieSub">
+                            영화 <i class="ri-arrow-down-s-line float-end"></i>
+                        </a>
+                        <ul class="list-unstyled collapse ps-3 mt-2" id="movieSub">
+                            <li><a href="#" class="text-decoration-none small">SF</a></li>
+                            <li><a href="#" class="text-decoration-none small">드라마</a></li>
+                            <li><a href="#" class="text-decoration-none small">액션</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+        <!-- 검은 반투명 배경 (닫기용) -->
+        <div id="sidebarBackdrop" class="sidebar-backdrop d-none"></div>
+        <a class="navbar-brand" href="/">board.io</a>
+        <div class="d-flex mx-auto search-input">
+            <input id="search-input" class="form-control me-2" type="search" placeholder="검색어를 입력하세요..." aria-label="Search">
+            <button id="search-button" class="btn btn-outline-secondary" type="submit"><i class="ri-search-line"></i></button>
+        </div>
+        <div th:if="${session.user_seq != null}" class="dropdown">
+            <a href="#" class="btn btn-outline-primary btn-sm dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span th:text="${session.user_nickname}">사용자</span>님
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" th:href="@{/member/closeProfile}">내 정보</a></li>
+                <li><a class="dropdown-item" th:href="@{/member/openProfile?user_nickname={user_nickname}(user_nickname=${session.user_nickname})}">내 게시글</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="/auth/logout">로그아웃</a></li>
+            </ul>
+        </div>
+        <div th:if="${session.user_seq == null}">
+            <a href="/login" class="btn btn-outline-primary btn-sm me-2">로그인</a>
+            <a href="/signup" class="btn btn-primary btn-sm">회원가입</a>
+        </div>
+    </div>
+</nav>
+
+<!-- 콘텐츠 영역 -->
+<div class="container mt-5 pt-4">
+    <div class="row mt-4">
+        <!-- 좌측 사이드바 -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="sidebar">
+                <h6 class="mb-3"><a href="/" class="text-decoration-none">Home</a></h6>
+                <ul class="list-unstyled" id="subjectMenu">
+
+                    <li style="display: none">
+                        <a class="text-decoration-none d-block" data-bs-toggle="collapse" href="#itSub" role="button" aria-expanded="false" aria-controls="itSub">
+                            IT <i class="ri-arrow-down-s-line float-end"></i>
+                        </a>
+                        <ul class="list-unstyled collapse ps-3 mt-2 itSub">
+                            <li><a href="#" class="text-decoration-none small">AI</a></li>
+                            <li><a href="#" class="text-decoration-none small">비트코인</a></li>
+                            <li><a href="#" class="text-decoration-none small">양자컴퓨터</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="mt-3" style="display: none">
+                        <a class="text-decoration-none d-block" data-bs-toggle="collapse" href="#movieSub" role="button" aria-expanded="false" aria-controls="movieSub">
+                            영화 <i class="ri-arrow-down-s-line float-end"></i>
+                        </a>
+                        <ul class="list-unstyled collapse ps-3 mt-2 movieSub">
+                            <li><a href="#" class="text-decoration-none small">SF</a></li>
+                            <li><a href="#" class="text-decoration-none small">드라마</a></li>
+                            <li><a href="#" class="text-decoration-none small">액션</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+        <!-- 메인 피드 (검색 결과) -->
+        <div class="col-lg-6">
+            <!-- 탭 메뉴 : 게시글 / 댓글 -->
+            <ul class="nav nav-tabs mb-3" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="posts-tab" data-bs-toggle="tab" data-bs-target="#postsDiv" type="button" role="tab">게시글</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#commentsDiv" type="button" role="tab">댓글</button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="TabContent">
+                <!-- 게시글 탭 -->
+                <div class="tab-pane fade show active" id="postsDiv" role="tabpanel">
+                    <!-- 검색 결과 (여러 post-card 출력) -->
+                    <!-- 예시 post-card 1 -->
+                    <div class="post-card">
+                        <div class="vote-section">
+                            <i class="ri-arrow-up-line"></i>
+                            <div>12</div>
+                            <i class="ri-arrow-down-line"></i>
+                        </div>
+                        <div class="post-content">
+                            <h5>검색 결과 게시글 제목 1</h5>
+                            <div class="post-meta mb-1">
+                                <span>작성자1</span> ·
+                                <span>2시간 전</span> ·
+                                <span class="badge bg-light text-dark">IT</span>
+                            </div>
+                            <p class="text-truncate">이곳에 게시글 내용 요약이 노출됩니다. 게시글 상세 내용은 생략 처리되어 있습니다.</p>
+                            <a href="#" class="text-decoration-none text-primary small">댓글 보기</a>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-outline-primary d-block mx-auto mt-3" style="width: 50%;">더보기</button>
+
+                </div>
+
+                <!-- 댓글 탭 -->
+                <div class="tab-pane fade" id="commentsDiv" role="tabpanel">
+                    <!-- 댓글 탭 검색 결과 영역 -->
+                    <div class="post-card mb-3">
+                        <div class="card-body">
+                            <!-- 연관 게시물 정보 (게시글) -->
+                            <div class="mb-3">
+                                <div class="post-card">
+                                    <div class="vote-section">
+                                        <i class="ri-arrow-up-line"></i>
+                                        <div>15</div>
+                                        <i class="ri-arrow-down-line"></i>
+                                    </div>
+                                    <div>
+                                        <h5>검색 결과 게시글 제목 3</h5>
+                                        <div class="post-meta mb-1">
+                                            <span>작성자3</span> ·
+                                            <span>1일 전</span>
+                                        </div>
+                                        <p class="text-truncate">
+                                            게시글 내용 요약이 나타납니다. 더 자세한 내용은 게시글 클릭 시 확인할 수 있습니다.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 댓글 정보 -->
+                            <div class="mb-2 comment-thread">
+                                <!-- <div class="pipe"></div> -->
+                                <div class="comment-content">
+                                    <h6 class="mb-1">댓글 작성자: 작성자 댓글</h6>
+                                    <p class="mb-1">
+                                        여기에 댓글 내용이 표시됩니다. 길 경우 일부만 노출됩니다.
+                                    </p>
+                                    <small class="text-muted">작성 시각: 3시간 전</small>
+                                </div>
+                            </div>
+                            <!-- <hr> -->
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-primary d-block mx-auto mt-3" style="width: 50%;" onclick="loadMorePosts()">더보기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 우측 사이드바 -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="sidebar">
+                <h6 class="mb-3">본 게시물</h6>
+                <ul class="list-unstyled" id="seenPost">
+                    <li style="display: none"><a href="#" class="text-decoration-none">🔥 요즘 뜨는 글</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 플로팅 글쓰기 버튼 -->
+<a th:href="@{/write/{subject_seq}(subject_seq=${subject_seq})}" class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-4 shadow">
+    <i class="ri-pencil-line"></i>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script type="text/javascript" th:src="@{/js/common/utils.js}"></script>
+<script type="text/javascript" th:src="@{/js/community/searchResult.js}"></script>
+</body>
+</html>

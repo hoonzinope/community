@@ -16,4 +16,5 @@ public class Comment {
     private Integer delete_flag;
     private Long parent_comment_seq;
     private long user_seq;
+    private Long reply_user_seq;
 }

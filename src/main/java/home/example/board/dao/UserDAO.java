@@ -23,6 +23,10 @@ public class UserDAO {
         return userMapper.getUser(user_name) != null;
     }
 
+    public User getUserByNickname(String user_nickname) {
+        return userMapper.getUserByNickname(user_nickname);
+    }
+
     public User getUserBySeq(Long user_seq) {
         return userMapper.getUserBySeq(user_seq);
     }
@@ -32,7 +36,7 @@ public class UserDAO {
                 .user_name(user_name)
                 .user_pw(user_pw)
                 .user_email(user_email)
-                .user_nickname(UUID.randomUUID().toString())
+                .user_nickname(UUID.randomUUID().toString().substring(0, 8))
                 .insert_ts(LocalDateTime.now())
                 .build();
         userMapper.addUser(newUser);
@@ -51,7 +55,8 @@ public class UserDAO {
         User user = userMapper.getUserBySeq(user_seq);
         if (user != null) {
             user.setUser_pw(reset_pw);
-            userMapper.updateUserInfo(user);
+            user.setForce_password_change(1);
+            userMapper.updateUserPassword(user);
         }
     }
 
@@ -59,6 +64,7 @@ public class UserDAO {
         User user = userMapper.getUserBySeq(user_seq);
         if (user != null) {
             user.setUser_pw(user_pw);
+            user.setForce_password_change(0);
             userMapper.updateUserInfo(user);
         }
     }

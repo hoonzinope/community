@@ -13,6 +13,7 @@ public class PostPagingDTO {
     private LocalDateTime update_ts;
     private int view_count;
     private long user_seq;
+    private String user_nickname;
     private String category;
     private long subject_seq;
     private int like_count;

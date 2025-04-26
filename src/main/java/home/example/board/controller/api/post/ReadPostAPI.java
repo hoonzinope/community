@@ -7,10 +7,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ReadPostAPI {
@@ -108,6 +108,33 @@ public class ReadPostAPI {
             @RequestParam(value = "limit", defaultValue = "10") int limit
     ) {
         JSONObject postList = readPostService.getUserPostListPaging(user_seq, offset, limit);
+        return ResponseEntity.ok().body(postList);
+    }
+
+    // 본 게시물 목록 조회
+    @Operation(summary = "본 게시물 목록 조회", description = "본 게시물 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode="200",
+                    description = "본 게시물 목록 조회 성공",
+                    content = {
+                            @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                                    name = "정상 response",
+                                                    value = "{\"postList\" : [{\"post_seq\" : 1, \"title\" : \"title\", \"content\" : \"content\", \"user_seq\" : 1, \"subject_seq\" : 1, \"created_at\" : \"2021-01-01 00:00:00\"}], \"total\" : 1}"
+                                            )
+                                    }
+                            )
+                    })
+    })
+    @PostMapping("/api/post/seen")
+    public ResponseEntity<JSONObject> getSeenPosts(
+            @RequestBody Map<String, Object> params
+    ) {
+        List<Long> post_seq_list = (List<Long>) params.get("seenPostList");
+        JSONObject postList = readPostService.getSeenPostListByPostSeqList(post_seq_list);
         return ResponseEntity.ok().body(postList);
     }
 }

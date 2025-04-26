@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class SubjectDAO {
@@ -52,8 +53,11 @@ public class SubjectDAO {
         return subjectMapper.getChildSubjectList(parent_seq);
     }
 
-    public List<Subject> getSubjectAllBySeq(long subject_seq) {
-        return subjectMapper.getSubjectAllBySeq(subject_seq);
+    public List<Subject> getSubjectAll() {
+        return subjectMapper.getSubjectList();
     }
 
+    public List<Subject> getSubjectListUseN() {
+        return subjectMapper.getSubjectListUseN();
+    }
 }

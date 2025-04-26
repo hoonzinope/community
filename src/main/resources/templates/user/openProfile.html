@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사용자 프로필 - board.io</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body { background-color: #f6f7f8; }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .search-input {
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .profile-header {
+            background: #fff;
+            padding: 24px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+        }
+        .profile-header img {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+        }
+        .profile-meta {
+            font-size: 0.9rem;
+            color: #777;
+        }
+        .tab-content .card {
+            margin-bottom: 16px;
+        }
+        .tab-pane {
+            padding-top: 1rem;
+        }
+
+        .sidebar-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+            z-index: 1045;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-drawer.show {
+            transform: translateX(0);
+        }
+
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 1040;
+        }
+    </style>
+</head>
+<body>
+<!-- 상단 내비게이션 바 -->
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <!-- 상단 navbar 안의 board.io 왼쪽에 삽입 -->
+        <button class="btn d-flex align-items-center me-2" id="sidebarToggleBtn" type="button">
+            <i class="ri-menu-line fs-4"></i>
+        </button>
+        <!-- 사이드 메뉴 슬라이드 영역 -->
+        <div id="slideSidebar" class="sidebar-drawer d-none">
+            <div class="p-4">
+                <h6 class="mb-3"><a href="/" class="text-decoration-none">Home</a></h6>
+                <ul class="list-unstyled" id="slideMenu">
+
+                    <li style="display: none">
+                        <a class="text-decoration-none d-block" data-bs-toggle="collapse" href="#itSub" role="button" aria-expanded="false" aria-controls="itSub">
+                            IT <i class="ri-arrow-down-s-line float-end"></i>
+                        </a>
+                        <ul class="list-unstyled collapse ps-3 mt-2" id="itSub">
+                            <li><a href="#" class="text-decoration-none small">AI</a></li>
+                            <li><a href="#" class="text-decoration-none small">비트코인</a></li>
+                            <li><a href="#" class="text-decoration-none small">양자컴퓨터</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="mt-3" style="display: none">
+                        <a class="text-decoration-none d-block" data-bs-toggle="collapse" href="#movieSub" role="button" aria-expanded="false" aria-controls="movieSub">
+                            영화 <i class="ri-arrow-down-s-line float-end"></i>
+                        </a>
+                        <ul class="list-unstyled collapse ps-3 mt-2" id="movieSub">
+                            <li><a href="#" class="text-decoration-none small">SF</a></li>
+                            <li><a href="#" class="text-decoration-none small">드라마</a></li>
+                            <li><a href="#" class="text-decoration-none small">액션</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+        <!-- 검은 반투명 배경 (닫기용) -->
+        <div id="sidebarBackdrop" class="sidebar-backdrop d-none"></div>
+        <a class="navbar-brand" href="/">board.io</a>
+        <div class="d-flex mx-auto search-input">
+            <input id="search-input" class="form-control me-2" type="search" placeholder="검색어를 입력하세요..." aria-label="Search">
+            <button id="search-button" class="btn btn-outline-secondary" type="submit"><i class="ri-search-line"></i></button>
+        </div>
+        <div th:if="${session.user_seq != null}" class="dropdown">
+            <a href="#" class="btn btn-outline-primary btn-sm dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span th:text="${session.user_nickname}">사용자</span>님
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" th:href="@{/member/closeProfile}">내 정보</a></li>
+                <li><a class="dropdown-item" th:href="@{/member/openProfile?user_nickname={user_nickname}(user_nickname=${session.user_nickname})}">내 게시글</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="/auth/logout">로그아웃</a></li>
+            </ul>
+        </div>
+        <div th:if="${session.user_seq == null}">
+            <a href="/login" class="btn btn-outline-primary btn-sm me-2">로그인</a>
+            <a href="/signup" class="btn btn-primary btn-sm">회원가입</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5 pt-4">
+    <!-- 프로필 헤더 -->
+    <div class="profile-header mt-4 mb-4">
+        <img th:src="@{/images/default-avatar.png}" alt="avatar" width="72" height="72">
+        <div>
+            <h5 class="mb-1" th:text="${user_nickname}">닉네임</h5>
+            <div class="profile-meta">
+                가입일: <span th:text="${insert_ts}">2023-01-01</span>
+<!--                · Karma: <span>1234</span>-->
+            </div>
+        </div>
+    </div>
+
+    <!-- 탭 메뉴 -->
+    <ul class="nav nav-tabs mb-3" id="profileTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="posts-tab" data-bs-toggle="tab" data-bs-target="#user-posts" type="button" role="tab">게시글</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#user-comments" type="button" role="tab">댓글</button>
+        </li>
+<!--        <li class="nav-item" role="presentation">-->
+<!--            <button class="nav-link" id="saved-tab" data-bs-toggle="tab" data-bs-target="#user-saved" type="button" role="tab">저장됨</button>-->
+<!--        </li>-->
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="upvoted-tab" data-bs-toggle="tab" data-bs-target="#user-upvoted" type="button" role="tab">업보트</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="downvoted-tab" data-bs-toggle="tab" data-bs-target="#user-downvoted" type="button" role="tab">다운보트</button>
+        </li>
+    </ul>
+
+    <!-- 탭 콘텐츠 -->
+    <div class="tab-content" id="profileTabContent">
+        <!-- 게시글 탭 -->
+        <div class="tab-pane fade show active" id="user-posts" role="tabpanel">
+            <div th:each="post : ${posts}" class="card p-3">
+                <h6 th:text="${post.title}">게시글 제목</h6>
+                <p class="text-muted mb-1" th:text="${post.createdAt}">2024-04-01</p>
+                <p class="text-truncate" th:text="${post.content}">게시글 내용...</p>
+                <a th:href="@{'/posts/' + ${post.id}}" class="text-primary small">자세히 보기</a>
+            </div>
+            <button class="btn btn-outline-primary d-block mx-auto mt-3" style="width: 50%;">더보기</button>
+        </div>
+
+        <!-- 댓글 탭 -->
+        <div class="tab-pane fade" id="user-comments" role="tabpanel">
+            <div th:each="comment : ${comments}" class="card p-3">
+                <p class="mb-1"><i class="ri-chat-1-line me-1"></i><span th:text="${comment.content}">댓글 내용</span></p>
+                <div class="text-muted small">
+                    <span th:text="${comment.createdAt}">2024-04-01</span> · <a th:href="@{'/posts/' + ${comment.postId}}">원글 보기</a>
+                </div>
+            </div>
+            <button class="btn btn-outline-primary d-block mx-auto mt-3" style="width: 50%;">더보기</button>
+        </div>
+
+        <!-- 저장됨 탭 -->
+<!--        <div class="tab-pane fade" id="user-saved" role="tabpanel">-->
+<!--            <div th:if="${#lists.isEmpty(savedPosts)}" class="text-muted">저장된 게시글이 없습니다.</div>-->
+<!--            <div th:each="post : ${savedPosts}" class="card p-3">-->
+<!--                <h6 th:text="${post.title}">저장된 게시글 제목</h6>-->
+<!--                <p class="text-muted mb-1" th:text="${post.createdAt}">2024-04-01</p>-->
+<!--                <a th:href="@{'/posts/' + ${post.id}}" class="text-primary small">자세히 보기</a>-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <!-- 업보트 탭 -->
+        <div class="tab-pane fade" id="user-upvoted" role="tabpanel">
+            <div th:if="${#lists.isEmpty(upvotedPosts)}" class="text-muted">업보트한 게시글이 없습니다.</div>
+            <div th:each="post : ${upvotedPosts}" class="card p-3">
+                <h6 th:text="${post.title}">업보트 게시글 제목</h6>
+                <p class="text-muted mb-1" th:text="${post.createdAt}">2024-04-01</p>
+                <a th:href="@{'/posts/' + ${post.id}}" class="text-primary small">자세히 보기</a>
+            </div>
+            <button class="btn btn-outline-primary d-block mx-auto mt-3" style="width: 50%;">더보기</button>
+        </div>
+
+        <!-- 다운보트 탭 -->
+        <div class="tab-pane fade" id="user-downvoted" role="tabpanel">
+            <div th:if="${#lists.isEmpty(downvotedPosts)}" class="text-muted">다운보트한 게시글이 없습니다.</div>
+            <div th:each="post : ${downvotedPosts}" class="card p-3">
+                <h6 th:text="${post.title}">다운보트 게시글 제목</h6>
+                <p class="text-muted mb-1" th:text="${post.createdAt}">2024-04-01</p>
+                <a th:href="@{'/posts/' + ${post.id}}" class="text-primary small">자세히 보기</a>
+            </div>
+            <button class="btn btn-outline-primary d-block mx-auto mt-3" style="width: 50%;">더보기</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const user_seq = `[[${user_seq}]]`;
+</script>
+<script type="text/javascript" th:src="@{/js/common/utils.js}"></script>
+<script th:src="@{/js/member/openProfile.js}"></script>
+</body>
+</html>
