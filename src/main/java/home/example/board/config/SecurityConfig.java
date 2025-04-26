@@ -1,8 +1,10 @@
 package home.example.board.config;
 
+import home.example.board.filter.JwtAuthenticationFilter;
 import home.example.board.handler.CustomAuthenticationFailureHandler;
 import home.example.board.handler.CustomAuthenticationSuccessHandler;
 import home.example.board.handler.CustomLogoutSuccessHandler;
+import home.example.board.utils.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +17,7 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.session.ConcurrentSessionFilter;
@@ -29,6 +32,13 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -54,6 +64,11 @@ public class SecurityConfig {
     }
 
     @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtTokenProvider); // 직접 구현한 필터
+    }
+
+    @Bean
     public HttpSessionEventPublisher httpSessionEventPublisher() {
         return new HttpSessionEventPublisher();
     }
@@ -68,6 +83,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             // URL별 접근 제어 설정
             .authorizeHttpRequests(auth -> auth
+                    .antMatchers("/api/bot/login").permitAll()
                     // 게시판 목록이나 상세 페이지는 누구나 접근 가능
                     .antMatchers("/","/login","/signup","/board/**", "/post/**","/auth/signup","/api/**","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/search").permitAll()
                     // 그 외의 URL은 인증 필요
@@ -116,6 +132,9 @@ public class SecurityConfig {
                 HttpServletResponse response = event.getResponse();
                 response.sendRedirect("/login?expired=true&message=expiredLogin");
             }), SessionManagementFilter.class);
+
+        // JWT 필터 추가
+        httpSecurity.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
