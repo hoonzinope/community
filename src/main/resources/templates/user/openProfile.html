@@ -119,10 +119,10 @@
         <!-- 검은 반투명 배경 (닫기용) -->
         <div id="sidebarBackdrop" class="sidebar-backdrop d-none"></div>
         <a class="navbar-brand" href="/">board.io</a>
-        <form class="d-flex mx-auto search-input">
-            <input class="form-control me-2" type="search" placeholder="검색어를 입력하세요..." aria-label="Search">
-            <button class="btn btn-outline-secondary" type="submit"><i class="ri-search-line"></i></button>
-        </form>
+        <div class="d-flex mx-auto search-input">
+            <input id="search-input" class="form-control me-2" type="search" placeholder="검색어를 입력하세요..." aria-label="Search">
+            <button id="search-button" class="btn btn-outline-secondary" type="submit"><i class="ri-search-line"></i></button>
+        </div>
         <div th:if="${session.user_seq != null}" class="dropdown">
             <a href="#" class="btn btn-outline-primary btn-sm dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <span th:text="${session.user_nickname}">사용자</span>님

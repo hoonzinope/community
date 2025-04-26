@@ -1,7 +1,35 @@
 (function() {
     document.addEventListener('DOMContentLoaded', function(e) {
         userInfo.init();
+        searchObj.searchPosts();
     });
+
+    const searchObj = {
+        // search
+        searchPosts : function() {
+            let searchButton = document.getElementById('search-button');
+            let searchInput = document.getElementById('search-input');
+
+            searchButton.addEventListener('click', function() {
+                let searchInput = document.getElementById('search-input');
+                let searchValue = searchInput.value.trim();
+                if (searchValue) {
+                    window.location.href = `/search?keyword=${searchValue}`;
+                }
+            });
+
+            searchInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    let searchValue = searchInput.value.trim();
+                    if (searchValue) {
+                        window.location.href = `/search?keyword=${searchValue}`;
+                    }
+                }
+            });
+        },
+    }
+
 
     const userInfo = {
         init : function() {
