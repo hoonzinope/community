@@ -5,6 +5,24 @@
 
 <!-- SQL Mapping -->
 <mapper namespace="home.example.board.repository.UserMapper">
+    <select id="getBotUserByName" parameterType="String"
+            resultType="home.example.board.DTO.BotUserDTO">
+        select
+            user_seq,
+            user_name,
+            user_pw,
+            user_email,
+            user_nickname,
+            insert_ts,
+            role,
+            delete_flag,
+            delete_ts,
+            force_password_change,
+            is_bot
+        from user
+        where user_name = #{user_name}
+    </select>
+
     <select id="getUserBySeq" parameterType="long"
             resultType="home.example.board.domain.User">
         select
