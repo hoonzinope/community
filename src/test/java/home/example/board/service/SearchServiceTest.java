@@ -39,7 +39,7 @@ class SearchServiceTest {
         long subject_seq = 29;
 
         // Call the search method
-        JSONObject result = searchService.search(keyword, offset, limit, searchType, subject_seq);
+        JSONObject result = searchService.search(keyword, offset, limit, searchType);
 
         System.out.println("Search Result: " + result.toJSONString());
     }
@@ -53,7 +53,7 @@ class SearchServiceTest {
         long subject_seq = 1;
 
         // Call the search method
-        JSONObject result = searchService.search(keyword, offset, limit, searchType, subject_seq);
+        JSONObject result = searchService.search(keyword, offset, limit, searchType);
 
         System.out.println("Search Result: " + result.toJSONString());
     }
