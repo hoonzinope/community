@@ -23,6 +23,14 @@ public class CommentDAO {
         return commentMapper.selectComments(post_seq);
     }
 
+    public List<Comment> selectUserComments(long user_seq, int offset, int limit) {
+        return commentMapper.selectUserCommentsPaging(user_seq, offset, limit);
+    }
+
+    public int selectUserCommentsCount(long user_seq) {
+        return commentMapper.selectUserCommentsCount(user_seq);
+    }
+
     @Transactional
     public Long insertComment(long post_seq, String content, Long parent_comment_seq, long user_seq) {
         Comment comment = Comment.builder()
@@ -71,5 +79,10 @@ public class CommentDAO {
             throw new IllegalArgumentException("User does not have permission to delete this comment");
         }
         commentMapper.deleteComment(comment_seq);
+    }
+
+    @Transactional
+    public void removeCommentAllByUser(long user_seq) {
+        commentMapper.removeCommentAllByUser(user_seq);
     }
 }

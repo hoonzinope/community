@@ -25,6 +25,6 @@ public class ModifyCommentService {
     public void modifyComment(long comment_seq, String content, long user_seq) throws IllegalAccessException {
         commentHistoryDAO.insertCommentHistory(comment_seq);
         commentDAO.updateComment(comment_seq, content, user_seq);
-        //outboxDAO.insertComment(comment_seq, content, "UPDATE");
+        outboxDAO.insertComment(comment_seq, content, "UPDATE");
     }
 }

@@ -59,18 +59,6 @@ public class PageController {
         return "community/writePost";
     }
 
-    @GetMapping("/profile")
-    public String profile(HttpServletRequest request, Model model) {
-        long user_seq = Long.parseLong(request.getSession().getAttribute("user_seq").toString());
-        readUserService.getUserInfo(model, user_seq);
-        return "profile";
-    }
-
-    @GetMapping("/changePassword")
-    public String changePassword() {
-        return "changePassword";
-    }
-
     @GetMapping("/modify/{post_seq}")
     public String modify(@PathVariable long post_seq, Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -105,8 +93,8 @@ public class PageController {
             @RequestParam(value = "searchType", defaultValue = "all") String searchType,
             Model model
     ) {
-        JSONObject result = searchService.search(keyword, offset, limit, searchType);
-        model.addAttribute("data", result);
-        return "search";
+        //JSONObject result = searchService.search(keyword, offset, limit, searchType);
+        //model.addAttribute("data", result);
+        return "community/searchResult";
     }
 }

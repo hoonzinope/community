@@ -14,4 +14,8 @@ public interface CommentMapper {
     void updateComment(Comment comment);
     void deleteComment(long comment_seq);
     List<Comment> getCommentAll();
+
+    List<Comment> selectUserCommentsPaging(long user_seq, int offset, int limit);
+    int selectUserCommentsCount(long user_seq);
+    void removeCommentAllByUser(long user_seq);
 }

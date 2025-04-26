@@ -25,4 +25,5 @@ public interface PostMapper {
     List<PostPagingDTO> getUserPostListPaging(Map<String, Object> paging);
     List<Post> getPostAll();
     List<PostPagingDTO> getPostList(List<Long> post_seq_list);
+    void deletePostAllByUser(long user_seq);
 }

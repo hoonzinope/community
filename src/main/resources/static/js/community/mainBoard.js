@@ -13,6 +13,9 @@
                 board.requestPosts(board.subject_seq);
             }
         });
+
+        // 검색 기능
+        board.searchPosts();
     });
 
     const board = {
@@ -233,6 +236,29 @@
                 backdrop.addEventListener("click", closeSidebar);
         },
 
+        // search
+        searchPosts : function() {
+            let searchButton = document.getElementById('search-button');
+            let searchInput = document.getElementById('search-input');
+
+            searchButton.addEventListener('click', function() {
+                let searchInput = document.getElementById('search-input');
+                let searchValue = searchInput.value.trim();
+                if (searchValue) {
+                    window.location.href = `/search?keyword=${searchValue}`;
+                }
+            });
+
+            searchInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    let searchValue = searchInput.value.trim();
+                    if (searchValue) {
+                        window.location.href = `/search?keyword=${searchValue}`;
+                    }
+                }
+            });
+        },
 
         // 게시물 리스트 요청
         requestPosts : function(subject_seq) {

@@ -32,6 +32,6 @@ public class RemovePostService {
         // 게시물 삭제
         postDAO.removePost(post_seq);
         // Outbox에 게시물 삭제 내용 추가
-        // outboxDAO.insertPost(post_seq, "", "", "DELETE");
+        outboxDAO.insertPost(post_seq, "", "", "DELETE");
     }
 }

@@ -65,4 +65,17 @@ public class ReadCommentAPI {
         JSONObject jsonObject = readCommentService.selectComments(post_seq, user_seq);
         return ResponseEntity.ok().body(jsonObject);
     }
+
+    @GetMapping("/api/comment/user")
+    public ResponseEntity<JSONObject> getUserComments(
+            @Parameter(description = "댓글 작성자 번호", required = true)
+            @RequestParam long user_seq,
+            @Parameter(description = "페이징 offset", required = true)
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @Parameter(description = "페이징 limit", required = true)
+            @RequestParam(value = "limit", defaultValue = "10") int limit) {
+
+        JSONObject jsonObject = readCommentService.selectUserComments(user_seq, offset, limit);
+        return ResponseEntity.ok().body(jsonObject);
+    }
 }

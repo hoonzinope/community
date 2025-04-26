@@ -138,17 +138,17 @@
         <!-- 검은 반투명 배경 (닫기용) -->
         <div id="sidebarBackdrop" class="sidebar-backdrop d-none"></div>
         <a class="navbar-brand" href="/">board.io</a>
-        <form class="d-flex mx-auto search-input">
-            <input class="form-control me-2" type="search" placeholder="검색어를 입력하세요..." aria-label="Search">
-            <button class="btn btn-outline-secondary" type="submit"><i class="ri-search-line"></i></button>
-        </form>
+        <div class="d-flex mx-auto search-input">
+            <input id="search-input" class="form-control me-2" type="search" placeholder="검색어를 입력하세요..." aria-label="Search">
+            <button id="search-button" class="btn btn-outline-secondary" type="submit"><i class="ri-search-line"></i></button>
+        </div>
         <div th:if="${session.user_seq != null}" class="dropdown">
             <a href="#" class="btn btn-outline-primary btn-sm dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <span th:text="${session.user_nickname}">사용자</span>님
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="/member/me">내 정보</a></li>
-                <li><a class="dropdown-item" href="/member/posts">내 게시글</a></li>
+                <li><a class="dropdown-item" th:href="@{/member/closeProfile}">내 정보</a></li>
+                <li><a class="dropdown-item" th:href="@{/member/openProfile?user_nickname={user_nickname}(user_nickname=${session.user_nickname})}">내 게시글</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item text-danger" href="/auth/logout">로그아웃</a></li>
             </ul>

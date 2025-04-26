@@ -4,6 +4,7 @@ import home.example.board.DTO.CommentDTO;
 import home.example.board.dao.CommentDAO;
 import home.example.board.dao.CommentHistoryDAO;
 import home.example.board.dao.OutboxDAO;
+import home.example.board.domain.Comment;
 import home.example.board.domain.CommentLike;
 import home.example.board.domain.User;
 import home.example.board.repository.CommentLikeMapper;
@@ -122,4 +123,15 @@ public class ReadCommentService {
 //            }
 //        });
 //    }
+
+    public JSONObject selectUserComments(long user_seq, int offset, int limit) {
+        List<Comment> comments = commentDAO.selectUserComments(user_seq, offset, limit);
+        int totalCount = commentDAO.selectUserCommentsCount(user_seq);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("commentList", comments);
+        jsonObject.put("comment_count", comments.size());
+        jsonObject.put("total_count", totalCount);
+        return jsonObject;
+    }
+
 }

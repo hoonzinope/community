@@ -38,7 +38,7 @@ public class SearchAPI {
                             examples = {
                                             @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name="SearchRequest",
-                                            value ="{ \"keyword\": \"검색어\", \"offset\": 0, \"limit\": 10, \"type\": \"all\", \"subject_seq\": 1 }"
+                                            value ="{ \"keyword\": \"검색어\", \"offset\": 0, \"limit\": 10, \"type\": \"all\"}"
                                         )
                                     }
                     )
@@ -49,16 +49,16 @@ public class SearchAPI {
         int offset = (int) requestMap.get("offset");
         int limit = (int) requestMap.get("limit");
         String type = (String) requestMap.get("type");
-        Long subject_seq =  Long.parseLong(requestMap.get("subject_seq").toString());
+        // Long subject_seq =  Long.parseLong(requestMap.get("subject_seq").toString());
 
         JSONObject result = new JSONObject();
         result.put("keyword", keyword);
         result.put("offset", offset);
         result.put("limit", limit);
         result.put("type", type);
-        result.put("subject_seq", subject_seq);
+        //result.put("subject_seq", subject_seq);
         try{
-            result = searchService.search(keyword, offset, limit, type, subject_seq);
+            result = searchService.search(keyword, offset, limit, type);
             return ResponseEntity.ok().body(result);
         } catch (Exception e) {
             e.printStackTrace();

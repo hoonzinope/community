@@ -67,7 +67,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         session.setAttribute("user_seq", userDetails.getUserSeq());
         session.setAttribute("user_nickname", userNickname);
-
         if (userDetails.getTempPassword()) {
             referer = "/changePassword";
         }

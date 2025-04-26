@@ -103,4 +103,44 @@
             c.reply_user_seq
         FROM comment c
     </select>
+
+    <select id="selectUserCommentsPaging" parameterType="map"
+            resultType="home.example.board.domain.Comment">
+        select
+            comment_seq,
+            post_seq,
+            content,
+            insert_ts,
+            delete_ts,
+            delete_flag,
+            parent_comment_seq,
+            user_seq,
+            reply_user_seq
+        from comment
+        where
+            user_seq = #{user_seq}
+          and delete_flag = 0
+        order by
+            insert_ts desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="selectUserCommentsCount" parameterType="long"
+            resultType="int">
+        select
+            count(*) as comment_count
+        from comment
+        where
+            user_seq = #{user_seq}
+        and delete_flag = 0
+    </select>
+
+    <update id="removeCommentAllByUser" parameterType="long">
+        update comment
+            set
+                delete_flag = 1,
+                delete_ts = now()
+        where
+            user_seq = #{user_seq}
+    </update>
 </mapper>

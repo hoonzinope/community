@@ -72,8 +72,9 @@
     <!-- 사이드 메뉴 슬라이드 영역 -->
     <div id="slideSidebar" class="sidebar-drawer d-none">
       <div class="p-4">
-        <h5><a href="/" class="text-decoration-none">🏠 Home</a></h5>
-        <ul class="list-unstyled mt-3" id="slideMenu">
+        <h6 class="mb-3"><a href="/" class="text-decoration-none">Home</a></h6>
+        <ul class="list-unstyled" id="slideMenu">
+
           <li style="display: none">
             <a class="text-decoration-none d-block" data-bs-toggle="collapse" href="#itSub" role="button" aria-expanded="false" aria-controls="itSub">
               IT <i class="ri-arrow-down-s-line float-end"></i>
@@ -95,6 +96,7 @@
               <li><a href="#" class="text-decoration-none small">액션</a></li>
             </ul>
           </li>
+
         </ul>
       </div>
     </div>
@@ -111,8 +113,8 @@
         <span th:text="${session.user_nickname}">사용자</span>님
       </a>
       <ul class="dropdown-menu dropdown-menu-end">
-        <li><a class="dropdown-item" href="/member/me">내 정보</a></li>
-        <li><a class="dropdown-item" href="/member/posts">내 게시글</a></li>
+        <li><a class="dropdown-item" th:href="@{/member/closeProfile}">내 정보</a></li>
+        <li><a class="dropdown-item" th:href="@{/member/openProfile?user_nickname={user_nickname}(user_nickname=${session.user_nickname})}">내 게시글</a></li>
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item text-danger" href="/auth/logout">로그아웃</a></li>
       </ul>

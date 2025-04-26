@@ -134,4 +134,8 @@ public class PostDAO {
         List<PostPagingDTO> postList = postMapper.getPostList(postSeqList);
         return postList;
     }
+
+    public void removePostAllByUser(long user_seq) {
+        postMapper.deletePostAllByUser(user_seq);
+    }
 }

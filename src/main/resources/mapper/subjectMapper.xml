@@ -5,14 +5,30 @@
 
 <!-- SQL Mapping -->
 <mapper namespace="home.example.board.repository.SubjectMapper">
+    <select id="getSubjectListUseN" resultType="home.example.board.domain.Subject">
+        SELECT
+            subject_seq,
+            subject_name,
+            insert_ts,
+            parent_subject_seq,
+            use_yn
+        FROM
+            subject
+        WHERE
+            use_yn = 'N'
+    </select>
+
     <select id="getSubjectList" resultType="home.example.board.domain.Subject">
         SELECT
             subject_seq,
             subject_name,
             insert_ts,
-            parent_subject_seq
+            parent_subject_seq,
+            use_yn
         FROM
             subject
+        where
+            use_yn = 'Y'
     </select>
 
     <select id="getSubject"
@@ -22,11 +38,14 @@
             subject_seq,
             subject_name,
             insert_ts,
-            parent_subject_seq
+            parent_subject_seq,
+            use_yn
         FROM
             subject
         WHERE
             subject_seq = #{subject_seq}
+        and
+            use_yn = 'Y'
     </select>
 
     <select id="getSiblingSubjectList" parameterType="long" resultType="home.example.board.domain.Subject">
@@ -34,15 +53,19 @@
             subject_seq,
             subject_name,
             insert_ts,
-            parent_subject_seq
+            parent_subject_seq,
+            use_yn
         FROM
             subject
         WHERE
+            use_yn = 'Y'
+            and (
             subject_seq = #{subject_seq}
-            or
+                or
             subject_seq in (SELECT subject_seq FROM subject where parent_subject_seq = #{subject_seq})
-            or
+                or
             parent_subject_seq = (SELECT parent_subject_seq FROM subject WHERE subject_seq = #{subject_seq})
+            )
     </select>
 
     <select id="getParentsSubjectList" resultType="home.example.board.domain.Subject">
@@ -50,11 +73,13 @@
             subject_seq,
             subject_name,
             insert_ts,
-            parent_subject_seq
+            parent_subject_seq,
+            use_yn
         FROM
             subject
         WHERE
-            parent_subject_seq is null or parent_subject_seq = 0
+            use_yn = 'Y' and
+            (parent_subject_seq is null or parent_subject_seq = 0)
     </select>
 
     <select id="getChildSubjectList" parameterType="long" resultType="home.example.board.domain.Subject">
@@ -62,10 +87,12 @@
             subject_seq,
             subject_name,
             insert_ts,
-            parent_subject_seq
+            parent_subject_seq,
+            use_yn
         FROM
             subject
         WHERE
+            use_yn = 'Y' and
             parent_subject_seq = #{parent_subject_seq}
     </select>
 
@@ -74,10 +101,12 @@
             subject_seq,
             subject_name,
             insert_ts,
-            parent_subject_seq
+            parent_subject_seq,
+            use_yn
         FROM
             subject
         WHERE
-            subject_seq = #{subject_seq} or parent_subject_seq = #{subject_seq}
+            use_yn = 'Y' and
+            (subject_seq = #{subject_seq} or parent_subject_seq = #{subject_seq})
     </select>
 </mapper>
