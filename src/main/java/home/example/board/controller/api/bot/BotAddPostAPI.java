@@ -6,6 +6,7 @@ import home.example.board.service.post.AddPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.json.simple.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -67,9 +68,8 @@ public class BotAddPostAPI {
             response.put("success", "true");
             return ResponseEntity.ok(response);
         }catch (Exception e) {
-
-            response.put("success", "false");
-            return ResponseEntity.ok(response);
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
