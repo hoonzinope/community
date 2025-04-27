@@ -109,4 +109,18 @@
             use_yn = 'Y' and
             (subject_seq = #{subject_seq} or parent_subject_seq = #{subject_seq})
     </select>
+
+    <select id="getSubjectByName" parameterType="string" resultType="home.example.board.domain.Subject">
+        SELECT
+            subject_seq,
+            subject_name,
+            insert_ts,
+            parent_subject_seq,
+            use_yn
+        FROM
+            subject
+        WHERE
+            use_yn = 'Y' and
+            subject_name = #{subject_name}
+    </select>
 </mapper>

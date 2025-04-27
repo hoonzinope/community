@@ -60,4 +60,8 @@ public class SubjectDAO {
     public List<Subject> getSubjectListUseN() {
         return subjectMapper.getSubjectListUseN();
     }
+
+    public Subject getSubjectByName(String subject_name) {
+        return subjectMapper.getSubjectByName(subject_name);
+    }
 }

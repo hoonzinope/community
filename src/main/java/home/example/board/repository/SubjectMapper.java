@@ -13,4 +13,5 @@ public interface SubjectMapper {
     List<Subject> getSubjectList();
     List<Subject> getParentsSubjectList();
     List<Subject> getChildSubjectList(long parent_seq);
+    Subject getSubjectByName(String subject_name);
 }
