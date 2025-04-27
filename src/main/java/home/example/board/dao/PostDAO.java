@@ -100,7 +100,7 @@ public class PostDAO {
         return postList;
     }
 
-    public Long addPost(String title, String content, long user_seq, int subject_seq) {
+    public Long addPost(String title, String content, long user_seq, long subject_seq) {
         Post post = Post.builder()
                 .title(title)
                 .content(content)

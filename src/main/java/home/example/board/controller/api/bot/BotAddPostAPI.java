@@ -1,29 +1,30 @@
-package home.example.board.controller.api.post;
+package home.example.board.controller.api.bot;
 
+import home.example.board.DTO.CustomUserDetail;
+import home.example.board.DTO.botLoginDTO.BotAddPostDTO;
 import home.example.board.service.post.AddPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.json.simple.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 @RestController
-public class AddPostAPI {
+public class BotAddPostAPI {
 
     private final AddPostService addPostService;
 
-    @Autowired
-    public AddPostAPI(AddPostService addPostService) {
+    public BotAddPostAPI(AddPostService addPostService) {
         this.addPostService = addPostService;
     }
 
-    // 게시물 등록
-    @Operation(summary = "게시글 추가", description = "게시글을 추가합니다.")
+    // bot - 게시물 등록
+    @Operation(summary = "bot 게시글 추가", description = "bot 게시글 추가 api")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode="200",
@@ -40,7 +41,7 @@ public class AddPostAPI {
                             )
                     })
     })
-    @PostMapping("/api/post")
+    @PostMapping("/api/bot/post")
     public ResponseEntity<JSONObject> addPost(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "게시글 정보",
@@ -53,22 +54,31 @@ public class AddPostAPI {
                             examples = {
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "게시글 정보",
-                                            value = "{\"title\" : \"title\", \"content\" : \"content\", \"user_seq\" : 1, \"subject_seq\" : 1}"
+                                            value = "{\"title\" : \"title\", \"content\" : \"content\", \"subject\" : \"subject_name\"}"
                                     )
                             }
                     )
             )
-            @RequestBody Map<String, Object> requestMap
-    ) {
-        String title = (String) requestMap.get("title");
-        String content = (String) requestMap.get("content");
-        long user_seq = Long.parseLong(requestMap.get("user_seq").toString());
-        long subject_seq = Long.parseLong(requestMap.get("subject_seq").toString());
+            @RequestBody BotAddPostDTO botAddPostDTO) {
+        JSONObject response = new JSONObject();
+        try {
+            Long user_seq = this.getUserSeq();
+            addPostService.addPostByBot(botAddPostDTO, user_seq);
 
-        addPostService.addPost(title, content, user_seq, subject_seq);
+            response.put("success", "true");
+            return ResponseEntity.ok(response);
+        }catch (Exception e) {
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("success", "true");
-        return ResponseEntity.ok().body(jsonObject);
+    private Long getUserSeq() throws IllegalStateException{
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("User is not authenticated");
+        }
+        CustomUserDetail userDetail = (CustomUserDetail) authentication.getPrincipal();
+        return userDetail.getUserSeq();
     }
 }

@@ -1,5 +1,6 @@
 package home.example.board.dao;
 
+import home.example.board.DTO.BotUserDTO;
 import home.example.board.domain.User;
 import home.example.board.repository.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,10 @@ public class UserDAO {
     @Autowired
     public UserDAO(UserMapper userMapper) {
         this.userMapper = userMapper;
+    }
+
+    public BotUserDTO getBotUserByName(String user_name) {
+        return userMapper.getBotUserByName(user_name);
     }
 
     public boolean isUserNameDuplicate(String user_name) {
