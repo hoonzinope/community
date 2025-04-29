@@ -18,4 +18,5 @@ public class PostPagingDTO {
     private long subject_seq;
     private int like_count;
     private int dislike_count;
+    private int comment_count;
 }

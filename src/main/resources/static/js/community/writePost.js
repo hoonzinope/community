@@ -148,7 +148,7 @@
                         }
                     }
                     // 클릭된 주제의 게시물 요청
-                    write.redirectPostsBySubject(subject_seq);
+                    // write.redirectPostsBySubject(subject_seq);
                 });
             });
 

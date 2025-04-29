@@ -100,7 +100,7 @@
                         }
                     }
                     // 클릭된 주제의 게시물 요청
-                    postObj.redirectPostsBySubject(subject_seq);
+                    // postObj.redirectPostsBySubject(subject_seq);
                 });
             });
         },
@@ -178,7 +178,7 @@
                         }
                     }
                     // 클릭된 주제의 게시물 요청
-                    postObj.redirectPostsBySubject(subject_seq);
+                    // postObj.redirectPostsBySubject(subject_seq);
                 });
             });
 
