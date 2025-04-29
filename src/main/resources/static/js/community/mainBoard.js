@@ -116,7 +116,7 @@
                         }
                     }
                     // 클릭된 주제의 게시물 요청
-                    board.requestPostsBySubject(subject_seq);
+                    // board.requestPostsBySubject(subject_seq);
                 });
             });
         },
@@ -202,7 +202,7 @@
                         }
                     }
                     // 클릭된 주제의 게시물 요청
-                    board.requestPostsBySubject(subject_seq);
+                    // board.requestPostsBySubject(subject_seq);
                 });
             });
 
