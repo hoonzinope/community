@@ -377,14 +377,29 @@
                     <p class="text-truncate">
                         <div>${post.content} </div>
                     </p>
-                    <a href="/post/${post.post_seq}" class="text-decoration-none text-primary small">댓글 보기</a>
+                    <a class="text-decoration-none text-primary small">댓글 보기 (${post.comment_count}개)</a>
                 `;
 
                 postCardDiv.appendChild(voteSection);
                 postCardDiv.appendChild(postContentDiv);
 
+                // 게시물 클릭 시 상세보기 요청
+                postCardDiv.addEventListener('click', function() {
+                    postObj.redirectPost(post.post_seq);
+                });
+
                 postsDiv.appendChild(postCardDiv);
             });
+        },
+        // 게시물 상세보기 요청
+        redirectPost : function(post_seq) {
+            localStorage.getItem("seenPostList") == null ? localStorage.setItem("seenPostList", JSON.stringify([])) : null;
+            let seenPostList = JSON.parse(localStorage.getItem("seenPostList"));
+            if(!seenPostList.includes(post_seq)) {
+                seenPostList.push(post_seq);
+                localStorage.setItem("seenPostList", JSON.stringify(seenPostList));
+            }
+            window.location.href = `/post/${post_seq}`;
         },
         // 더보기 버튼 생성 및 이벤트 등록
         appendMoreButton : function(offset, limit) {

@@ -128,6 +128,7 @@ public class ReadPostService {
         postJson.put("category", post.getCategory());
         postJson.put("like_count", post.getLike_count());
         postJson.put("dislike_count", post.getDislike_count());
+        postJson.put("comment_count", post.getComment_count());
 
         return postJson;
     }

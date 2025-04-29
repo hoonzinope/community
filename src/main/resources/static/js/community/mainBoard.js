@@ -23,6 +23,7 @@
         limit: 10,
         isLoading : false, // 게시물 로딩 중일 때 제어
         noMorePosts : false, // 더 이상 게시물이 없을 때 제어
+        isFirstRequest : true, // 첫 로딩 시 요청 여부
         subject_seq : 0,
         init: function(subject_seq) {
             board.requestSubjects();
@@ -130,6 +131,7 @@
             board.offset = 0; // 오프셋 초기화
             board.noMorePosts = false; // 더 이상 게시물이 없음을 초기화
             board.isLoading = false; // 로딩 상태 초기화
+            board.isFirstRequest = true;
             board.subject_seq = subject_seq;
             board.requestPosts(subject_seq);
         },
@@ -275,6 +277,14 @@
                     return response.json();
                 })
                 .then(data => {
+                    if(board.isFirstRequest && data.postList.length == 0){
+                        // empty mainfeed 처리
+                        board.appendEmptyPosts();
+                    }
+                    else{
+                        board.isFirstRequest = false;
+                    }
+
                     // API 응답 구조에 따라 data 내부의 게시물 배열 처리
                     // 예를 들어, data.posts 배열에 게시물이 담겨있다고 가정
                     if (data.postList && data.postList.length > 0) {
@@ -292,7 +302,7 @@
                 });
         },
         appendPosts : function(posts) {
-            console.log(posts);
+            // console.log(posts);
             const mainFeed = document.getElementById('mainFeed');
             posts.forEach(post => {
                 const postElement = document.createElement('div');
@@ -324,7 +334,7 @@
                     <p class="text-truncate">
                         <div>${post.content} </div>
                     </p>
-                    <a class="text-decoration-none text-primary small">댓글 보기</a>
+                    <a class="text-decoration-none text-primary small">댓글 보기 (${post.comment_count}개)</a>
                 `
                 postElement.appendChild(postContent);
 
@@ -335,6 +345,32 @@
                     board.redirectPost(post.post_seq);
                 });
             });
+        },
+        appendEmptyPosts : function() {
+
+            const mainFeed = document.getElementById('mainFeed');
+            mainFeed.innerHTML = ''; // 게시물 초기화
+            const postElement = document.createElement('div');
+            postElement.className = 'post-card';
+
+            let insertDate = new Date();
+            let formattedDate = utils.timeSince(insertDate);
+            const postContent = document.createElement('div');
+            postContent.className = 'post-content empty-message';
+            postContent.innerHTML = `
+                    <h5>게시물이 없습니다ㅠㅠ</h5>
+                    <div class="post-meta mb-1">
+                        <span>system</span> ·
+                        <span>${formattedDate}</span> ·
+                        <span class="badge bg-light text-dark">system</span>
+                    </div>
+                    <p class="text-truncate">
+                        <div>게시물을 작성해보세요!</div>
+                    </p>
+                `
+            postElement.appendChild(postContent);
+
+            mainFeed.appendChild(postElement);
         },
         // 게시물 상세보기 요청
         redirectPost : function(post_seq) {
