@@ -302,7 +302,6 @@
                 });
         },
         appendPosts : function(posts) {
-            // console.log(posts);
             const mainFeed = document.getElementById('mainFeed');
             posts.forEach(post => {
                 const postElement = document.createElement('div');
