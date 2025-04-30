@@ -1,7 +1,7 @@
 package home.example.board.controller.api.bot;
 
-import home.example.board.DTO.botLoginDTO.BotLoginRequestDTO;
-import home.example.board.DTO.botLoginDTO.BotLoginResponseDTO;
+import home.example.board.DTO.botApiDTO.BotLoginRequestDTO;
+import home.example.board.DTO.botApiDTO.BotLoginResponseDTO;
 import home.example.board.service.bot.BotLoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
