@@ -1,4 +1,4 @@
-package home.example.board.DTO.botLoginDTO;
+package home.example.board.DTO.botApiDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

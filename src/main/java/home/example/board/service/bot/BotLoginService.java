@@ -1,7 +1,7 @@
 package home.example.board.service.bot;
 
 import home.example.board.DTO.BotUserDTO;
-import home.example.board.DTO.botLoginDTO.BotLoginRequestDTO;
+import home.example.board.DTO.botApiDTO.BotLoginRequestDTO;
 import home.example.board.dao.UserDAO;
 import home.example.board.utils.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;

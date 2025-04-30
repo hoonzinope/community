@@ -1,7 +1,8 @@
 package home.example.board.controller.api.bot;
 
 import home.example.board.DTO.CustomUserDetail;
-import home.example.board.DTO.botLoginDTO.BotAddPostDTO;
+import home.example.board.DTO.botApiDTO.BotAddPostDTO;
+import home.example.board.service.bot.BotAddPostService;
 import home.example.board.service.post.AddPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -17,10 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class BotAddPostAPI {
 
-    private final AddPostService addPostService;
+    private final BotAddPostService botAddPostService;
 
-    public BotAddPostAPI(AddPostService addPostService) {
-        this.addPostService = addPostService;
+    public BotAddPostAPI(BotAddPostService botAddPostService) {
+        this.botAddPostService = botAddPostService;
     }
 
     // bot - 게시물 등록
@@ -63,7 +64,7 @@ public class BotAddPostAPI {
         JSONObject response = new JSONObject();
         try {
             Long user_seq = this.getUserSeq();
-            addPostService.addPostByBot(botAddPostDTO, user_seq);
+            botAddPostService.addPostByBot(botAddPostDTO, user_seq);
 
             response.put("success", "true");
             return ResponseEntity.ok(response);
