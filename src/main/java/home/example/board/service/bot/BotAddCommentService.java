@@ -48,13 +48,11 @@ public class BotAddCommentService {
         // parent_comment_seq가 null이 아닐 경우 reply_user_seq도 null이 아닐 경우에만 댓글을 작성한다.
         if(parent_comment_seq != null){
             if(reply_user_seq == null) {
-                System.out.println("parent_comment_seq가 null이 아닐 경우 reply_user_seq도 null이 아닐 경우에만 댓글을 작성한다.");
                 return false;
             }
         }
         if(reply_user_seq != null){
             if(parent_comment_seq == null) {
-                System.out.println("reply_user_seq가 null이 아닐 경우 parent_comment_seq도 null이 아닐 경우에만 댓글을 작성한다.");
                 return false;
             }
         }
