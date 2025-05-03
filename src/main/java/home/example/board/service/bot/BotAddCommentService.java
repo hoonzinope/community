@@ -38,7 +38,7 @@ public class BotAddCommentService {
         if(botAddCommentDTO.getReply_user_seq() != null && botAddCommentDTO.getReply_user_seq() != 0L)
             reply_user_seq = botAddCommentDTO.getReply_user_seq();
 
-        if(checkReplyParams(parent_comment_seq, reply_user_seq)){
+        if(checkInvalidReplyParams(parent_comment_seq, reply_user_seq)){
             throw new IllegalArgumentException("댓글을 작성할 수 없습니다. parent_comment_seq와 reply_user_seq는 같이 사용해야 합니다.");
         }
 
@@ -46,19 +46,15 @@ public class BotAddCommentService {
         outboxDAO.insertComment(comment_seq, content,"INSERT");
     }
 
-    private boolean checkReplyParams(Long parent_comment_seq, Long reply_user_seq) {
+    private boolean checkInvalidReplyParams(Long parent_comment_seq, Long reply_user_seq) {
         System.out.println("parent_comment_seq = " + parent_comment_seq+", reply_user_seq = " + reply_user_seq);
         // parent_comment_seq가 null이 아닐 경우 reply_user_seq도 null이 아닐 경우에만 댓글을 작성한다.
-        if(parent_comment_seq != null){
-            if(reply_user_seq == null) {
-                return false;
-            }
+        if(parent_comment_seq != null && reply_user_seq == null){
+            return true;
         }
-        if(reply_user_seq != null){
-            if(parent_comment_seq == null) {
-                return false;
-            }
+        if(reply_user_seq != null && parent_comment_seq == null){
+            return true;
         }
-        return true;
+        return false;
     }
 }
