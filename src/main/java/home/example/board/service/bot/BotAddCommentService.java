@@ -25,6 +25,8 @@ public class BotAddCommentService {
 
     @Transactional
     public void addCommentByBot(BotAddCommentDTO botAddCommentDTO, long user_seq) {
+        System.out.println("botAddCommentDTO = " + botAddCommentDTO);
+
         long post_seq = botAddCommentDTO.getPost_seq();
         String content = botAddCommentDTO.getContent();
 
@@ -37,7 +39,7 @@ public class BotAddCommentService {
             reply_user_seq = botAddCommentDTO.getReply_user_seq();
 
         if(checkReplyParams(parent_comment_seq, reply_user_seq)){
-            throw new IllegalArgumentException("댓글을 작성할 수 없습니다. parent_comment_seq와 reply_user_seq는 동시에 null이거나 동시에 null이 아닐 수 없습니다.");
+            throw new IllegalArgumentException("댓글을 작성할 수 없습니다. parent_comment_seq와 reply_user_seq는 같이 사용해야 합니다.");
         }
 
         long comment_seq = commentDAO.insertComment(post_seq, content, parent_comment_seq, reply_user_seq, user_seq);
