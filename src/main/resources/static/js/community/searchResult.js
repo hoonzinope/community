@@ -396,6 +396,11 @@
             localStorage.getItem("seenPostList") == null ? localStorage.setItem("seenPostList", JSON.stringify([])) : null;
             let seenPostList = JSON.parse(localStorage.getItem("seenPostList"));
             if(!seenPostList.includes(post_seq)) {
+                if(seenPostList.length >= 5) {
+                    while(seenPostList.length >= 5) {
+                        seenPostList.shift(); // 가장 오래된 게시물 제거
+                    }
+                }
                 seenPostList.push(post_seq);
                 localStorage.setItem("seenPostList", JSON.stringify(seenPostList));
             }
