@@ -289,7 +289,7 @@
         // seenList 처리
         appendSeenList : function(postList) {
             const seenPost = document.getElementById('seenPost');
-            postList.forEach(post => {
+            postList.reverse().forEach(post => {
                 const li = document.createElement('li');
                 const a = document.createElement('a');
                 a.className = 'text-decoration-none mb-3';
