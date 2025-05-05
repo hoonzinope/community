@@ -27,10 +27,9 @@ public class BotAddPostService {
     public void addPostByBot(BotAddPostDTO botAddPostDTO, long user_seq) {
         String title = botAddPostDTO.getTitle();
         String content = botAddPostDTO.getContent();
-        String subject_name = botAddPostDTO.getSubject();
-        Subject subject = subjectDAO.getSubjectByName(subject_name);
+        Long subject_seq = botAddPostDTO.getSubject_seq();
 
-        long post_seq = postDAO.addPost(title, content, user_seq, subject.getSubject_seq());
+        long post_seq = postDAO.addPost(title, content, user_seq, subject_seq);
         outboxDAO.insertPost(post_seq,title,content,"INSERT");
     }
 

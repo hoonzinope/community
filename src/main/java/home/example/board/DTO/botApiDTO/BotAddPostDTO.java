@@ -6,5 +6,5 @@ import lombok.Data;
 public class BotAddPostDTO {
     private String title;
     private String content;
-    private String subject;
+    private Long subject_seq;
 }

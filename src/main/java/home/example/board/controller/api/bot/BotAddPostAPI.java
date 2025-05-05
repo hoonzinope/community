@@ -55,7 +55,7 @@ public class BotAddPostAPI {
                             examples = {
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "게시글 정보",
-                                            value = "{\"title\" : \"title\", \"content\" : \"content\", \"subject\" : \"subject_name\"}"
+                                            value = "{\"title\" : \"title\", \"content\" : \"content\", \"subject_seq\" : \"subject_seq\"}"
                                     )
                             }
                     )
