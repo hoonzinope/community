@@ -29,7 +29,7 @@
                 });
         },
         appendSubject : function(subjectList) {
-            console.log(subjectList);
+            //console.log(subjectList);
             $('#subject').empty();
             $('#subject').append('<option value="">주제를 선택하세요</option>');
             subjectList.forEach(subject => {
@@ -152,7 +152,7 @@
                     subject_seq: subject_seq,
                     user_seq: user_seq
                 }
-                console.log(data);
+                //console.log(data);
 
                 fetch('/api/post', {
                     method: 'POST',
@@ -170,7 +170,7 @@
                         }
                     });
                 }).catch(function(err) {
-                    console.log(err);
+                    //console.log(err);
                     alert('게시글 작성 실패' + err);
                 });
             });

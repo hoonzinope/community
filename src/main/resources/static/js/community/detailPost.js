@@ -134,7 +134,7 @@
         },
         // 불러온 게시물 main feed에 표시
         appendPost : function(post) {
-            console.log(post);
+            //console.log(post);
             const mainFeed = document.getElementById('mainFeed');
 
             const postElement = document.createElement('div');
@@ -204,7 +204,7 @@
             // localStorage에서 seenPost 가져오기
             let seenPostList = JSON.parse(localStorage.getItem("seenPostList"));
             if (seenPostList == null || seenPostList.length == 0) {
-                console.log('seenPost가 없습니다.');
+                //console.log('seenPost가 없습니다.');
                 return;
             }
             // seenPost를 서버에 전송
@@ -264,7 +264,7 @@
                     location.href = '/board';
                 });
             }).catch(function(err) {
-                console.log(err);
+                //console.log(err);
             });
         },
 
@@ -431,7 +431,7 @@
             });
             if (response.ok) {
                 const result = await response.json();
-                console.log(result);
+                //console.log(result);
                 // 댓글 작성 성공 시 댓글 목록 갱신
                 commentObj.requestComment(post_seq);
             } else {
@@ -478,7 +478,7 @@
             h5.setAttribute('id', 'comment_cnt');
             h5.innerHTML = "댓글 "+comment_count+"개";
             document.getElementById('commentList').appendChild(h5);
-            console.log(commentList);
+            //console.log(commentList);
             let commentElement = document.createElement('div');
             commentList.forEach(comment => {
                 let commentContent = comment.content;
@@ -783,7 +783,7 @@
                     alert('댓글 내용을 입력하세요.');
                     return;
                 }
-                console.log(user_seq, updatedContent, comment.comment_seq);
+                //console.log(user_seq, updatedContent, comment.comment_seq);
                 // 댓글 수정 API 호출
                 //commentObj.updateComment(comment.comment_seq, updatedContent);
                 commentObj.update_comment(user_seq, updatedContent, comment.comment_seq);
@@ -817,7 +817,7 @@
             delete_button.addEventListener('click', function() {
                 let check = confirm("댓글을 삭제하시겠습니까?");
                 if(!check) return;
-                console.log(user_seq, comment.comment_seq);
+                //console.log(user_seq, comment.comment_seq);
                 // 댓글 삭제 API 호출
                 //commentObj.deleteComment(comment.comment_seq);
                 commentObj.delete_comment(user_seq, comment.comment_seq);

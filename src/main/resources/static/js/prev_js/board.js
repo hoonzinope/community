@@ -149,7 +149,7 @@
                     + "&searchType=" + searchType
                     + "&offset=0&limit=10";
 
-                console.log("clicked "+ queryString);
+                //console.log("clicked "+ queryString);
                 if (searchInput) {
                     window.location.href = '/search' + queryString;
                 }

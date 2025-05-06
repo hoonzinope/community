@@ -30,7 +30,7 @@
                 });
         },
         appendSubject : function(subjectList, subject_seq) {
-            console.log(subjectList);
+            //console.log(subjectList);
             $('#subject').empty();
             $('#subject').append('<option value="">주제를 선택하세요</option>');
             subjectList.forEach(subject => {
@@ -68,12 +68,12 @@
             })
                 .then(function(response) {
                     response.json().then(function(data) {
-                        console.log(data);
+                        //console.log(data);
                         modify.settingData(data);
                     });
                 })
                 .catch(function(err) {
-                    console.log(err);
+                    //console.log(err);
                 });
         },
         // 불러온 게시물 데이터를 화면에 설정
@@ -170,7 +170,7 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log("이미지 삭제 응답:", data);
+                    //console.log("이미지 삭제 응답:", data);
                 })
                 .catch(error => {
                     console.error("이미지 삭제 실패:", error);
@@ -202,7 +202,7 @@
                     subject_seq: subject_seq,
                     user_seq: user_seq
                 }
-                console.log(data);
+                //console.log(data);
 
                 let endpoint = `/api/post/${post_seq}`;
                 fetch(endpoint, {
@@ -217,7 +217,7 @@
                         location.href = `/post/${post_seq}`;
                     });
                 }).catch(function(err) {
-                    console.log(err);
+                    //console.log(err);
                     alert('게시글 작성 실패' + err);
                 });
             });

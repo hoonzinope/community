@@ -262,7 +262,7 @@
             // localStorage에서 seenPost 가져오기
             let seenPostList = JSON.parse(localStorage.getItem("seenPostList"));
             if (seenPostList == null || seenPostList.length == 0) {
-                console.log('seenPost가 없습니다.');
+                //console.log('seenPost가 없습니다.');
                 return;
             }
             // seenPost를 서버에 전송
@@ -285,7 +285,7 @@
                 })
                 .then(data => {
                     // seenList 처리
-                    //console.log(data);
+                    ////console.log(data);
                     board.appendSeenList(data.postList);
                 })
                 .catch(error => {

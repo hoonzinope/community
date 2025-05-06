@@ -86,7 +86,7 @@
     const userPost = {
         user_seq : user_seq,
         init : function() {
-            console.log(this.user_seq);
+            //console.log(this.user_seq);
             if(this.user_seq == null) {
                 alert("잘못된 접근입니다.");
                 window.location.href = '/';

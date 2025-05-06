@@ -15,12 +15,12 @@
         })
             .then(function(response) {
                 response.json().then(function(data) {
-                    console.log(data);
+                    //console.log(data);
                     settingData(data);
                 });
             })
             .catch(function(err) {
-                console.log(err);
+                //console.log(err);
             });
     }
 
@@ -79,7 +79,7 @@
         tempDiv.find('img').each(function() {
             currentImages.push($(this).attr('src'));
         });
-        console.log(currentImages);
+        //console.log(currentImages);
     }
 
     function uploadSummernoteImageFile(file, editor) {
@@ -117,7 +117,7 @@
         })
             .then(response => response.json())
             .then(data => {
-                console.log("이미지 삭제 응답:", data);
+                //console.log("이미지 삭제 응답:", data);
             })
             .catch(error => {
                 console.error("이미지 삭제 실패:", error);
@@ -139,7 +139,7 @@
                 });
             })
             .catch(function(err) {
-                console.log(err);
+                //console.log(err);
             });
     }
 
@@ -176,7 +176,7 @@
                     location.href = '/';
                 });
             }).catch(function(err) {
-                console.log(err);
+                //console.log(err);
                 alert('게시글 작성 실패' + err);
             });
         })

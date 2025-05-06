@@ -5,8 +5,8 @@
 
     const searchPage = {
         init: function() {
-            console.log('data loaded');
-            console.log(data);
+            //console.log('data loaded');
+            //console.log(data);
             searchPage.search();
             searchPage.render(data);
         },
@@ -23,7 +23,7 @@
                     + "&searchType=" + searchType
                     + "&offset=0&limit=10";
 
-                console.log("clicked "+ queryString);
+                //console.log("clicked "+ queryString);
                 if (searchInput) {
                     window.location.href = '/search' + queryString;
                 }
@@ -101,7 +101,7 @@
             let totalPages = Math.ceil(total / limit);
             let offset = data.offset;
             let currentPage = Math.floor(offset / limit) + 1;
-            console.log("currentPage: " + currentPage);
+            //console.log("currentPage: " + currentPage);
 
             $("#pagination").twbsPagination({
                 first : null,
@@ -120,7 +120,7 @@
                         + "&offset=" + (page - 1) * limit
                         + "&limit=" + limit;
 
-                    console.log("clicked "+ queryString);
+                    //console.log("clicked "+ queryString);
                     window.location.href = '/search' + queryString;
                 }
             });

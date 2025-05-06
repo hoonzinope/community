@@ -1,6 +1,6 @@
 (function() {
     document.addEventListener("DOMContentLoaded",function() {
-        console.log('Hello World');
+        //console.log('Hello World');
         loadingSummerNote();
         callSubjects();
         writePost();
@@ -73,7 +73,7 @@
         })
             .then(response => response.json())
             .then(data => {
-                console.log("이미지 삭제 응답:", data);
+                //console.log("이미지 삭제 응답:", data);
             })
             .catch(error => {
                 console.error("이미지 삭제 실패:", error);
@@ -99,7 +99,7 @@
                 return response.json();
             })
             .then(data => {
-                // console.log(data);
+                // //console.log(data);
                 drawSubject(data);
             })
             .catch(error => {
@@ -142,7 +142,7 @@
                     }
                 });
             }).catch(function(err) {
-                console.log(err);
+                //console.log(err);
                 alert('게시글 작성 실패' + err);
             });
         })
