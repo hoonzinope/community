@@ -38,16 +38,9 @@ public class UserPageController {
         return "user/closeProfile";
     }
 
-    @GetMapping("/profile")
-    public String profile(HttpServletRequest request, Model model) {
-        long user_seq = Long.parseLong(request.getSession().getAttribute("user_seq").toString());
-        readUserService.getUserInfo(model, user_seq);
-        return "profile";
-    }
-
     @GetMapping("/changePassword")
     public String changePassword() {
-        return "changePassword";
+        return "user/changePassword";
     }
 
 
