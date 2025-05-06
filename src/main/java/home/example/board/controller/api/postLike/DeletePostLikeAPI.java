@@ -3,6 +3,7 @@ package home.example.board.controller.api.postLike;
 import home.example.board.service.PostLikeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 public class DeletePostLikeAPI {
 
@@ -71,6 +73,7 @@ public class DeletePostLikeAPI {
                     )
             )
             @RequestBody JSONObject data) {
+        log.info("게시글 좋아요/싫어요 삭제 API 호출 : {}", data.toJSONString());
         long post_seq = Long.parseLong(data.get("post_seq").toString());
         long user_seq = Long.parseLong(data.get("user_seq").toString());
 
@@ -80,7 +83,7 @@ public class DeletePostLikeAPI {
             result.put("result", "success");
             return ResponseEntity.ok(result);
         }catch (Exception e) {
-            e.printStackTrace();
+            log.error("게시글 좋아요/싫어요 삭제 실패 : {}", e.getMessage());
             JSONObject result = new JSONObject();
             result.put("result", "fail");
             result.put("message", e.getMessage());

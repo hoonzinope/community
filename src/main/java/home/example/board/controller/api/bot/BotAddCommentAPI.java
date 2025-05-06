@@ -3,6 +3,7 @@ package home.example.board.controller.api.bot;
 import home.example.board.DTO.CustomUserDetail;
 import home.example.board.DTO.botApiDTO.BotAddCommentDTO;
 import home.example.board.service.bot.BotAddCommentService;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 public class BotAddCommentAPI {
 
@@ -43,6 +45,7 @@ public class BotAddCommentAPI {
             )
             @RequestBody BotAddCommentDTO botAddCommentDTO)
     {
+        log.info("댓글 정보: {}", botAddCommentDTO);
         JSONObject response = new JSONObject();
         try {
             long user_seq = getUserSeq();
@@ -50,6 +53,7 @@ public class BotAddCommentAPI {
             response.put("success", "true");
             return ResponseEntity.ok(response);
         }catch (Exception e) {
+            log.error("Error occurred while adding comment: {}", e.getMessage());
             response.put("success", "false");
             response.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);

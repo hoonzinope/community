@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
+@Slf4j
 @RestController
 public class ImageAPI {
 
@@ -75,6 +77,7 @@ public class ImageAPI {
                     )
             )
             @RequestParam("image")MultipartFile imageFile) {
+        log.info("ImageAPI - addImage() called");
         // 이미지 추가
         JSONObject response = new JSONObject();
 
@@ -89,6 +92,7 @@ public class ImageAPI {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
+            log.error("ImageAPI - addImage() failed "+e.getMessage());
             response.put("error", "이미지 업로드 중 오류 발생");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -142,11 +146,13 @@ public class ImageAPI {
                     )
             )
             @RequestParam("url") String imageUrl) {
+        log.info("ImageAPI - deleteImage() called");
         // 이미지 삭제
         JSONObject response = new JSONObject();
 
         if(imageUrl == null || imageUrl.trim().isEmpty()){
             response.put("error","유효하지 않은 이미지 URL");
+            log.error("ImageAPI - deleteImage() called with empty url");
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -156,6 +162,7 @@ public class ImageAPI {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
+            log.error("ImageAPI - deleteImage() failed "+e.getMessage());
             response.put("error", "이미지 삭제 중 오류 발생");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }

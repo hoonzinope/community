@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 public class SubjectAPI {
 
@@ -38,6 +40,7 @@ public class SubjectAPI {
             @PathVariable Long subject_seq
     )
     {
+        log.info("getSubjects - subject_seq = {}", subject_seq);
         JSONObject subjectList = subjectService.selectSiblingSubject(subject_seq);
         return ResponseEntity.ok().body(subjectList);
     }
@@ -60,6 +63,7 @@ public class SubjectAPI {
     })
     @GetMapping("/api/subject/majorSubjects")
     public ResponseEntity<JSONObject> getMajorSubjects() {
+        log.info("getMajorSubjects - major_subjects");
         JSONObject subjectList = subjectService.getMajorSubjectList();
         return ResponseEntity.ok().body(subjectList);
     }
@@ -98,6 +102,7 @@ public class SubjectAPI {
             )
             @RequestBody JSONObject subjectId
     ) {
+        log.info("getMinorSubjects - subjectId = {}", subjectId);
         // Extract the subject_seq from the request body
         long subject_seq = Long.parseLong(subjectId.get("major_seq").toString());
         JSONObject subjectList = subjectService.getMinorSubjectList(subject_seq);
@@ -138,6 +143,7 @@ public class SubjectAPI {
             )
             @RequestBody JSONObject subjectId
     ) {
+        log.info("getSubjectName - subjectId = {}", subjectId);
         // Extract the subject_seq from the request body
         long subject_seq = Long.parseLong(subjectId.get("subject_seq").toString());
         JSONObject subjectName = subjectService.getSubTopicAndMainTopic(subject_seq);
@@ -162,6 +168,7 @@ public class SubjectAPI {
     })
     @GetMapping("/api/subjects/all")
     public ResponseEntity<JSONObject> getAllSubject() {
+        log.info("getAllSubject - all subjects");
         JSONObject subjectList = new JSONObject();
         subjectList.put("subjectList", subjectService.getAllSubject());
         return ResponseEntity.ok().body(subjectList);

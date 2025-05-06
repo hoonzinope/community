@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Slf4j
 @RestController
 public class UserDeleteAPI {
 
@@ -58,6 +60,7 @@ public class UserDeleteAPI {
     @DeleteMapping("/member/me")
     public ResponseEntity<JSONObject> deleteUser(
             HttpServletRequest request) {
+        log.info("deleteUser() called");
         JSONObject jsonObject = new JSONObject();
         long user_seq = (long) request.getSession().getAttribute("user_seq");
 
@@ -65,7 +68,7 @@ public class UserDeleteAPI {
             removeUserService.removeUser(user_seq);
             jsonObject.put("success", true);
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            log.error("delete user failed "+e.getMessage());
             jsonObject.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(jsonObject);
         }

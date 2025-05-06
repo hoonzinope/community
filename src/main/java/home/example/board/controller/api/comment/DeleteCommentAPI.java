@@ -4,6 +4,7 @@ import home.example.board.service.comment.RemoveCommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class DeleteCommentAPI {
 
@@ -77,6 +79,7 @@ public class DeleteCommentAPI {
             )
             @RequestBody Map<String, Object> requestBody
     ){
+        log.info("delete comment requestBody: {}", requestBody);
         long user_seq = Long.parseLong(requestBody.get("user_seq").toString());
         JSONObject jsonObject = new JSONObject();
         try{
@@ -84,7 +87,7 @@ public class DeleteCommentAPI {
             jsonObject.put("success", true);
             return ResponseEntity.ok().body(jsonObject);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            log.error("IllegalAccessException: {}", e.getMessage());
             jsonObject.put("message", e.getMessage());
             jsonObject.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(jsonObject);

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class UserJoinAPI {
 
@@ -71,6 +73,7 @@ public class UserJoinAPI {
                             }
                     ))
             @RequestBody Map<String, Object> userInfo) {
+        log.info("회원가입 요청: {}", userInfo);
         JSONObject jsonObject = new JSONObject();
 
         String user_name = (String) userInfo.get("user_name");
@@ -81,7 +84,7 @@ public class UserJoinAPI {
             addUserService.addUser(user_name, user_pw, user_email);
             jsonObject.put("success", true);
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            log.error("회원가입 실패: {}", e.getMessage());
             jsonObject.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(jsonObject);
         }

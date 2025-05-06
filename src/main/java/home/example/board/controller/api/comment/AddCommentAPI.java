@@ -5,6 +5,7 @@ import home.example.board.service.comment.AddCommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class AddCommentAPI {
 
@@ -80,7 +82,7 @@ public class AddCommentAPI {
                     )
             )
             @RequestBody Map<String, Object> requestBody, @AuthenticationPrincipal CustomUserDetail userDetail) {
-
+        log.info("add comment: {}", requestBody);
         String content = (String) requestBody.get("content");
         Long parent_comment_seq =
                 requestBody.get("parent_comment_seq") == null ?
@@ -93,10 +95,12 @@ public class AddCommentAPI {
         JSONObject jsonObject = new JSONObject();
         try{
             if(user_seq == null){
+                log.error("user_seq is null");
                 jsonObject.put("message", "로그인 후 이용해주세요.");
                 return ResponseEntity.badRequest().body(jsonObject);
             }
             if(content == null || content.isEmpty()){
+                log.error("content is null");
                 jsonObject.put("message", "댓글 내용을 입력해주세요.");
                 return ResponseEntity.badRequest().body(jsonObject);
             }
@@ -104,7 +108,7 @@ public class AddCommentAPI {
             jsonObject.put("message", "댓글이 등록되었습니다.");
             return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e){
-            e.printStackTrace();
+            log.error("add comment error: {}", e.getMessage());
             jsonObject.put("message", "댓글 등록에 실패했습니다.");
             jsonObject.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(jsonObject);

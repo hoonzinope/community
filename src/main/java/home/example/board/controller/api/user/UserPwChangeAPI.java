@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class UserPwChangeAPI {
 
@@ -74,6 +76,7 @@ public class UserPwChangeAPI {
             )
             @RequestBody Map<String, Object> userInfo,
             HttpServletRequest request) {
+        log.info("userInfo: {}", userInfo);
         JSONObject jsonObject = new JSONObject();
         long user_seq = (long) request.getSession().getAttribute("user_seq");
         String new_pw = (String) userInfo.get("new_pw");
@@ -82,7 +85,7 @@ public class UserPwChangeAPI {
             updateUserService.userPasswordUpdate(user_seq, new_pw);
             jsonObject.put("success", true);
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            log.error("update user password failed "+e.getMessage());
             jsonObject.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(jsonObject);
         }

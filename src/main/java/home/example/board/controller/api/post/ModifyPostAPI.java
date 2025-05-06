@@ -4,6 +4,7 @@ import home.example.board.service.post.ModifyPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class ModifyPostAPI {
 
@@ -78,6 +80,7 @@ public class ModifyPostAPI {
             )
             @RequestBody Map<String, Object> requestMap
     ) {
+        log.info("post_seq: {}, requestMap: {}", post_seq, requestMap);
         String title = (String) requestMap.get("title");
         String content = (String) requestMap.get("content");
 
@@ -87,6 +90,7 @@ public class ModifyPostAPI {
             jsonObject.put("success","true");
             return ResponseEntity.ok().body(jsonObject);
         } catch (IllegalArgumentException e) {
+            log.error("IllegalArgumentException: {}", e.getMessage());
             jsonObject.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(jsonObject);
         }

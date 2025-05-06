@@ -4,7 +4,10 @@ import home.example.board.service.post.ReadPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class ReadPostAPI {
 
@@ -49,6 +53,7 @@ public class ReadPostAPI {
         @Parameter(description = "주제", required = false)
         @RequestParam(value = "subject_seq", defaultValue = "0") long subject_seq
     ){
+        log.info("offset: {}, limit: {}, subject_seq: {}", offset, limit, subject_seq);
         JSONObject postList = readPostService.getPostListPaging(offset, limit, subject_seq);
         return ResponseEntity.ok().body(postList);
     }
@@ -76,6 +81,7 @@ public class ReadPostAPI {
             @Parameter(description = "게시글 번호", required = true)
             @PathVariable long post_seq
     ) {
+        log.info("post_seq: {}", post_seq);
         JSONObject post = readPostService.getPost(post_seq);
         return ResponseEntity.ok().body(post);
     }
@@ -107,6 +113,7 @@ public class ReadPostAPI {
             @Parameter(description = "페이징 limit", required = true)
             @RequestParam(value = "limit", defaultValue = "10") int limit
     ) {
+        log.info("user_seq: {}, offset: {}, limit: {}", user_seq, offset, limit);
         JSONObject postList = readPostService.getUserPostListPaging(user_seq, offset, limit);
         return ResponseEntity.ok().body(postList);
     }
@@ -133,6 +140,7 @@ public class ReadPostAPI {
     public ResponseEntity<JSONObject> getSeenPosts(
             @RequestBody Map<String, Object> params
     ) {
+        log.info("params: {}", params);
         List<Long> post_seq_list = (List<Long>) params.get("seenPostList");
         JSONObject postList = readPostService.getSeenPostListByPostSeqList(post_seq_list);
         return ResponseEntity.ok().body(postList);

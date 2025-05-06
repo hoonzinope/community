@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class UserInfoUpdateAPI {
 
@@ -74,6 +76,7 @@ public class UserInfoUpdateAPI {
             )
             @RequestBody Map<String, Object> userInfo,
             HttpServletRequest request) {
+        log.info("userInfo: {}", userInfo);
         JSONObject jsonObject = new JSONObject();
         long user_seq = (long) request.getSession().getAttribute("user_seq");
         String user_nickname = (String) userInfo.get("user_nickname");
@@ -84,6 +87,7 @@ public class UserInfoUpdateAPI {
             jsonObject.put("success", true);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
+            log.error("update user info failed "+e.getMessage());
             jsonObject.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(jsonObject);
         }

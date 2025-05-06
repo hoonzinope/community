@@ -6,6 +6,7 @@ import home.example.board.service.bot.BotAddPostService;
 import home.example.board.service.post.AddPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 public class BotAddPostAPI {
 
@@ -61,6 +63,7 @@ public class BotAddPostAPI {
                     )
             )
             @RequestBody BotAddPostDTO botAddPostDTO) {
+        log.info("게시글 정보: {}", botAddPostDTO);
         JSONObject response = new JSONObject();
         try {
             Long user_seq = this.getUserSeq();
@@ -69,6 +72,7 @@ public class BotAddPostAPI {
             response.put("success", "true");
             return ResponseEntity.ok(response);
         }catch (Exception e) {
+            log.error("Error occurred while adding post: {}", e.getMessage());
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }

@@ -3,6 +3,7 @@ package home.example.board.controller.api.post;
 import home.example.board.service.post.AddPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class AddPostAPI {
 
@@ -60,15 +62,24 @@ public class AddPostAPI {
             )
             @RequestBody Map<String, Object> requestMap
     ) {
-        String title = (String) requestMap.get("title");
-        String content = (String) requestMap.get("content");
-        long user_seq = Long.parseLong(requestMap.get("user_seq").toString());
-        long subject_seq = Long.parseLong(requestMap.get("subject_seq").toString());
+        log.info("게시글 추가 요청: {}", requestMap);
+        try {
+            String title = (String) requestMap.get("title");
+            String content = (String) requestMap.get("content");
+            long user_seq = Long.parseLong(requestMap.get("user_seq").toString());
+            long subject_seq = Long.parseLong(requestMap.get("subject_seq").toString());
 
-        addPostService.addPost(title, content, user_seq, subject_seq);
+            addPostService.addPost(title, content, user_seq, subject_seq);
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("success", "true");
-        return ResponseEntity.ok().body(jsonObject);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("success", "true");
+            return ResponseEntity.ok().body(jsonObject);
+        }catch (Exception e) {
+            log.error("게시글 추가 실패: {}", e.getMessage());
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(jsonObject);
+        }
+
     }
 }
