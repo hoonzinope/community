@@ -4,6 +4,7 @@ import home.example.board.service.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class SearchAPI {
 
@@ -44,7 +46,7 @@ public class SearchAPI {
                     )
             )
             @RequestBody Map<String, Object> requestMap) {
-
+        log.info("SearchAPI - requestMap = {}", requestMap);
         String keyword = (String) requestMap.get("keyword");
         int offset = (int) requestMap.get("offset");
         int limit = (int) requestMap.get("limit");
@@ -62,6 +64,7 @@ public class SearchAPI {
             return ResponseEntity.ok().body(result);
         } catch (Exception e) {
             e.printStackTrace();
+            log.error("SearchAPI - search error: {}", e.getMessage());
             result.put("error", "검색 중 오류가 발생했습니다.");
             return ResponseEntity.badRequest().body(result);
         }

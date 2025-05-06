@@ -1,47 +1,13 @@
 (function() {
     document.addEventListener("DOMContentLoaded",function() {
-        loadPostData();
+        //console.log('Hello World');
+        loadingSummerNote();
+        callSubjects();
         writePost();
     });
-
-    function loadPostData() {
-        let endpoint = `/api/post/${post_seq}`;
-        fetch(endpoint,{
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        })
-            .then(function(response) {
-                response.json().then(function(data) {
-                    console.log(data);
-                    settingData(data);
-                });
-            })
-            .catch(function(err) {
-                console.log(err);
-            });
-    }
-
-    function settingData(data) {
-        // category
-        let category_seq = data.post.subject_seq;
-        callSubjects(category_seq);
-
-        // title
-        let title = data.post.title;
-        $("#title").val(title);
-
-        // content
-        let content = data.post.content;
-        loadingSummerNote(content);
-    }
-
-
     // 현재 에디터에 존재하는 이미지 URL 목록을 저장하는 변수
     let currentImages = [];
-    function loadingSummerNote(content){
+    function loadingSummerNote(){
         $('#content').summernote({
             height: 300,
             minHeight: null,
@@ -57,29 +23,24 @@
                 },
                 onChange: function(contents, $editable) {
                     // 임시 컨테이너를 사용하여 변경된 HTML 내용 내 이미지 태그를 추출
-                    let tempDiv = $('<div>').html(contents);
-                    let newImages = [];
+                    var tempDiv = $('<div>').html(contents);
+                    var newImages = [];
                     tempDiv.find('img').each(function() {
                         newImages.push($(this).attr('src'));
                     });
-                    if(newImages.length == 0)
-                        return;
+
                     // 이전 이미지 목록에 있지만, 새 목록에는 없는 이미지가 삭제된 이미지임
-                    let deletedImages = currentImages.filter(url => newImages.indexOf(url) === -1);
+                    var deletedImages = currentImages.filter(url => newImages.indexOf(url) === -1);
                     deletedImages.forEach(function(imageUrl){
                         deleteSummernoteFile(imageUrl);
+                    });
+
+                    $editable.find('iframe[src^="//"]').each(function(){
+                        $(this).attr('src', 'https:' + $(this).attr('src'));
                     });
                 }
             }
         });
-        // 초기 값을 설정
-        $('#content').summernote('code', content);
-        // 초기 content에 이미지가 있다면, 해당 이미지 URL을 currentImages에 저장
-        let tempDiv = $('<div>').html(content);
-        tempDiv.find('img').each(function() {
-            currentImages.push($(this).attr('src'));
-        });
-        console.log(currentImages);
     }
 
     function uploadSummernoteImageFile(file, editor) {
@@ -87,10 +48,6 @@
         data.append("image", file);
         fetch('/api/image/upload', {
             method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                // 'Content-Type': 'application/json' // FormData를 사용하므로 Content-Type을 설정하지 않음
-            },
             body: data
         })
             .then(response => response.json())
@@ -110,44 +67,49 @@
         fetch('/api/image/delete', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Accept': 'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: 'url=' + encodeURIComponent(imageUrl)
         })
             .then(response => response.json())
             .then(data => {
-                console.log("이미지 삭제 응답:", data);
+                //console.log("이미지 삭제 응답:", data);
             })
             .catch(error => {
                 console.error("이미지 삭제 실패:", error);
             });
     }
 
-    function callSubjects(category_seq){
-        const url = `/api/subjects/${category_seq}`;
+    function callSubjects(){
+        const url = '/api/subject/minorSubjects';
+        let data = {
+            major_seq: category
+        }
         fetch(url,{
-            method: 'GET',
+            method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
         })
-            .then(function(response) {
-                response.json().then(function(data) {
-                    drawSubject(data, category_seq);
-                });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
             })
-            .catch(function(err) {
-                console.log(err);
+            .then(data => {
+                // //console.log(data);
+                drawSubject(data);
+            })
+            .catch(error => {
+                console.error('Error fetching subjects:', error);
             });
     }
 
-    function drawSubject(data, category_seq) {
+    function drawSubject(data) {
         let subjects = data.subjectList;
         let rows = subjects.map(function(subject) {
-            if (category_seq === subject.subject_seq)
-                return `<option value="${subject.subject_seq}" selected>${subject.subject_name}</option>`;
             return `<option value="${subject.subject_seq}">${subject.subject_name}</option>`;
         });
 
@@ -163,9 +125,9 @@
                 content : $("#content").summernote('code'),
                 user_seq: $("#user_seq").val()
             }
-            let endpoint = `/api/post/${post_seq}`;
-            fetch(endpoint, {
-                method: 'PATCH',
+
+            fetch('/api/post', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
@@ -173,10 +135,14 @@
                 body: JSON.stringify(data)
             }).then(function(response) {
                 response.json().then(function(data) {
-                    location.href = '/';
+                    if (document.referrer) {
+                        window.location.href = document.referrer;
+                    }else{
+                        window.location.href = '/';
+                    }
                 });
             }).catch(function(err) {
-                console.log(err);
+                //console.log(err);
                 alert('게시글 작성 실패' + err);
             });
         })

@@ -6,11 +6,13 @@ import home.example.board.service.bot.BotLoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 public class BotAuthAPI {
 
@@ -66,10 +68,12 @@ public class BotAuthAPI {
                     }
             ))
             @org.springframework.web.bind.annotation.RequestBody BotLoginRequestDTO botLoginRequestDTO) {
+        log.info("Bot login request: {}", botLoginRequestDTO);
         try {
             String token = botLoginService.generateLoginToken(botLoginRequestDTO);
             return ResponseEntity.ok(new BotLoginResponseDTO(token));
         } catch (IllegalAccessException e) {
+            log.error("Access denied: {}", e.getMessage());
             return ResponseEntity.status(403).body(new BotLoginResponseDTO("Access denied: " + e.getMessage()));
         }
     }

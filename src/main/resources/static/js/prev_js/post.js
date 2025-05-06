@@ -20,7 +20,7 @@
             body: JSON.stringify(likeData)})
             .then(function(response) {
                 response.json().then(function(data) {
-                    console.log(data);
+                    //console.log(data);
                     if(data.like_type == "LIKE") {
                         $("#like").addClass("active");
                     }
@@ -29,7 +29,7 @@
                     }
                 });
             }).catch(function(err) {
-            console.log(err);
+            //console.log(err);
         });
     }
 
@@ -109,10 +109,10 @@
             body: JSON.stringify(likeData)})
             .then(function(response) {
                 response.json().then(function(data) {
-                    console.log(data);
+                    //console.log(data);
                 });
             }).catch(function(err) {
-            console.log(err);
+            //console.log(err);
         });
     }
 
@@ -128,10 +128,10 @@
             body: JSON.stringify(likeData)})
             .then(function(response) {
                 response.json().then(function(data) {
-                    console.log(data);
+                    //console.log(data);
                 });
             }).catch(function(err) {
-            console.log(err);
+            //console.log(err);
             });
     }
 
@@ -151,7 +151,7 @@
                    location.href = '/board';
                });
            }).catch(function(err) {
-               console.log(err);
+               //console.log(err);
            });
         });
     }

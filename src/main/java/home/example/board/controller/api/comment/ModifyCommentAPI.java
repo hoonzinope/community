@@ -4,6 +4,7 @@ import home.example.board.service.comment.ModifyCommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class ModifyCommentAPI {
 
@@ -77,6 +79,7 @@ public class ModifyCommentAPI {
             )
             @RequestBody Map<String, Object> requestBody
     ){
+        log.info("댓글 수정 API 호출 {}", requestBody);
         String content = (String) requestBody.get("content");
         long user_seq = Long.parseLong(requestBody.get("user_seq").toString());
 
@@ -89,7 +92,7 @@ public class ModifyCommentAPI {
             jsonObject.put("success", true);
             return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e){
-            e.printStackTrace();
+            log.error("댓글 수정 실패 {}", e.getMessage());
             jsonObject.put("message", e.getMessage());
             jsonObject.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(jsonObject);

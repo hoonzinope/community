@@ -5,6 +5,7 @@ import home.example.board.service.comment.ReadCommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 public class ReadCommentAPI {
 
@@ -60,10 +62,18 @@ public class ReadCommentAPI {
             @PathVariable long post_seq,
             @Parameter(description = "댓글 작성자 번호", required = false, example = "-1")
             @AuthenticationPrincipal CustomUserDetail userDetail) {
-
-        Long user_seq = userDetail != null ? userDetail.getUserSeq() : -1L;
-        JSONObject jsonObject = readCommentService.selectComments(post_seq, user_seq);
-        return ResponseEntity.ok().body(jsonObject);
+        log.info("read comment post_seq : {}", post_seq);
+        try {
+            Long user_seq = userDetail != null ? userDetail.getUserSeq() : -1L;
+            JSONObject jsonObject = readCommentService.selectComments(post_seq, user_seq);
+            return ResponseEntity.ok().body(jsonObject);
+        }catch (Exception e){
+            log.error("댓글 조회 실패", e);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("result", "fail");
+            jsonObject.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(jsonObject);
+        }
     }
 
     @GetMapping("/api/comment/user")
@@ -74,8 +84,16 @@ public class ReadCommentAPI {
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @Parameter(description = "페이징 limit", required = true)
             @RequestParam(value = "limit", defaultValue = "10") int limit) {
-
-        JSONObject jsonObject = readCommentService.selectUserComments(user_seq, offset, limit);
-        return ResponseEntity.ok().body(jsonObject);
+        log.info("read comment user_seq : {}", user_seq);
+        try {
+            JSONObject jsonObject = readCommentService.selectUserComments(user_seq, offset, limit);
+            return ResponseEntity.ok().body(jsonObject);
+        }catch (Exception e){
+            log.error("댓글 조회 실패", e);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("result", "fail");
+            jsonObject.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(jsonObject);
+        }
     }
 }

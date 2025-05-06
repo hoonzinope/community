@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <div th:fragment="meta(title, desc)">
+        <title th:text="${title}">urrrm...</title>
+        <meta name="description" th:content="${desc}" content="urrrm..."/>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+        <!-- 기타 공통 메타 -->
+    </div>
+</html>

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class CommentLikeAPI {
 
@@ -75,6 +77,7 @@ public class CommentLikeAPI {
                     )
             )
             @RequestBody  Map<String, Object> requestMap) {
+        log.info("댓글 좋아요/싫어요 추가 API 호출 : {}", requestMap);
         String like_type = (String) requestMap.get("like_type");
         long comment_seq = Long.parseLong(requestMap.get("comment_seq").toString());
         long user_seq = Long.parseLong(requestMap.get("user_seq").toString());
@@ -87,6 +90,7 @@ public class CommentLikeAPI {
             return ResponseEntity.ok().body(new JSONObject());
         } catch(Exception e) {
             e.printStackTrace();
+            log.error("댓글 좋아요/싫어요 추가 실패 : {}", e.getMessage());
             return ResponseEntity.badRequest().body(new JSONObject());
         }
     }
@@ -145,6 +149,7 @@ public class CommentLikeAPI {
                     )
             )
             @RequestBody Map<String, Object> requestMap) {
+        log.info("댓글 좋아요/싫어요 삭제 API 호출 : {}", requestMap);
         long comment_seq = Integer.parseInt(requestMap.get("comment_seq").toString());
         long user_seq = Integer.parseInt(requestMap.get("user_seq").toString());
 
@@ -153,6 +158,7 @@ public class CommentLikeAPI {
             return ResponseEntity.ok().body(new JSONObject());
         } catch(Exception e) {
             e.printStackTrace();
+            log.error("댓글 좋아요/싫어요 삭제 실패 : {}", e.getMessage());
             return ResponseEntity.badRequest().body(new JSONObject());
         }
     }

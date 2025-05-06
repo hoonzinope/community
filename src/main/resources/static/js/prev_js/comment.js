@@ -10,7 +10,7 @@
         const commentList = document.querySelector('.comment-list');
         let post_seq = document.getElementById("post_seq").value;
         let user_seq = document.getElementById("user_seq").value;
-        console.log(post_seq, user_seq);
+        //console.log(post_seq, user_seq);
         let endpoint = `/api/post/${post_seq}/comments`;
         if (user_seq != null && user_seq !== "") {
             endpoint += `?user_seq=${user_seq}`;
@@ -50,7 +50,7 @@
     }
 
     function drawCommentRow(comment) {
-        console.log(comment);
+        //console.log(comment);
         let p_user_name = comment.p_user_name !== "" ? "@" + comment.p_user_name : "";
         let depth = "";
         if (comment.sort_path.split("-").length > 1) {
@@ -172,7 +172,7 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data);
+                        //console.log(data);
                         comments();
                     });
             });
@@ -287,7 +287,7 @@
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                //console.log(data);
             });
     }
 
@@ -297,7 +297,7 @@
             "comment_seq": comment_seq,
             "user_seq": document.getElementById("user_seq").value
         }
-        console.log(data);
+        //console.log(data);
         fetch("/api/comment/like/delete", {
             method: 'POST',
             headers: {
@@ -308,7 +308,7 @@
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                //console.log(data);
             });
     }
 
@@ -359,7 +359,7 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data);
+                        //console.log(data);
                         comments();
                     });
             });
@@ -405,7 +405,7 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data);
+                        //console.log(data);
                         comments();
                     });
             });

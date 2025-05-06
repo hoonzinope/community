@@ -1,6 +1,6 @@
 (function () {
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('DOMContentLoaded');
+        //console.log('DOMContentLoaded');
         subject_board.init();
     });
 
@@ -33,7 +33,7 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data);
+                    //console.log(data);
                     let subject_name = data.subject_name;
                     if(data.parent_subject_name !== null) {
                         subject_name = data.parent_subject_name+" > "+data.subject_name;
@@ -182,7 +182,7 @@
                     type: searchType,
                     subject_seq : subject_seq
                 }
-                console.log(data);
+                //console.log(data);
                 fetch(endpoint,{
                     method: 'POST',
                     headers: {
