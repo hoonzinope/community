@@ -162,7 +162,7 @@ public class ImageAPI {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("ImageAPI - deleteImage() failed "+e.getMessage());
+            log.error("ImageAPI - deleteImage() failed {}",e.getMessage());
             response.put("error", "이미지 삭제 중 오류 발생");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
