@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <div class="position-fixed bottom-0 end-0 m-4 d-flex flex-column align-items-end" style="z-index: 1050;" th:fragment="right_bottom_buttons">
+        <!-- 맨위로 버튼 -->
+        <a href="javascript:void(0);" class="btn btn-secondary rounded-circle shadow mb-2" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
+            <i class="ri-arrow-up-line"></i>
+        </a>
+        <!-- 플로팅 글쓰기 버튼 -->
+        <a th:href="@{/write/{subject_seq}(subject_seq=${subject_seq})}" class="btn btn-primary rounded-circle shadow">
+            <i class="ri-pencil-line"></i>
+        </a>
+    </div>
+</html>
