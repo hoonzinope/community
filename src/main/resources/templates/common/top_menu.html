@@ -97,22 +97,23 @@
 <body>
 
 <!-- 상단 내비게이션 바 -->
-<nav th:replace="common/top_menu :: nav"></nav>
-
-<!-- 콘텐츠 영역 -->
-<div class="container mt-1 pt-4">
-    <div class="row mt-4">
-        <!-- 좌측 사이드바 -->
-        <div class="col-lg-3 d-none d-lg-block">
-            <div class="sidebar">
-                <h6 class="mb-3"><a href="/" class="text-decoration-none">전체</a></h6>
-                <ul class="list-unstyled" id="subjectMenu">
+<nav class="navbar navbar-expand-lg" th:fragment="nav">
+    <div class="container-fluid">
+        <!-- 상단 navbar 안의 board.io 왼쪽에 삽입 -->
+        <button class="btn d-flex align-items-center me-2" id="sidebarToggleBtn" type="button">
+            <i class="ri-menu-line fs-4"></i>
+        </button>
+        <!-- 사이드 메뉴 슬라이드 영역 -->
+        <div id="slideSidebar" class="sidebar-drawer d-none">
+            <div class="p-4">
+                <h6 class="mb-3"><a href="/" class="text-decoration-none">Home</a></h6>
+                <ul class="list-unstyled" id="slideMenu">
 
                     <li style="display: none">
                         <a class="text-decoration-none d-block" data-bs-toggle="collapse" href="#itSub" role="button" aria-expanded="false" aria-controls="itSub">
                             IT <i class="ri-arrow-down-s-line float-end"></i>
                         </a>
-                        <ul class="list-unstyled collapse ps-3 mt-2 itSub">
+                        <ul class="list-unstyled collapse ps-3 mt-2" id="itSub">
                             <li><a href="#" class="text-decoration-none small">AI</a></li>
                             <li><a href="#" class="text-decoration-none small">비트코인</a></li>
                             <li><a href="#" class="text-decoration-none small">양자컴퓨터</a></li>
@@ -123,7 +124,7 @@
                         <a class="text-decoration-none d-block" data-bs-toggle="collapse" href="#movieSub" role="button" aria-expanded="false" aria-controls="movieSub">
                             영화 <i class="ri-arrow-down-s-line float-end"></i>
                         </a>
-                        <ul class="list-unstyled collapse ps-3 mt-2 movieSub">
+                        <ul class="list-unstyled collapse ps-3 mt-2" id="movieSub">
                             <li><a href="#" class="text-decoration-none small">SF</a></li>
                             <li><a href="#" class="text-decoration-none small">드라마</a></li>
                             <li><a href="#" class="text-decoration-none small">액션</a></li>
@@ -134,46 +135,30 @@
             </div>
         </div>
 
-        <!-- 메인 피드 -->
-        <div class="col-lg-6" id="mainFeed">
-            <div class="post-card" style="display: none;">
-                <div class="vote-section">
-                    <i class="ri-arrow-up-line"></i>
-                    <div>0</div>
-                    <i class="ri-arrow-down-line"></i>
-                </div>
-                <div class="post-content">
-                    <h5>제목</h5>
-                    <div class="post-meta mb-1">
-                        <span>작성자</span> ·
-                        <span>1시간 전</span> ·
-                        <span class="badge bg-light text-dark">IT</span>
-                    </div>
-                    <p class="text-truncate">게시글 내용</p>
-                    <a href="#" class="text-decoration-none text-primary small">댓글 보기</a>
-                </div>
-            </div>
+        <!-- 검은 반투명 배경 (닫기용) -->
+        <div id="sidebarBackdrop" class="sidebar-backdrop d-none"></div>
+        <a class="navbar-brand" href="/">board.io</a>
+        <div class="d-flex mx-auto search-input">
+            <input id="search-input" class="form-control me-2" type="search" placeholder="검색어를 입력하세요..." aria-label="Search">
+            <button id="search-button" class="btn btn-outline-secondary" type="submit"><i class="ri-search-line"></i></button>
         </div>
-
-        <!-- 우측 사이드바 -->
-        <div class="col-lg-3 d-none d-lg-block">
-            <div class="sidebar">
-                <h6 class="mb-3">본 게시물</h6>
-                <ul class="list-unstyled" id="seenPost">
-                    <li style="display: none"><a href="#" class="text-decoration-none">🔥 요즘 뜨는 글</a></li>
-                </ul>
-            </div>
+        <div th:if="${session.user_seq != null}" class="dropdown">
+            <a href="#" class="btn btn-outline-primary btn-sm dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span th:text="${session.user_nickname}">사용자</span>님
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" th:href="@{/member/closeProfile}">내 정보</a></li>
+                <li><a class="dropdown-item" th:href="@{/member/openProfile?user_nickname={user_nickname}(user_nickname=${session.user_nickname})}">내 게시글</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="/auth/logout">로그아웃</a></li>
+            </ul>
+        </div>
+        <div th:if="${session.user_seq == null}">
+            <a href="/login" class="btn btn-outline-primary btn-sm me-2">로그인</a>
+            <a href="/signup" class="btn btn-primary btn-sm">회원가입</a>
         </div>
     </div>
-</div>
-
-<!-- 플로팅 글쓰기 버튼 -->
-<a th:href="@{/write/{subject_seq}(subject_seq=${subject_seq})}" class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-4 shadow">
-    <i class="ri-pencil-line"></i>
-</a>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script type="text/javascript" th:src="@{/js/common/utils.js}"></script>
-<script type="text/javascript" th:src="@{/js/community/mainBoard.js}"></script>
+    <script th:src="@{/js/common/menu.js}"></script>
+</nav>
 </body>
 </html>
