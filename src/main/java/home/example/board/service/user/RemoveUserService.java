@@ -24,11 +24,11 @@ public class RemoveUserService {
     }
 
     public void removeUser(long user_seq) {
-        postDAO.removePostAllByUser(user_seq);
-        outboxDAO.removePostAllByUser(user_seq);
-
         commentDAO.removeCommentAllByUser(user_seq);
         outboxDAO.removeCommentAllByUser(user_seq);
+
+        postDAO.removePostAllByUser(user_seq);
+        outboxDAO.removePostAllByUser(user_seq);
 
         userDAO.deleteUser(user_seq);
     }

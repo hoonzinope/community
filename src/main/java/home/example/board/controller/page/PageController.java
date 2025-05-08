@@ -1,6 +1,6 @@
 package home.example.board.controller.page;
 
-import home.example.board.service.SearchService;
+import home.example.board.service.search.SearchService;
 import home.example.board.service.post.CheckPostService;
 import home.example.board.service.post.ReadPostService;
 import home.example.board.service.user.ReadUserService;
