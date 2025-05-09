@@ -84,65 +84,39 @@ public class MeiliSearchService {
 
     private JSONObject getPostSearch(String keyword, int offset, int limit, List<Long> diableble_subject_list) throws IOException, ParseException {
         String url = this.url + "/indexes/posts/search";
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        // Perform the search operation using the MeiliSearch API
-        HttpPost post = new HttpPost(url);
-
-        // Set request body
-        JSONObject requestBody = new JSONObject();
-        requestBody.put("q", keyword);
-        requestBody.put("offset", offset);
-        requestBody.put("limit", limit);
-        if(diableble_subject_list.size() > 0) {
-            List<String> filters = diableble_subject_list.stream().map(subject_seq -> {
-                String condition = "subject_seq != " + subject_seq;
-                return condition;
-            }).collect(Collectors.toList());
-            requestBody.put("filter", filters);
-        }
-        requestBody.put("sort", new ArrayList<>(Arrays.asList("insert_timestamp:desc")));
-
-        // Execute the request
-        post.setHeader("Content-Type", "application/json");
-        post.setHeader("Authorization", "Bearer "+this.apiKey);
-        post.setEntity(new StringEntity(requestBody.toString(), "UTF-8"));
-
-        // 요청 실행 및 응답 처리
-        HttpResponse response = httpClient.execute(post);
-        StringBuilder resultBuilder = new StringBuilder();
-        BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-        String line;
-        while ((line = rd.readLine()) != null) {
-            resultBuilder.append(line);
-        }
-        httpClient.close();
-
-        // 응답을 JSON 객체로 변환
-        JSONParser parser = new JSONParser();
-        return (JSONObject) parser.parse(resultBuilder.toString());
+        List<String> filters = diableble_subject_list.stream().map(subject_seq -> {
+            String condition = "subject_seq != " + subject_seq;
+            return condition;
+        }).collect(Collectors.toList());
+        List<String> sortOptions = new ArrayList<>();
+        sortOptions.add("insert_timestamp:desc");
+        return this.executeSearch(url, keyword, offset, limit, filters, sortOptions);
     }
 
     private JSONObject getCommentSearch(String keyword, int offset, int limit, List<Long> diableble_subject_list) throws IOException, ParseException {
         String url = this.url + "/indexes/comments/search";
+        List<String> filters = diableble_subject_list.stream().map(subject_seq -> {
+            String condition = "subject_seq != " + subject_seq;
+            return condition;
+        }).collect(Collectors.toList());
+        List<String> sortOptions = new ArrayList<>();
+        sortOptions.add("insert_timestamp:desc");
+        return this.executeSearch(url, keyword, offset, limit, filters, sortOptions);
+    }
 
+    private JSONObject executeSearch(String url, String keyword, int offset, int limit, List<String> filters, List<String> sortOptions) throws IOException, ParseException{
         CloseableHttpClient httpClient = HttpClients.createDefault();
         // Perform the search operation using the MeiliSearch API
         HttpPost post = new HttpPost(url);
-
-
         // Set request body
         JSONObject requestBody = new JSONObject();
         requestBody.put("q", keyword);
         requestBody.put("offset", offset);
         requestBody.put("limit", limit);
-        if(diableble_subject_list.size() > 0) {
-            List<String> filters = diableble_subject_list.stream().map(subject_seq -> {
-                String condition = "subject_seq != " + subject_seq;
-                return condition;
-            }).collect(Collectors.toList());
+        if(filters.size() > 0) {
             requestBody.put("filter", filters);
         }
-        requestBody.put("sort", new ArrayList<>(Arrays.asList("insert_timestamp:desc")));
+        requestBody.put("sort", sortOptions);
 
         // Execute the request
         post.setHeader("Content-Type", "application/json");
