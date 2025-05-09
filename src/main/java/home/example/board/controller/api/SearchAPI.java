@@ -72,6 +72,13 @@ public class SearchAPI {
         }
     }
 
+
+    @Operation(summary = "MeiliSearch 검색 API", description = "MeiliSearch를 사용하여 검색어를 입력받아 검색 결과를 반환합니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @PostMapping("/api/v2/search")
     public ResponseEntity<JSONObject> meiliSearch(@io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "검색 요청 데이터",
@@ -83,7 +90,7 @@ public class SearchAPI {
                     examples = {
                             @io.swagger.v3.oas.annotations.media.ExampleObject(
                                     name="SearchRequest",
-                                    value ="{ \"keyword\": \"검색어\", \"offset\": 0, \"limit\": 10, \"type\": \"all\"}"
+                                    value ="{ \"keyword\": \"검색어\", \"offset\": 0, \"limit\": 10, \"type\": \"post or comment\"}"
                             )
                     }
             )
