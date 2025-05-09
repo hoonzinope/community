@@ -185,7 +185,7 @@
         },
         // 게시물 검색 요청
         requestPosts : function(offset, limit, keyword) {
-            const url = `/api/search`;
+            const url = `/api/v2/search`;
             let data = {
                 offset: offset,
                 limit: limit,
@@ -305,7 +305,7 @@
         },
         // 댓글 검색 요청
         requestComments : function(offset, limit, keyword) {
-            const url = `/api/search`;
+            const url = `/api/v2/search`;
             let data = {
                 offset: offset,
                 limit: limit,

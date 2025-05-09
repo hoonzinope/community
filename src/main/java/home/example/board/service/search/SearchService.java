@@ -1,12 +1,10 @@
-package home.example.board.service;
+package home.example.board.service.search;
 
 import home.example.board.DTO.PostPagingDTO;
 import home.example.board.dao.PostDAO;
 import home.example.board.dao.SubjectDAO;
 import home.example.board.dao.UserDAO;
-import home.example.board.domain.Subject;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
