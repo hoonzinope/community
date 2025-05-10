@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Urrrm - 주제 관리</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      background-color: #f6f7f8;
+    }
+    .sidebar {
+      width: 220px;
+      background-color: #1e1e2f;
+      color: white;
+      padding-top: 20px;
+    }
+    .main {
+      flex: 1;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .subject-card {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .sub-subject {
+      margin-left: 30px;
+      border-left: 3px solid #dee2e6;
+      padding-left: 15px;
+    }
+    .inactive-subject {
+      opacity: 0.6;
+      background-color: #f8f9fa;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="text-center mb-4">
+      <h5 class="mb-2">urrrm - admin</h5>
+      <a href="/" class="btn btn-outline-light btn-sm">
+        <i class="ri-arrow-left-line"></i> 커뮤니티로 돌아가기
+      </a>
+    </div>
+    <div class="nav flex-column">
+      <a href="/admin/users" class="nav-link text-white"><i class="ri-user-line me-2"></i>회원 관리</a>
+      <a href="/admin/posts" class="nav-link text-white"><i class="ri-file-list-line me-2"></i>게시글 관리</a>
+      <a href="/admin/comments" class="nav-link text-white"><i class="ri-chat-1-line me-2"></i>댓글 관리</a>
+      <a href="/admin/subject" class="nav-link text-white active"><i class="ri-price-tag-3-line me-2"></i>주제 관리</a>
+      <a href="/admin/stats" class="nav-link text-white"><i class="ri-bar-chart-line me-2"></i>통계 보기</a>
+    </div>
+  </div>
+
+  <div class="main p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4 class="mb-0">주제 관리</h4>
+      <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
+        <i class="ri-add-line"></i> 새 주제 추가
+      </button>
+    </div>
+
+    <!-- 주제 카드 -->
+    <div class="subject-card">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="mb-1">IT</h5>
+          <div class="text-muted small">
+            <span class="me-2"><i class="ri-time-line"></i> 생성: 2023-05-01</span>
+            <span class="badge bg-success">사용중</span>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-outline-primary btn-sm me-2" title="하위 주제 추가">
+            <i class="ri-add-circle-line"></i>
+          </button>
+          <button class="btn btn-warning btn-sm me-2" title="수정">
+            <i class="ri-edit-line"></i>
+          </button>
+          <button class="btn btn-danger btn-sm" title="비활성화">
+            <i class="ri-eye-off-line"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 하위 주제 -->
+      <div class="sub-subject mt-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="mb-1">AI</h6>
+            <div class="text-muted small">
+              <span class="me-2"><i class="ri-time-line"></i> 생성: 2023-05-02</span>
+              <span class="badge bg-success">사용중</span>
+            </div>
+          </div>
+          <div>
+            <button class="btn btn-warning btn-sm me-2" title="수정">
+              <i class="ri-edit-line"></i>
+            </button>
+            <button class="btn btn-danger btn-sm" title="비활성화">
+              <i class="ri-eye-off-line"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 비활성화된 주제 예시 -->
+    <div class="subject-card inactive-subject">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="mb-1">게임</h5>
+          <div class="text-muted small">
+            <span class="me-2"><i class="ri-time-line"></i> 생성: 2023-04-01</span>
+            <span class="badge bg-secondary">비활성화</span>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-success btn-sm" title="활성화">
+            <i class="ri-eye-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 새 주제 추가 모달 -->
+  <div class="modal fade" id="addSubjectModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">새 주제 추가</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">주제명</label>
+            <input type="text" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">상위 주제</label>
+            <select class="form-select">
+              <option value="">없음 (최상위 주제)</option>
+              <option>IT</option>
+              <option>영화</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+          <button type="button" class="btn btn-primary">추가</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
