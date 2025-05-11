@@ -277,7 +277,7 @@
         },
         // 더보기 버튼 생성 및 이벤트 등록
         appendMoreButton : function(offset, limit) {
-            let postListDiv = document.getElementById('user-posts');
+            let postListDiv = document.getElementById('postsDiv');
             let moreBtn = document.createElement('button');
             moreBtn.className = 'btn btn-outline-primary d-block mx-auto mt-3';
             moreBtn.setAttribute('style', 'width: 50%;');
@@ -403,7 +403,7 @@
         },
         // 더보기 버튼 생성 및 이벤트 등록
         appendMoreButton : function(offset, limit) {
-            let commentListDiv = document.getElementById('user-comments');
+            let commentListDiv = document.getElementById('commentsDiv');
             let moreBtn = document.createElement('button');
             moreBtn.className = 'btn btn-outline-primary d-block mx-auto mt-3';
             moreBtn.setAttribute('style', 'width: 50%;');
