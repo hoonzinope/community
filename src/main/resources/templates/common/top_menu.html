@@ -132,6 +132,11 @@
                     </li>
 
                 </ul>
+
+                <h6 class="mb-3"
+                    th:if="${session.user_role != null and session.user_role.contains('ROLE_ADMIN')}">
+                    <a href="/admin" class="text-decoration-none">Admin</a>
+                </h6>
             </div>
         </div>
 
