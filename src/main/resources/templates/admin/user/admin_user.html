@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="UTF-8">
@@ -93,8 +93,15 @@
     <div class="d-flex align-items-center gap-3">
       <h4 class="mb-0">회원 관리</h4>
     </div>
-    <div class="search-section">
+    <div class="search-section d-flex gap-2">
+      <select class="form-select w-auto">
+        <option>닉네임</option>
+        <option>이메일</option>
+      </select>
       <input type="search" class="form-control" placeholder="회원 검색...">
+      <button class="btn btn-secondary">
+        <i class="ri-search-line"></i>
+      </button>
     </div>
   </div>
 
@@ -114,40 +121,44 @@
       <option>이메일순</option>
       <option>닉네임순</option>
     </select>
+    <button class="btn btn-secondary">
+      <i class="ri-filter-3-line me-1"></i>정렬
+    </button>
   </div>
 
-  <div class="user-card">
-    <div class="d-flex justify-content-between align-items-center">
-      <div>
-        <h6 class="mb-1">
-          <span class="me-2">example@email.com</span>
-          <span class="badge bg-secondary">일반회원</span>
-          <span class="badge bg-info">Bot</span>
-        </h6>
-        <div class="text-muted small">
-          <span class="me-2"><i class="ri-user-line"></i> 닉네임: user123</span>
-          <span class="me-2"><i class="ri-id-card-line"></i> SEQ: 1</span>
-          <span class="me-2"><i class="ri-calendar-line"></i> 가입: 2025-05-01</span>
-          <span class="me-2"><i class="ri-time-line"></i> 수정: 2025-05-01</span>
+  <div id="card-list">
+    <div class="user-card">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="user-info">
+          <h6 class="mb-1 user-info-header">
+            <span class="me-2">example@email.com</span>
+            <span class="badge bg-secondary">일반회원</span>
+            <span class="badge bg-info">Bot</span>
+          </h6>
+          <div class="text-muted small user-details">
+            <span class="me-2"><i class="ri-user-line"></i> 닉네임: user123</span>
+            <span class="me-2"><i class="ri-id-card-line"></i> SEQ: 1</span>
+            <span class="me-2"><i class="ri-calendar-line"></i> 가입: 2025-05-01</span>
+            <span class="me-2"><i class="ri-time-line"></i> 수정: 2025-05-01</span>
+          </div>
         </div>
-      </div>
-      <div>
-        <button class="btn btn-warning btn-sm me-2" title="비밀번호 초기화">
-          <i class="ri-lock-password-line"></i>
-        </button>
-        <button class="btn btn-info btn-sm me-2" title="권한 변경">
-          <i class="ri-shield-user-line"></i>
-        </button>
-        <button class="btn btn-danger btn-sm" title="회원 삭제">
-          <i class="ri-delete-bin-line"></i>
-        </button>
+        <div class="user-actions d-flex">
+          <button class="btn btn-warning btn-sm me-2" title="비밀번호 초기화">
+            <i class="ri-lock-password-line"></i>
+          </button>
+          <button class="btn btn-info btn-sm me-2" title="권한 변경">
+            <i class="ri-shield-user-line"></i>
+          </button>
+          <button class="btn btn-danger btn-sm" title="회원 삭제">
+            <i class="ri-delete-bin-line"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>
-
   <!-- 페이지네이션 추가 -->
   <nav aria-label="Page navigation" class="mt-4 d-flex justify-content-center">
-    <ul class="pagination">
+    <ul class="pagination" id="pagination-nav">
       <li class="page-item disabled">
         <a class="page-link" href="#" aria-label="Previous">
           <i class="ri-arrow-left-s-line"></i>
@@ -164,8 +175,10 @@
     </ul>
   </nav>
 </div>
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.2/jquery.twbsPagination.js" integrity="sha512-uzuo1GprrBscZGr+iQSv8+YQQsKY+rSHJju0FruVsGHV2CZNZPymW/4RkxoHxAxw3Lo5UQaxDMF8zINUfAsGeg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/admin/user/user.js}"></script>
 </body>
 
 </html>
