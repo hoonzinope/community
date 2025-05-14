@@ -14,6 +14,7 @@
         init : function() {
             userinfo.getUserList();
             userinfo.filter();
+            userinfo.search();
         },
         getUserList: function() {
             let url = '/admin/users/get';
@@ -135,7 +136,6 @@
                 //'<i class="ri-key-line"></i>';
 
             userPwResetButton.addEventListener('click', function() {
-                // 비밀번호 초기화 로직
                 // TODO : 비밀번호 초기화 API 호출
             });
             userActionDiv.appendChild(userPwResetButton);
@@ -145,7 +145,6 @@
             userRoleChangeButton.title = '권한 변경';
             userRoleChangeButton.innerHTML = '<i class="ri-shield-user-line"></i>';
             userRoleChangeButton.addEventListener('click', function() {
-                // 권한 변경 로직
                 // TODO : 권한 변경 API 호출
             });
             userActionDiv.appendChild(userRoleChangeButton);
@@ -155,7 +154,6 @@
             userDeleteChangeButton.title = '회원 탈퇴';
             userDeleteChangeButton.innerHTML = '<i class="ri-delete-bin-5-line"></i>';
             userDeleteChangeButton.addEventListener('click', function() {
-                // 회원 탈퇴 로직
                 // TODO : 회원 탈퇴 API 호출
             });
 
@@ -163,7 +161,6 @@
                 userDeleteChangeButton.innerHTML = '<i class="ri-key-line"></i>';
                 userDeleteChangeButton.title = '회원 복구';
                 userDeleteChangeButton.addEventListener('click', function () {
-                    // 회원 복구 로직
                     // TODO : 회원 복구 API 호출
                 });
             }
@@ -195,6 +192,18 @@
                 let userStatus = document.getElementById('user-status').value;
                 let sortType = document.getElementById('sort-type').value;
 
+
+                let searchValue = document.getElementById('search-value').value;
+                if(searchValue !== '') {
+                    let searchType = document.getElementById('search-type').value;
+                    userinfo.searchType = searchType === '' ? null : searchType;
+                    userinfo.searchValue = searchValue === '' ? null : searchValue;
+                }else{
+                    userinfo.searchType = null;
+                    userinfo.searchValue = null;
+                }
+
+
                 userinfo.userRole = userRole === '' ? null : userRole;
                 userinfo.delete_flag = userStatus === '' ? null : (userStatus === 'active' ? 0 : 1);
                 userinfo.sortType = sortType === 'id' ? null : sortType;
@@ -203,7 +212,16 @@
             });
         },
         search : function() {
+            document.getElementById("search-button").addEventListener('click', function () {
+                let searchType = document.getElementById('search-type').value;
+                let searchValue = document.getElementById('search-value').value;
 
+                userinfo.searchType = searchType === '' ? null : searchType;
+                userinfo.searchValue = searchValue === '' ? null : searchValue;
+                userinfo.offset = 0;
+
+                userinfo.getUserList();
+            })
         }
     }
 })();
