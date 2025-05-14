@@ -17,7 +17,4 @@ jobs:
         run: docker build --build-arg ACTIVE_PROFILE=dev -t board:latest .
 
       - name: Deploy Docker Container
-        run: |
-          docker stop board-container  || true
-          docker rm board-container  || true
-          docker run -d --name board-container -p 8080:8080 --network hoonzi_network board:latest
+        run: docker compose -f /Users/hoonzi/Documents/docker_v/docker-compose.yml up -d
