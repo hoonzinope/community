@@ -5,7 +5,7 @@
 
     let userinfo = {
         userRole: null,
-        userStatus: null,
+        delete_flag: null,
         sortType: null,
         limit : 5,
         offset: 0,
@@ -13,18 +13,20 @@
         searchValue : null,
         init : function() {
             userinfo.getUserList();
+            userinfo.filter();
         },
         getUserList: function() {
             let url = '/admin/users/get';
             let params = {
                 userRole: this.userRole,
-                userStatus: this.userStatus,
+                delete_flag: this.delete_flag,
                 sortType: this.sortType,
                 limit: this.limit,
                 offset: this.offset,
                 searchType: this.searchType,
                 searchValue: this.searchValue
             };
+            console.log(params);
             fetch(url, {
                 method: 'POST',
                 headers: {
@@ -54,6 +56,9 @@
             userList.forEach(user => {
                 let userCard = document.createElement('div');
                 userCard.className = 'user-card';
+                if(user.user_status === 1) {
+                    userCard.className = 'user-card deleted-user';
+                }
 
                 let userCardContent = this.drawUserInfo(user);
                 userCard.appendChild(userCardContent);
@@ -93,12 +98,12 @@
             let userRoleSpan = document.createElement('span');
             userRoleSpan.className = 'badge bg-secondary';
             if(user.user_role === 'ADMIN') {
-                userRoleSpan.classList.add('badge bg-primary');
+                userRoleSpan.className ='badge bg-primary';
             }
-            userRoleSpan.innerText = user.user_role;
+            userRoleSpan.innerText = user.user_role.toLocaleLowerCase();
 
             let userisBotSpan = document.createElement('span');
-            if(user.user_is_bot === true) {
+            if(user.user_is_bot === 'Y') {
                 userisBotSpan.className = 'badge bg-info';
                 userisBotSpan.innerText = 'Bot';
             }
@@ -154,7 +159,7 @@
                 // TODO : 회원 탈퇴 API 호출
             });
 
-            if(user.user_delete_flag === true) {
+            if(user.user_status === 1) {
                 userDeleteChangeButton.innerHTML = '<i class="ri-key-line"></i>';
                 userDeleteChangeButton.title = '회원 복구';
                 userDeleteChangeButton.addEventListener('click', function () {
@@ -183,6 +188,22 @@
                     userinfo.getUserList();
                 }
             })
+        },
+        filter : function() {
+            document.getElementById("filter-button").addEventListener('click', function () {
+                let userRole = document.getElementById('user-role').value;
+                let userStatus = document.getElementById('user-status').value;
+                let sortType = document.getElementById('sort-type').value;
+
+                userinfo.userRole = userRole === '' ? null : userRole;
+                userinfo.delete_flag = userStatus === '' ? null : (userStatus === 'active' ? 0 : 1);
+                userinfo.sortType = sortType === 'id' ? null : sortType;
+                userinfo.offset = 0;
+                userinfo.getUserList();
+            });
+        },
+        search : function() {
+
         }
     }
 })();

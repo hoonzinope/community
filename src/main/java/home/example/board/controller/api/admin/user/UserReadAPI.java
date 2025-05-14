@@ -51,7 +51,6 @@ public class UserReadAPI {
     public ResponseEntity<UserReadAdminResponseDTO> getUsers(
             @RequestBody UserReadAdminRequestDTO userReadAdminRequestDTO,
             @AuthenticationPrincipal CustomUserDetail userDetail) {
-        log.info("Get user list for admin {}", userReadAdminRequestDTO);
         try {
             CheckAdminUserUtils.isAdminOrThrowException(userDetail);
             return ResponseEntity.ok().body(userAdminReadService.getUsers(userReadAdminRequestDTO));

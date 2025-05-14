@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class UserReadAdminRequestDTO {
     private String userRole;
-    private String userStatus;
+    private Integer delete_flag;
     private String sortType;
     private int limit;
     private int offset;

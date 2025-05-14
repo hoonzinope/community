@@ -13,10 +13,10 @@
         FROM user
         <where>
             <if test="userRole != null and userRole != ''">
-                AND user_role = #{userRole}
+                AND role = #{userRole}
             </if>
-            <if test="userStatus != null">
-                AND delete_flag = #{userStatus}
+            <if test="delete_flag != null">
+                AND delete_flag = #{delete_flag}
             </if>
             <if test="searchType != null and searchValue != null">
                 <choose>
@@ -53,10 +53,10 @@
         FROM user
         <where>
             <if test="userRole != null and userRole != ''">
-                AND user_role = #{userRole}
+                AND role = #{userRole}
             </if>
-            <if test="userStatus != null">
-                AND delete_flag = #{userStatus}
+            <if test="delete_flag != null">
+                AND delete_flag = #{delete_flag}
             </if>
             <if test="searchType != null and searchValue != null">
                 <choose>

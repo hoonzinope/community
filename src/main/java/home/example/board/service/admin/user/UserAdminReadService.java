@@ -24,6 +24,7 @@ public class UserAdminReadService {
     public UserReadAdminResponseDTO getUsers(UserReadAdminRequestDTO userReadAdminRequestDTO) {
         // Implement the logic to get users
         // dao logic
+
         List<User> users = userAdminDAO.getUsers(userReadAdminRequestDTO);
         int totalCount = userAdminDAO.getUserCount(userReadAdminRequestDTO);
 
@@ -35,7 +36,7 @@ public class UserAdminReadService {
                 .currentPage(userReadAdminRequestDTO.getOffset() / userReadAdminRequestDTO.getLimit() + 1)
                 .pageSize(userReadAdminRequestDTO.getLimit())
                 .userRole(userReadAdminRequestDTO.getUserRole())
-                .userStatus(userReadAdminRequestDTO.getUserStatus())
+                .userStatus(userReadAdminRequestDTO.getDelete_flag() == null ? "null" : userReadAdminRequestDTO.getDelete_flag().toString())
                 .sortType(userReadAdminRequestDTO.getSortType())
                 .searchType(userReadAdminRequestDTO.getSearchType())
                 .searchValue(userReadAdminRequestDTO.getSearchValue())

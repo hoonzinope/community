@@ -46,6 +46,11 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
+    .deleted-user {
+      opacity: 0.6;
+      background-color: #f8f9fa;
+    }
+
     .user-info {
       display: flex;
       flex-direction: column;
@@ -106,22 +111,22 @@
   </div>
 
   <div class="filter-section">
-    <select class="form-select w-auto">
-      <option>전체 회원</option>
-      <option>일반 회원</option>
-      <option>관리자</option>
-      <option>봇</option>
+    <select class="form-select w-auto" id="user-role">
+      <option value="">전체 회원</option>
+      <option value="USER">일반 회원</option>
+      <option value="ADMIN">관리자</option>
     </select>
-    <select class="form-select w-auto">
-      <option>활성 회원</option>
-      <option>탈퇴 회원</option>
+    <select class="form-select w-auto" id="user-status">
+      <option value="">전체 회원</option>
+      <option value="active">활성 회원</option>
+      <option value="delete">탈퇴 회원</option>
     </select>
-    <select class="form-select w-auto">
-      <option>최신순</option>
-      <option>이메일순</option>
-      <option>닉네임순</option>
+    <select class="form-select w-auto" id="sort-type">
+      <option value="id">최신순</option>
+      <option value="user_email">이메일순</option>
+      <option value="user_nickname">닉네임순</option>
     </select>
-    <button class="btn btn-secondary">
+    <button class="btn btn-secondary" id="filter-button">
       <i class="ri-filter-3-line me-1"></i>정렬
     </button>
   </div>
