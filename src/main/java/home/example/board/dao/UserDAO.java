@@ -82,4 +82,12 @@ public class UserDAO {
             userMapper.deleteUser(user);
         }
     }
+
+    public void updateUserRole(Long user_seq, String role) {
+        User user = userMapper.getUserBySeq(user_seq);
+        if (user != null) {
+            user.setRole(role);
+            userMapper.updateUserInfo(user);
+        }
+    }
 }
