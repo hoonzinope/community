@@ -96,8 +96,7 @@ public class PostDAO {
         if(post_seq_list == null || post_seq_list.isEmpty()) {
             return new ArrayList<PostPagingDTO>();
         }
-        List<PostPagingDTO> postList = postMapper.getPostList(post_seq_list);
-        return postList;
+        return postMapper.getPostList(post_seq_list);
     }
 
     public Long addPost(String title, String content, long user_seq, long subject_seq) {
@@ -137,5 +136,9 @@ public class PostDAO {
 
     public void removePostAllByUser(long user_seq) {
         postMapper.deletePostAllByUser(user_seq);
+    }
+
+    public void restorePostAllByUser(long user_seq) {
+        postMapper.restorePostAllByUser(user_seq);
     }
 }

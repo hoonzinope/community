@@ -167,4 +167,13 @@
             where
                 user_seq = #{user_seq}
     </update>
+
+    <update id="restoreUser"
+            parameterType="home.example.board.domain.User">
+        update user
+            set delete_flag = #{delete_flag},
+                delete_ts = null
+            where
+                user_seq = #{user_seq}
+    </update>
 </mapper>

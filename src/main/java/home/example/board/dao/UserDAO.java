@@ -83,6 +83,15 @@ public class UserDAO {
         }
     }
 
+    public void restoreUser(Long user_seq) {
+        User user = userMapper.getUserBySeq(user_seq);
+        if (user != null) {
+            user.setDelete_flag(0);
+            user.setDelete_ts(null);
+            userMapper.restoreUser(user);
+        }
+    }
+
     public void updateUserRole(Long user_seq, String role) {
         User user = userMapper.getUserBySeq(user_seq);
         if (user != null) {

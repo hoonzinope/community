@@ -274,4 +274,13 @@
             user_seq = #{user_seq}
     </update>
 
+    <update id="restorePostAllByUser" parameterType="long">
+        update post
+        set
+            delete_flag = 0,
+            delete_ts = null
+        WHERE
+            user_seq = #{user_seq}
+            and delete_flag = 1
+    </update>
 </mapper>

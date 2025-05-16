@@ -26,4 +26,5 @@ public interface PostMapper {
     List<Post> getPostAll();
     List<PostPagingDTO> getPostList(List<Long> post_seq_list);
     void deletePostAllByUser(long user_seq);
+    void restorePostAllByUser(long user_seq);
 }

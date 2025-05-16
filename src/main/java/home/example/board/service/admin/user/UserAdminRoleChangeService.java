@@ -19,7 +19,7 @@ public class UserAdminRoleChangeService {
         User user = userDAO.getUserBySeq(userSeq);
         if(user == null)
             throw new IllegalArgumentException("User not found with seq: " + userSeq);
-        String oldRole = user.getRole() == "ADMIN" ? "USER" : "ADMIN";
+        String oldRole = user.getRole().equals("ADMIN") ? "USER" : "ADMIN";
         userDAO.updateUserRole(userSeq, oldRole);
     }
 }

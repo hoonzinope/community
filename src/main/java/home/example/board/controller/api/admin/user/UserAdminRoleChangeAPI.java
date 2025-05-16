@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-public class UserRoleChangeAPI {
+public class UserAdminRoleChangeAPI {
 
     private final UserAdminRoleChangeService userAdminRoleChangeService;
 
     @Autowired
-    public UserRoleChangeAPI(UserAdminRoleChangeService userAdminRoleChangeService) {
+    public UserAdminRoleChangeAPI(UserAdminRoleChangeService userAdminRoleChangeService) {
         this.userAdminRoleChangeService = userAdminRoleChangeService;
     }
 
@@ -28,7 +28,6 @@ public class UserRoleChangeAPI {
             @PathVariable Long userSeq,
             @AuthenticationPrincipal CustomUserDetail userDetail) {
         CheckAdminUserUtils.isAdminOrThrowException(userDetail);
-        // TODO : Implement change user role logic
         JSONObject jsonObject = new JSONObject();
         try{
             // Call the service to change the user role

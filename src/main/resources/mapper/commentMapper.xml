@@ -143,4 +143,14 @@
         where
             user_seq = #{user_seq}
     </update>
+
+    <update id="restoreCommentAllByUser" parameterType="long">
+        update comment
+            set
+                delete_flag = 0,
+                delete_ts = null
+        where
+            user_seq = #{user_seq}
+            and delete_flag = 1
+    </update>
 </mapper>

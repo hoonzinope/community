@@ -4,6 +4,7 @@ import home.example.board.DTO.CustomUserDetail;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class AdminPageController {
@@ -18,6 +19,14 @@ public class AdminPageController {
     public String adminUsersPage(@AuthenticationPrincipal CustomUserDetail userDetail) {
         isAdmin(userDetail);
         return "admin/user/admin_user";
+    }
+
+    @GetMapping("/admin/users/detail/{userSeq}")
+    public String adminUserDetailsPage(
+            @PathVariable long userSeq,
+            @AuthenticationPrincipal CustomUserDetail userDetail) {
+        isAdmin(userDetail);
+        return "admin/user/admin_userDetail";
     }
 
     @GetMapping("/admin/posts")

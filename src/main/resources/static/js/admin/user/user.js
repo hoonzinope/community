@@ -65,6 +65,10 @@
                 userCard.appendChild(userCardContent);
 
                 userCardList.appendChild(userCard);
+
+                userCardList.addEventListener('click', event => {
+                    window.location.href = "/admin/users/detail/" + user.user_seq;
+                })
             });
         },
         drawUserInfo : function (user) {
@@ -97,15 +101,15 @@
             emailSpan.innerText = user.user_email;
 
             let userRoleSpan = document.createElement('span');
-            userRoleSpan.className = 'badge bg-secondary';
+            userRoleSpan.className = 'badge bg-secondary me-1';
             if(user.user_role === 'ADMIN') {
-                userRoleSpan.className ='badge bg-primary';
+                userRoleSpan.className ='badge bg-primary me-1';
             }
             userRoleSpan.innerText = user.user_role.toLocaleLowerCase();
 
             let userisBotSpan = document.createElement('span');
             if(user.user_is_bot === 'Y') {
-                userisBotSpan.className = 'badge bg-info';
+                userisBotSpan.className = 'badge bg-info me-1';
                 userisBotSpan.innerText = 'Bot';
             }
 
@@ -136,7 +140,7 @@
                 //'<i class="ri-key-line"></i>';
 
             userPwResetButton.addEventListener('click', function() {
-                // TODO : 비밀번호 초기화 API 호출
+                userinfo.resetPwUser(user.user_seq);
             });
             userActionDiv.appendChild(userPwResetButton);
 
@@ -145,7 +149,7 @@
             userRoleChangeButton.title = '권한 변경';
             userRoleChangeButton.innerHTML = '<i class="ri-shield-user-line"></i>';
             userRoleChangeButton.addEventListener('click', function() {
-                // TODO : 권한 변경 API 호출
+                userinfo.roleChange(user.user_seq);
             });
             userActionDiv.appendChild(userRoleChangeButton);
 
@@ -154,14 +158,14 @@
             userDeleteChangeButton.title = '회원 탈퇴';
             userDeleteChangeButton.innerHTML = '<i class="ri-delete-bin-5-line"></i>';
             userDeleteChangeButton.addEventListener('click', function() {
-                // TODO : 회원 탈퇴 API 호출
+                userinfo.deleteUser(user.user_seq);
             });
 
             if(user.user_status === 1) {
                 userDeleteChangeButton.innerHTML = '<i class="ri-key-line"></i>';
                 userDeleteChangeButton.title = '회원 복구';
                 userDeleteChangeButton.addEventListener('click', function () {
-                    // TODO : 회원 복구 API 호출
+                    userinfo.restoreUser(user.user_seq);
                 });
             }
 
@@ -222,6 +226,82 @@
 
                 userinfo.getUserList();
             })
+        },
+        restoreUser : function(user_seq) {
+            let url = '/admin/users/restore/'+ user_seq;
+            fetch(url, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok'+ response.json().error_message);
+                }
+            }).then(data => {
+                userinfo.getUserList();
+            }).catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        },
+        deleteUser : function(user_seq) {
+            let url = '/admin/users/delete/'+ user_seq;
+            fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok'+ response.json().error_message);
+                }
+            }).then(data => {
+                userinfo.getUserList();
+            }).catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        },
+        resetPwUser : function(user_seq) {
+            let url = '/admin/users/resetpw/'+ user_seq;
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok'+ response.json().error_message);
+                }
+            }).then(data => {
+                userinfo.getUserList();
+            }).catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        },
+        roleChange : function (user_seq) {
+            let url = '/admin/users/roleChange/'+ user_seq;
+            fetch(url, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok'+ response.json().error_message);
+                }
+            }).then(data => {
+                userinfo.getUserList();
+            }).catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
         }
     }
 })();
