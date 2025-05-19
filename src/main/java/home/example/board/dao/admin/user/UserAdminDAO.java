@@ -28,4 +28,17 @@ public class UserAdminDAO {
         return userAdminMapper.getUserCount(userReadAdminRequestDTO);
     }
 
+    public User getUser(long user_seq) {
+        // Implement the logic to get a user by ID from the database
+        return userAdminMapper.getUser(user_seq);
+    }
+
+    public void updateUserInfo(User user) {
+        // Implement the logic to update user info in the database
+        int count = userAdminMapper.checkDuplicateUserInfo(user);
+        if(count != 0) {
+            throw new IllegalArgumentException("User with the same email or nickname or id already exists.");
+        }
+        userAdminMapper.updateUserInfo(user);
+    }
 }

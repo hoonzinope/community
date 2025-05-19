@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- mapper DTD 선언 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- SQL Mapping -->
+<mapper namespace="home.example.board.repository.admin.UserAdminPostMapper">
+
+    <select id="getPostByUserSeq"
+            parameterType="home.example.board.DTO.adminApiDTO.UserPostReadAdminRequestDTO"
+            resultType="home.example.board.domain.Post">
+            SELECT *
+            FROM post
+            WHERE user_seq = #{user_seq}
+            <choose>
+                <when test="sortType == 'post_seq'">
+                    ORDER BY post_seq DESC
+                </when>
+                <when test="sortType == 'view_count'">
+                    ORDER BY view_count DESC
+                </when>
+                <otherwise>
+                    ORDER BY post_seq DESC
+                </otherwise>
+            </choose>
+            LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="getPostCountByUserSeq"
+            parameterType="home.example.board.DTO.adminApiDTO.UserPostReadAdminRequestDTO"
+            resultType="int">
+            SELECT COUNT(*)
+            FROM post
+            WHERE user_seq = #{user_seq}
+    </select>
+</mapper>

@@ -10,4 +10,7 @@ import java.util.List;
 public interface UserAdminMapper {
     List<User> getUsers(UserReadAdminRequestDTO userReadAdminRequestDTO);
     int getUserCount(UserReadAdminRequestDTO userReadAdminRequestDTO);
+    User getUser(long user_seq);
+    Integer checkDuplicateUserInfo(User user);
+    void updateUserInfo(User user);
 }

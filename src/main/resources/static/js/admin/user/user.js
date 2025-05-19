@@ -66,7 +66,7 @@
 
                 userCardList.appendChild(userCard);
 
-                userCardList.addEventListener('click', event => {
+                userCard.addEventListener('click', event => {
                     window.location.href = "/admin/users/detail/" + user.user_seq;
                 })
             });

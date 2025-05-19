@@ -2,6 +2,7 @@ package home.example.board.service.admin.user;
 
 import home.example.board.DTO.adminApiDTO.UserReadAdminRequestDTO;
 import home.example.board.DTO.adminApiDTO.UserReadAdminResponseDTO;
+import home.example.board.DTO.adminApiDTO.UserReadOneAdminResponseDTO;
 import home.example.board.dao.admin.user.UserAdminDAO;
 import home.example.board.domain.User;
 import org.json.simple.JSONObject;
@@ -60,6 +61,32 @@ public class UserAdminReadService {
             jsonList.add(jsonObject);
         }
         return jsonList;
+    }
+
+    public UserReadOneAdminResponseDTO getUser(long user_seq) {
+        // Implement the logic to get a single user
+        // dao logic
+
+        User user = userAdminDAO.getUser(user_seq);
+        if (user == null) {
+            return UserReadOneAdminResponseDTO.builder()
+                    .error_message("User not found")
+                    .build();
+        }
+
+        // Create and return the response DTO
+        return UserReadOneAdminResponseDTO.builder()
+                .user_seq(user.getUser_seq())
+                .user_name(user.getUser_name())
+                .user_email(user.getUser_email())
+                .user_role(user.getRole())
+                .user_status(user.getDelete_flag() == 0 ? "ACTIVE" : "DELETED")
+                .user_nickname(user.getUser_nickname())
+                .user_insert_ts(user.getInsert_ts())
+                .user_update_ts(user.getUpdate_ts())
+                .user_is_bot(user.getIs_bot())
+                .user_forced_password_change(user.getForce_password_change() == 0 ? "false" : "true")
+                .build();
     }
 
 }
