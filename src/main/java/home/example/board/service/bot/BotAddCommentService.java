@@ -35,7 +35,7 @@ public class BotAddCommentService {
 
 
         // 게시글이 존재하는지 확인
-        if(postDAO.getPost(post_seq) == null){
+        if(!postDAO.isExistPost(post_seq)){
             throw new IllegalArgumentException("게시글이 존재하지 않습니다.");
         }
 
