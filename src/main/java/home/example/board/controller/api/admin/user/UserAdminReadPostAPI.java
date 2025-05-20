@@ -35,8 +35,7 @@ public class UserAdminReadPostAPI {
                 return ResponseEntity.ok().body(userPostReadAdminResponseDTO);
             }
         } catch (Exception e){
-            e.printStackTrace();
-            log.error("exception occured {}",e.getMessage());
+            log.error("Exception occurred", e);
             UserPostReadAdminResponseDTO resultDto = UserPostReadAdminResponseDTO.builder()
                     .error_message("exception " + e.getMessage()).build();
             return ResponseEntity.status(403).body(resultDto);
