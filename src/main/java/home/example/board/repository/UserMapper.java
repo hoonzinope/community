@@ -18,5 +18,6 @@ public interface UserMapper {
     List<User> getUserBySeqList(List<Long> userSeqList);
     void resetUserPw(User user);
     void deleteUser(User user);
+    void restoreUser(User user);
     User getUserByNickname(String user_nickname);
 }

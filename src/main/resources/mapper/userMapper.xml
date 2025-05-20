@@ -15,6 +15,7 @@
             user_nickname,
             insert_ts,
             role,
+            update_ts,
             delete_flag,
             delete_ts,
             force_password_change,
@@ -33,9 +34,11 @@
             user_nickname,
             insert_ts,
             role,
+            update_ts,
             delete_flag,
             delete_ts,
-            force_password_change
+            force_password_change,
+            is_bot
         from user
         where user_seq = #{user_seq}
     </select>
@@ -50,9 +53,11 @@
             user_nickname,
             insert_ts,
             role,
+            update_ts,
             delete_flag,
             delete_ts,
-            force_password_change
+            force_password_change,
+            is_bot
         from user
         where user_seq in
         <foreach collection="list" item="item" open="(" separator="," close=")">
@@ -77,9 +82,11 @@
             user_nickname,
             insert_ts,
             role,
+            update_ts,
             delete_flag,
             delete_ts,
-            force_password_change
+            force_password_change,
+            is_bot
         from user
         where user_name = #{user_name}
     </select>
@@ -94,9 +101,11 @@
             user_nickname,
             insert_ts,
             role,
+            update_ts,
             delete_flag,
             delete_ts,
-            force_password_change
+            force_password_change,
+            is_bot
         from user
         where user_nickname = #{user_nickname}
     </select>
@@ -111,9 +120,11 @@
             user_nickname,
             insert_ts,
             role,
+            update_ts,
             delete_flag,
             delete_ts,
-            force_password_change
+            force_password_change,
+            is_bot
         from user
     </select>
 
@@ -153,6 +164,15 @@
         update user
             set delete_flag = #{delete_flag},
                 delete_ts = #{delete_ts}
+            where
+                user_seq = #{user_seq}
+    </update>
+
+    <update id="restoreUser"
+            parameterType="home.example.board.domain.User">
+        update user
+            set delete_flag = #{delete_flag},
+                delete_ts = null
             where
                 user_seq = #{user_seq}
     </update>

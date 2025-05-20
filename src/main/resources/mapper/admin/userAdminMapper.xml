@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- mapper DTD 선언 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- SQL Mapping -->
+<mapper namespace="home.example.board.repository.admin.UserAdminMapper">
+
+    <select id="getUsers"
+            parameterType="home.example.board.DTO.adminApiDTO.UserReadAdminRequestDTO"
+            resultType="home.example.board.domain.User">
+        SELECT *
+        FROM user
+        <where>
+            <if test="userRole != null and userRole != ''">
+                AND role = #{userRole}
+            </if>
+            <if test="delete_flag != null">
+                AND delete_flag = #{delete_flag}
+            </if>
+            <if test="searchType != null and searchValue != null">
+                <choose>
+                    <when test="searchType == 'user_nickname'">
+                        AND user_nickname LIKE CONCAT('%', #{searchValue}, '%')
+                    </when>
+                    <when test="searchType == 'user_email'">
+                        AND user_email LIKE CONCAT('%', #{searchValue}, '%')
+                    </when>
+                </choose>
+            </if>
+        </where>
+        <choose>
+            <when test="sortType == 'user_seq'">
+                ORDER BY user_seq DESC
+            </when>
+            <when test="sortType == 'user_nickname'">
+                ORDER BY user_nickname DESC
+            </when>
+            <when test="sortType == 'user_email'">
+                ORDER BY user_email DESC
+            </when>
+            <otherwise>
+                ORDER BY user_seq DESC
+            </otherwise>
+        </choose>
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="getUserCount"
+            parameterType="home.example.board.DTO.adminApiDTO.UserReadAdminRequestDTO"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM user
+        <where>
+            <if test="userRole != null and userRole != ''">
+                AND role = #{userRole}
+            </if>
+            <if test="delete_flag != null">
+                AND delete_flag = #{delete_flag}
+            </if>
+            <if test="searchType != null and searchValue != null">
+                <choose>
+                    <when test="searchType == 'user_nickname'">
+                        AND user_nickname LIKE CONCAT('%', #{searchValue}, '%')
+                    </when>
+                    <when test="searchType == 'user_email'">
+                        AND user_email LIKE CONCAT('%', #{searchValue}, '%')
+                    </when>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <select id="getUser"
+            parameterType="long"
+            resultType="home.example.board.domain.User">
+        SELECT *
+        FROM user
+        WHERE user_seq = #{user_seq}
+    </select>
+
+    <select id="checkDuplicateUserInfo"
+            parameterType="home.example.board.domain.User"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM user
+        WHERE user_nickname = #{user_nickname}
+        OR user_email = #{user_email}
+        OR user_name = #{user_name}
+    </select>
+
+    <update id="updateUser"
+            parameterType="home.example.board.domain.User">
+        UPDATE user
+        SET user_nickname = #{user_nickname},
+            user_email = #{user_email},
+            user_password = #{user_password},
+            role = #{role}
+        WHERE user_seq = #{user_seq}
+    </update>
+</mapper>

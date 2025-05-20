@@ -32,6 +32,10 @@ public class CustomUserDetail implements UserDetails {
         return Collections.singletonList(authority);
     }
 
+    public boolean isAdmin() {
+        return this.user.getRole().equals("ADMIN");
+    }
+
     @Override
     public String getPassword() {
         return this.user.getUser_pw();

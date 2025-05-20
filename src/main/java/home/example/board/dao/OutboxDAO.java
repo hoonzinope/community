@@ -70,7 +70,21 @@ public class OutboxDAO {
                 .aggregate_type("POST")
                 .aggregate_id(user_seq)
                 .event_type("UserSoftDeleted")
-                .payload("")
+                .payload(new JSONObject().toJSONString())
+                .created_ts(LocalDateTime.now())
+                .status("PENDING")
+                .build();
+        // insert Outbox into database
+        outboxMapper.insertOutbox(outbox);
+    }
+
+    public void restorePostAllByUser(long user_seq) {
+        // convert Post to Outbox
+        Outbox outbox = Outbox.builder()
+                .aggregate_type("POST")
+                .aggregate_id(user_seq)
+                .event_type("UserRestore")
+                .payload(new JSONObject().toJSONString())
                 .created_ts(LocalDateTime.now())
                 .status("PENDING")
                 .build();
@@ -84,7 +98,21 @@ public class OutboxDAO {
                 .aggregate_type("COMMENT")
                 .aggregate_id(user_seq)
                 .event_type("UserSoftDeleted")
-                .payload("")
+                .payload(new JSONObject().toJSONString())
+                .created_ts(LocalDateTime.now())
+                .status("PENDING")
+                .build();
+        // insert Outbox into database
+        outboxMapper.insertOutbox(outbox);
+    }
+
+    public void restoreCommentAllByUser(long user_seq) {
+        // convert Comment to Outbox
+        Outbox outbox = Outbox.builder()
+                .aggregate_type("COMMENT")
+                .aggregate_id(user_seq)
+                .event_type("UserRestore")
+                .payload(new JSONObject().toJSONString())
                 .created_ts(LocalDateTime.now())
                 .status("PENDING")
                 .build();

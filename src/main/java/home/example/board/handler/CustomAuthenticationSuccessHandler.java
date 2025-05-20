@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -67,6 +68,9 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         session.setAttribute("user_seq", userDetails.getUserSeq());
         session.setAttribute("user_nickname", userNickname);
+        session.setAttribute("user_role", userDetails.getAuthorities().stream()
+                .map(auth -> auth.getAuthority())
+                .collect(Collectors.toList()));
         if (userDetails.getTempPassword()) {
             referer = "/changePassword";
         }

@@ -85,4 +85,9 @@ public class CommentDAO {
     public void removeCommentAllByUser(long user_seq) {
         commentMapper.removeCommentAllByUser(user_seq);
     }
+
+    @Transactional
+    public void restoreCommentAllByUser(long user_seq) {
+        commentMapper.restoreCommentAllByUser(user_seq);
+    }
 }
