@@ -25,7 +25,7 @@ public class UserAdminReadPostAPI {
             @RequestBody UserPostReadAdminRequestDTO userPostReadAdminRequestDTO,
             @AuthenticationPrincipal CustomUserDetail customUserDetail){
         try{
-            System.out.println("getUserPost" + userPostReadAdminRequestDTO);
+            log.debug("Processing getUserPost request: {}", userPostReadAdminRequestDTO);
             CheckAdminUserUtils.isAdminOrThrowException(customUserDetail);
             UserPostReadAdminResponseDTO userPostReadAdminResponseDTO =
                     userAdminReadPostService.getUserPost(userPostReadAdminRequestDTO);
