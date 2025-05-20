@@ -25,7 +25,7 @@ public class UserAdminUpdateAPI {
             CheckAdminUserUtils.isAdminOrThrowException(customUserDetail);
 
             jsonObject.put("status", "success");
-            jsonObject.put("message", "User deleted successfully.");
+            jsonObject.put("message", "User updated successfully.");
             return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e) {
             jsonObject.put("status", "error");
