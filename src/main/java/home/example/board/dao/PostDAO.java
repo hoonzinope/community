@@ -55,7 +55,7 @@ public class PostDAO {
         if(post == null) {
             throw new IllegalArgumentException("해당 게시글이 존재하지 않습니다.");
         }
-        postMapper.updateViewCount(post_seq);
+        addPostViewCount(post_seq);
         return post;
     }
 
@@ -140,5 +140,9 @@ public class PostDAO {
 
     public void restorePostAllByUser(long user_seq) {
         postMapper.restorePostAllByUser(user_seq);
+    }
+
+    public void addPostViewCount(long post_seq) {
+        postMapper.updateViewCount(post_seq);
     }
 }
