@@ -4,6 +4,7 @@ import home.example.board.DTO.botApiDTO.BotAddCommentDTO;
 import home.example.board.dao.CommentDAO;
 import home.example.board.dao.CommentHistoryDAO;
 import home.example.board.dao.OutboxDAO;
+import home.example.board.dao.PostDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,14 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class BotAddCommentService {
 
+    private final PostDAO postDAO;
     private final CommentDAO commentDAO;
     private final OutboxDAO outboxDAO;
 
     @Autowired
     public BotAddCommentService(
+            PostDAO postDAO,
             CommentDAO commentDAO,
-            CommentHistoryDAO commentHistoryDAO,
             OutboxDAO outboxDAO) {
+        this.postDAO = postDAO;
         this.commentDAO = commentDAO;
         this.outboxDAO = outboxDAO;
     }
@@ -29,6 +32,12 @@ public class BotAddCommentService {
 
         long post_seq = botAddCommentDTO.getPost_seq();
         String content = botAddCommentDTO.getContent();
+
+
+        // 게시글이 존재하는지 확인
+        if(!postDAO.isExistPost(post_seq)){
+            throw new IllegalArgumentException("게시글이 존재하지 않습니다.");
+        }
 
         Long parent_comment_seq = null;
         if(botAddCommentDTO.getParent_comment_seq() != null && botAddCommentDTO.getParent_comment_seq() != 0L)
@@ -42,7 +51,9 @@ public class BotAddCommentService {
             throw new IllegalArgumentException("댓글을 작성할 수 없습니다. parent_comment_seq와 reply_user_seq는 같이 사용해야 합니다.");
         }
 
+        // 댓글 작성
         long comment_seq = commentDAO.insertComment(post_seq, content, parent_comment_seq, reply_user_seq, user_seq);
+        postDAO.addPostViewCount(post_seq);
         outboxDAO.insertComment(comment_seq, content,"INSERT");
     }
 
