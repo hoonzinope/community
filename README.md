@@ -3,12 +3,16 @@
 ## 기술 스택
 
 - **Backend Framework:** Spring Boot 2.7.5
-- **Language:** Java 1.8
+- **Language:** Java 8
 - **ORM:** MyBatis
 - **Template Engine:** Thymeleaf
+- **Authentication:** JWT (JSON Web Token)
+- **Session Management:** Spring Session (JDBC backed)
 - **Containerization:** Docker
     - **DB:** MySQL 8
     - **Image Storage:** Minio
+    - **Search Engine (Primary):** Meilisearch
+    - **Search Engine (Secondary/Optional):** Elasticsearch
 
 ![image.png](./screenshot/architecture.png)
 
@@ -26,12 +30,32 @@
 - **게시글 작성:** 로그인된 회원은 새 게시글을 작성할 수 있음
 - **이미지 첨부:** 게시글 작성 시 이미지 파일 첨부 가능 (Minio를 이용한 이미지 저장)
 - **게시글 관리:** 작성자 본인에 한해 게시글 조회, 수정, 삭제 가능
+- **변경 이력 추적:** 게시글 수정 내역을 기록하고 조회할 수 있습니다.
 
 ### 댓글
 
 - **댓글 작성:** 로그인된 회원은 게시글에 댓글 작성 가능
 - **댓글 좋아요/싫어요:** 로그인된 회원은 댓글에 좋아요 또는 싫어요를 누를 수 있음
 - **댓글 관리:** 작성자 본인에 한해 댓글 조회, 수정, 삭제 가능
+- **변경 이력 추적:** 댓글 수정 내역을 기록하고 조회할 수 있습니다.
+
+### 주제/카테고리
+
+- 게시글을 주제별로 분류하여 관리할 수 있습니다.
+
+### 검색
+
+- 게시글 및 댓글 내용 검색 기능을 제공합니다.
+- Meilisearch 및 Elasticsearch를 활용한 검색 최적화.
+
+### 관리자 기능
+
+- **사용자 관리:** 관리자 페이지에서 사용자 정보 조회 및 수정.
+- **콘텐츠 관리:** 게시글 및 댓글 관리 기능.
+
+### Bot API
+
+- 자동화된 콘텐츠 생성 및 상호작용을 위한 API를 제공합니다.
 
 테이블의 연관관계는 아래와 같습니다.
 
@@ -43,7 +67,7 @@
 
 - JDK 1.8 이상
 - Gradle
-- Docker 설치 (MySQL 8, Minio 컨테이너 실행)
+- Docker 설치 (MySQL 8, Minio, Meilisearch, Elasticsearch 컨테이너 실행)
 
 ### 1. 소스 코드 클론
 
@@ -71,6 +95,22 @@ docker run --name minio -p 9000:9000 -p 9001:9001 -e "MINIO_ROOT_USER=your_acces
 
 ```
 
+**Meilisearch 실행**
+
+```bash
+# Meilisearch는 마스터 키 없이 실행하면 자동으로 생성하며, 프로덕션 환경에서는 보안을 위해 마스터 키를 설정하는 것이 좋습니다.
+# 예시 (마스터 키 없이 실행): docker run -p 7700:7700 -v $(pwd)/meili_data:/meili_data getmeili/meilisearch:latest
+# 또는 마스터키 설정시 (your_master_key 를 실제 키로 변경):
+docker run --name meilisearch -p 7700:7700 -e MEILI_MASTER_KEY='your_master_key' -v $(pwd)/meili_data:/meili_data getmeili/meilisearch:latest
+```
+
+**Elasticsearch 실행**
+
+```bash
+# 단일 노드 개발 모드로 실행합니다.
+docker run --name elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsearch:7.17.9
+```
+
 ### 3. 애플리케이션 설정
 
 `src/main/resources/application.properties` 또는 `application.yml` 파일에서 데이터베이스 및 Minio 관련 설정을 본인의 환경에 맞게 수정합니다.
@@ -86,6 +126,11 @@ minio.endpoint=http://localhost:9000
 minio.access-key=your_access_key
 minio.secret-key=your_secret_key
 
+# Search engine config
+spring.meilisearch.url=http://localhost:7700
+spring.meilisearch.api-key=your_master_key # Meilisearch 실행 시 설정한 마스터 키와 동일하게 입력
+
+spring.elasticsearch.uris=http://localhost:9200
 ```
 
 ### 4. 프로젝트 빌드 및 실행
