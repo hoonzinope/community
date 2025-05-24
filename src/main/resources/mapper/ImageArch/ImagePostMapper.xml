@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- mapper DTD 선언 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- SQL Mapping -->
+<mapper namespace="home.example.board.repository.imageArch.ImagePostMapper">
+
+    <select id="selectImagePostList"
+            parameterType="home.example.board.DTO.imageArch.ImagePostRequestDTO"
+            resultType="home.example.board.domain.ImagePost">
+        SELECT ecp.*
+        FROM external_community_post ecp
+        WHERE EXISTS (
+            SELECT 1
+            FROM external_post_image epi
+            WHERE ecp.post_id = epi.post_id
+        )
+        AND ecp.post_created_at is not null
+        ORDER BY ecp.post_id desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="selectImagePostCount"
+            parameterType="home.example.board.DTO.imageArch.ImagePostRequestDTO"
+            resultType="int">
+        SELECT count(*)
+        FROM external_community_post ecp
+        WHERE EXISTS (
+            SELECT 1
+            FROM external_post_image epi
+            WHERE ecp.post_id = epi.post_id
+        )
+        AND post_created_at is not null
+    </select>
+</mapper>
