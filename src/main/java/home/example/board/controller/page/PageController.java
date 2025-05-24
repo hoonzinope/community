@@ -97,4 +97,9 @@ public class PageController {
         //model.addAttribute("data", result);
         return "community/searchResult";
     }
+
+    @GetMapping("/imgArchive")
+    public String imgArchive() {
+        return "community/imgArchive";
+    }
 }
