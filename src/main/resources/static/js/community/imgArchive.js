@@ -127,17 +127,17 @@
                 document.getElementById('imgModal').style.display = 'none';
             }
             // 모달 바깥 클릭 시 닫기 (선택)
-            window.onclick = function(e) {
+            window.addEventListener('click', function(e) {
                 const modal = document.getElementById('imgModal');
                 if (e.target === modal) modal.style.display = 'none';
-            }
+            });
 
-            window.onclick = function(e) {
+            window.addEventListener('click', function(e) {
                 const closeModal = document.getElementsByClassName('close-modal');
                 if (e.target === closeModal[0]) {
                     closeImgModal();
                 }
-            }
+            });
         },
 
     }
