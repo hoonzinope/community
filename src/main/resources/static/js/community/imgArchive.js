@@ -62,7 +62,7 @@
                 let imagePost = imagePostList[i].imagePost;
                 let images = imagePostList[i].images;
                 let imageUrls = images.map(img => img.image_url);
-                thumbUrl = images[0].thumb_url;
+                let thumbUrl = images[0].thumb_url;
 
                 let imgCard = document.createElement('div');
                 imgCard.className = 'img-card';
