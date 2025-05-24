@@ -73,7 +73,7 @@
                     <div class="img-overlay">
                         <div class="overlay-content">
                             <div class="img-title">${imagePost.post_title}</div>
-                            <div class="img-count">+${images.length}</div>
+                            <div class="img-count">+${images.length - 1}</div>
                         </div>
                     </div>
                 `;
