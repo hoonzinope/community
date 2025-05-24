@@ -25,7 +25,12 @@
             parameterType="home.example.board.DTO.imageArch.ImagePostRequestDTO"
             resultType="int">
         SELECT count(*)
-        FROM external_community_post
-        WHERE post_created_at is not null
+        FROM external_community_post ecp
+        WHERE EXISTS (
+            SELECT 1
+            FROM external_post_image epi
+            WHERE ecp.post_id = epi.post_id
+        )
+        AND post_created_at is not null
     </select>
 </mapper>
