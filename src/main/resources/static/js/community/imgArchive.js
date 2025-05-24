@@ -61,7 +61,7 @@
             for(let i = 0; i < imagePostList.length; i++) {
                 let imagePost = imagePostList[i].imagePost;
                 let images = imagePostList[i].images;
-                imageUrls = images.map(img => img.image_url);
+                let imageUrls = images.map(img => img.image_url);
                 thumbUrl = images[0].thumb_url;
 
                 let imgCard = document.createElement('div');
