@@ -23,7 +23,7 @@
           ]]>
         </if>
         ORDER BY ecp.post_id desc
-        limit #{limit} offset #{offset}
+        limit #{limit}
     </select>
 
     <select id="selectImagePostCount"

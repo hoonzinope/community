@@ -5,7 +5,6 @@
         window.addEventListener('scroll', function() {
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
                 if (!imgArchive.isLoading) {
-                    imgArchive.offset += imgArchive.limit; // 다음 페이지 오프셋 증가
                     imgArchive.getImagePosts(); // 추가 이미지 포스트 요청
                 }
             }
@@ -13,8 +12,7 @@
     });
 
     let imgArchive = {
-        limit : 15,
-        offset : 0,
+        limit : 15, // 한 번에 가져올 이미지 포스트 수
         lastId : null,
         isLoading : false,
         init: function() {
@@ -24,7 +22,6 @@
             let url = "/api/image-posts";
             let params = {
                 limit: this.limit,
-                offset: this.offset,
                 lastId: this.lastId
             }
             this.isLoading = true;

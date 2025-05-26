@@ -53,7 +53,6 @@ public class ImageArchService {
 
         return ImagePostPagingResponseDTO.builder()
                 .limit(imagePostRequestDTO.getLimit())
-                .offset(imagePostRequestDTO.getOffset())
                 .totalCount(imagePostTotalCount)
                 .imagePostList(imagePostDTOS)
                 .lastId(lastId)
