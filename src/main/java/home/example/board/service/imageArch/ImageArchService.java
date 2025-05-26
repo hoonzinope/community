@@ -36,7 +36,7 @@ public class ImageArchService {
         List<Long> postIds = imagePosts.stream()
                                        .map(ImagePost::getPost_id)
                                        .collect(Collectors.toList());
-
+        Long lastId = imagePosts.isEmpty() ? null : imagePosts.get(imagePosts.size() - 1).getPost_id();
         // Fetch images associated with the post IDs
         List<Image> images = selectImageList(postIds);
 
@@ -56,6 +56,7 @@ public class ImageArchService {
                 .offset(imagePostRequestDTO.getOffset())
                 .totalCount(imagePostTotalCount)
                 .imagePostList(imagePostDTOS)
+                .lastId(lastId)
                 .build();
     }
 

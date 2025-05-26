@@ -4,8 +4,10 @@
         // 스크롤이 바닥에 닿았을 때 추가 이미지 로드
         window.addEventListener('scroll', function() {
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-                imgArchive.offset += imgArchive.limit; // 다음 페이지 오프셋 증가
-                imgArchive.getImagePosts(); // 추가 이미지 포스트 요청
+                if (!imgArchive.isLoading) {
+                    imgArchive.offset += imgArchive.limit; // 다음 페이지 오프셋 증가
+                    imgArchive.getImagePosts(); // 추가 이미지 포스트 요청
+                }
             }
         });
     });
@@ -13,6 +15,8 @@
     let imgArchive = {
         limit : 15,
         offset : 0,
+        lastId : null,
+        isLoading : false,
         init: function() {
             this.getImagePosts();
         },
@@ -20,8 +24,10 @@
             let url = "/api/image-posts";
             let params = {
                 limit: this.limit,
-                offset: this.offset
+                offset: this.offset,
+                lastId: this.lastId
             }
+            this.isLoading = true;
             fetch(url, {
                 method: 'POST',
                 headers: {
@@ -36,12 +42,17 @@
                 return response.json();
             })
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 if (data.imagePostList !== undefined) {
+                    // 마지막 ID 업데이트
+                    this.lastId = data.lastId;
                     this.drawImagePosts(data.imagePostList);
                 } else {
                     console.error('Error fetching image posts:', data.message);
                 }
+            })
+            .finally(function() {
+                imgArchive.isLoading = false; // 로딩 상태 해제
             })
         },
         drawImagePosts: function(imagePostList) {
@@ -70,10 +81,10 @@
                 imgCard.setAttribute('data-imgs', JSON.stringify(imageUrls));
                 imgCard.innerHTML = `
                     <img src="${thumbUrl}" class="card-img" alt="썸네일" />
-                    <div class="img-overlay">
+                    <div class="img">
                         <div class="overlay-content">
                             <div class="img-title">${imagePost.post_title}</div>
-                            <div class="img-count">+${images.length - 1}</div>
+                            <div class="img-count">+${images.length}</div>
                         </div>
                     </div>
                 `;
