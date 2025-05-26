@@ -17,8 +17,13 @@
             WHERE ecp.post_id = epi.post_id
         )
         AND ecp.post_created_at is not null
+        <if test="lastId != null">
+          <![CDATA[
+            AND ecp.post_id < #{lastId}
+          ]]>
+        </if>
         ORDER BY ecp.post_id desc
-        limit #{limit} offset #{offset}
+        limit #{limit}
     </select>
 
     <select id="selectImagePostCount"

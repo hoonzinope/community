@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 public class ImagePostPagingResponseDTO {
     int limit;
-    int offset;
     int totalCount;
+    Long lastId;
     List<ImagePostDTO> imagePostList;
 }
