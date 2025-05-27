@@ -9,7 +9,14 @@
     <select id="selectImagePostList"
             parameterType="home.example.board.DTO.imageArch.ImagePostRequestDTO"
             resultType="home.example.board.domain.ImagePost">
-        SELECT ecp.*
+        SELECT
+            ecp.post_id,
+            ecp.site_code,
+            ecp.post_title,
+            ecp.post_url,
+            ecp.author,
+            ecp.post_created_at,
+            ecp.fetched_at
         FROM external_community_post ecp
         WHERE EXISTS (
             SELECT 1

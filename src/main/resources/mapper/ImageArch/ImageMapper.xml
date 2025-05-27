@@ -8,7 +8,14 @@
     <select id="selectImageList"
             parameterType="list"
             resultType="home.example.board.domain.Image">
-        SELECT *
+        SELECT
+            image_id,
+            post_id,
+            image_url,
+            image_index,
+            thumb_url,
+            status,
+            fetched_at
         FROM external_post_image
         WHERE post_id in
         <foreach item="postId" index="index" collection="postIds" open="(" separator="," close=")">
