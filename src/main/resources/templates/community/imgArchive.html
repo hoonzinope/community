@@ -23,8 +23,8 @@
         .masonry-container {
             max-width: 1080px;
             margin: 40px auto 0 auto;
-            column-count: 4;
-            column-gap: 26px;
+            /*column-count: 4;*/
+            /*column-gap: 26px;*/
         }
         @media (max-width: 1200px) { .masonry-container { column-count: 3; } }
         @media (max-width: 900px) { .masonry-container { column-count: 2; } }
@@ -33,6 +33,7 @@
         .img-card {
             position: relative;
             margin-bottom: 28px;
+            max-width: 180px;
             cursor: pointer;
             break-inside: avoid;
             border-radius: 14px;
@@ -186,7 +187,7 @@
         }
         .modal-images-scroll img {
             width: 100%;
-            max-width: 430px;
+            /*max-width: 430px;*/
             margin: 0 auto;
             border-radius: 10px;
             background: #222;
@@ -289,6 +290,9 @@
         </div>
     </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/masonry/4.2.2/masonry.pkgd.min.js" integrity="sha512-JRlcvSZAXT8+5SQQAvklXGJuxXTouyq8oIMaYERZQasB8SBDHZaUbeASsJWpk0UUrf89DP3/aefPPrlMR1h1yQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/5.0.0/imagesloaded.pkgd.min.js" integrity="sha512-kfs3Dt9u9YcOiIt4rNcPUzdyNNO9sVGQPiZsub7ywg6lRW5KuK1m145ImrFHe3LMWXHndoKo2YRXWy8rnOcSKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script type="text/javascript" th:src="@{/js/common/utils.js}"></script>
 <script type="text/javascript" th:src="@{/js/community/imgArchive.js}"></script>
 </body>

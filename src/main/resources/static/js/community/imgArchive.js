@@ -15,8 +15,18 @@
         limit : 15, // 한 번에 가져올 이미지 포스트 수
         lastId : null,
         isLoading : false,
+        mnsry: null,
         init: function() {
+            this.init_mansonry(); // Masonry 초기화
             this.getImagePosts();
+        },
+        init_mansonry : function() {
+            this.msnry = new Masonry('#imgMasonry', {
+                itemSelector: '.img-card',
+                columnWidth: '.img-card', // 카드의 기본 너비에 맞게 설정
+                gutter: 10,               // 카드 사이의 간격(px)
+                percentPosition: true
+            });
         },
         getImagePosts: function() {
             let url = "/api/image-posts";
@@ -91,6 +101,10 @@
                     imgArchive.showImageViewer(title, imgs);
                 });
                 imgMasonry.appendChild(imgCard);
+                imgArchive.msnry.appended(imgCard); // Masonry에 추가
+                imagesLoaded('#imgMasonry', function() {
+                    imgArchive.msnry.layout(); // 레이아웃 업데이트
+                });
             }
         },
         showImageViewer: function(title, imgs) {
