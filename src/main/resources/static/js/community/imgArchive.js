@@ -24,7 +24,7 @@
             this.msnry = new Masonry('#imgMasonry', {
                 itemSelector: '.img-card',
                 columnWidth: '.img-card', // 카드의 기본 너비에 맞게 설정
-                gutter: 10,               // 카드 사이의 간격(px)
+                gutter: 5,               // 카드 사이의 간격(px)
                 percentPosition: true
             });
         },

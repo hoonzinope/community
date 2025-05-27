@@ -33,7 +33,7 @@ public class PageController {
 
     @GetMapping("/")
     public String index() {
-        return "redirect:/board";
+        return "redirect:/imgArchive";
     }
 
     @GetMapping("/board")
