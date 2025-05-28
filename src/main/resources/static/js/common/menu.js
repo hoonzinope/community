@@ -36,19 +36,19 @@
                 let chid_subject_list = subject.child_subject_list;
 
                 let sub_id = `subject_slide_${subject_seq}`;
-                let a = document.createElement('a');
-                a.className = 'text-decoration-none d-block collapsed';
-                a.setAttribute('data-bs-toggle', 'collapse');
-                a.setAttribute('href', '');
-                a.setAttribute('role', 'button');
-                a.setAttribute('aria-expanded', 'false');
-                a.setAttribute('aria-controls', sub_id);
+                let div_slide_menu = document.createElement('div');
+                div_slide_menu.className = 'text-decoration-none d-block collapsed';
+                div_slide_menu.setAttribute('data-bs-toggle', 'collapse');
+                div_slide_menu.setAttribute('href', '');
+                div_slide_menu.setAttribute('role', 'button');
+                div_slide_menu.setAttribute('aria-expanded', 'false');
+                div_slide_menu.setAttribute('aria-controls', sub_id);
                 if(chid_subject_list != undefined && chid_subject_list.length > 0) {
-                    a.innerHTML = `${subject_name} <i class="ri-arrow-down-s-line float-end"></i>`;
+                    div_slide_menu.innerHTML = `${subject_name} <i class="ri-arrow-down-s-line float-end"></i>`;
                 }else{
-                    a.innerHTML = `${subject_name}`;
+                    div_slide_menu.innerHTML = `${subject_name}`;
                 }
-                subjectItem.appendChild(a);
+                subjectItem.appendChild(div_slide_menu);
 
                 if(chid_subject_list != undefined && chid_subject_list.length > 0) {
                     const childSubjectList = document.createElement('ul');
@@ -76,11 +76,11 @@
                 }
                 slideMenu.appendChild(subjectItem);
 
-                a.addEventListener('click', function(e) {
+                div_slide_menu.addEventListener('click', function(e) {
                     //e.preventDefault();
-                    a.className = 'text-decoration-none d-block' + (a.getAttribute('aria-expanded') === 'true' ? '' : 'collapsed');
-                    a.setAttribute('aria-expanded',
-                        a.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
+                    div_slide_menu.className = 'text-decoration-none d-block' + (div_slide_menu.getAttribute('aria-expanded') === 'true' ? '' : 'collapsed');
+                    div_slide_menu.setAttribute('aria-expanded',
+                        div_slide_menu.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
 
                     let childSubjectList = document.getElementsByName('child_subject_list');
                     if (childSubjectList) {
