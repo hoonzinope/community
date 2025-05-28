@@ -54,6 +54,7 @@
                     // 마지막 ID 업데이트
                     this.lastId = data.lastId;
                     this.drawImagePosts(data.imagePostList);
+                    this.prefetchThumbnails(); // 썸네일 미리 적재
                 } else {
                     console.error('Error fetching image posts:', data.message);
                 }
@@ -161,6 +162,35 @@
                 }
             });
         },
-
+        prefetchThumbnails : function() {
+            let url = "/api/image-prefetch";
+            let params = {
+                limit: this.limit,
+                lastId: this.lastId
+            }
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(params)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // console.log('썸네일 미리 가져오기 성공');
+                } else {
+                    // console.error('썸네일 미리 가져오기 실패:', data.message);
+                }
+            })
+            .catch(error => {
+                // console.error('썸네일 미리 가져오기 중 오류 발생:', error);
+            });
+        }
     }
 })();
