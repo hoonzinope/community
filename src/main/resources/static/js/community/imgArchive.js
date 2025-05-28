@@ -183,13 +183,13 @@
             })
             .then(data => {
                 if (data.success) {
-                    console.log('썸네일 미리 가져오기 성공');
+                    // console.log('썸네일 미리 가져오기 성공');
                 } else {
-                    console.error('썸네일 미리 가져오기 실패:', data.message);
+                    // console.error('썸네일 미리 가져오기 실패:', data.message);
                 }
             })
             .catch(error => {
-                console.error('썸네일 미리 가져오기 중 오류 발생:', error);
+                // console.error('썸네일 미리 가져오기 중 오류 발생:', error);
             });
         }
     }
