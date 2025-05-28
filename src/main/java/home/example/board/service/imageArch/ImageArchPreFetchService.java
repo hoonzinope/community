@@ -171,7 +171,4 @@ public class ImageArchPreFetchService {
         return ".jpg";
     }
 
-    private byte[] toBytes(InputStream is) throws Exception {
-        return org.apache.commons.io.IOUtils.toByteArray(is);
-    }
 }
