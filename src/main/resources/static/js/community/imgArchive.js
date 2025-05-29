@@ -14,13 +14,37 @@
     let imgArchive = {
         limit : 15, // 한 번에 가져올 이미지 포스트 수
         lastId : null,
+        nsfw: 0, // NSFW 필터링 여부 (0: 전체, 1: NSFW)
         isLoading : false,
         mnsry: null,
         init: function() {
+            this.category_tab(); // 카테고리 탭 이벤트 초기화
             this.init_mansonry(); // Masonry 초기화
             this.getImagePosts();
         },
+        category_tab: function() {
+            let tabs = document.getElementsByClassName('nav-item');
+            for(let i = 0; i < tabs.length; i++) {
+                let tab = tabs[i];
+                tab.addEventListener('click', function() {
+                    // 선택된 탭 강조
+                    document.querySelector('.nav-link.active').classList.remove('active');
+                    tab.querySelector('.nav-link').classList.add('active');
+                    // NSFW 필터링 설정
+                    if(document.querySelector('.nav-link.active').getAttribute("data-category") === 'nsfw') {
+                        imgArchive.nsfw = 1;
+                    }else{
+                        imgArchive.nsfw = 0;
+                    }
+                    imgArchive.lastId = null; // 새로고침 시 마지막 ID 초기화
+                    imgArchive.init_mansonry(); // Masonry 초기화
+                    imgArchive.getImagePosts(); // 이미지 포스트 새로 가져오기
+                });
+            }
+        },
         init_mansonry : function() {
+            let imgMasonry = document.getElementById('imgMasonry');
+            imgMasonry.innerHTML = ''; // 기존 카드 제거
             this.msnry = new Masonry('#imgMasonry', {
                 itemSelector: '.img-card',
                 columnWidth: '.img-card', // 카드의 기본 너비에 맞게 설정
@@ -32,7 +56,8 @@
             let url = "/api/image-posts";
             let params = {
                 limit: this.limit,
-                lastId: this.lastId
+                lastId: this.lastId,
+                nsfw: this.nsfw // NSFW 필터링 여부
             }
             this.isLoading = true;
             fetch(url, {
