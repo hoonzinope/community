@@ -29,6 +29,14 @@
             AND ecp.post_id < #{lastId}
           ]]>
         </if>
+        <choose>
+            <when test="nsfw != 0">
+                AND ecp.nsfw = #{nsfw}
+            </when>
+            <otherwise>
+                AND ecp.nsfw = 0
+            </otherwise>
+        </choose>
         ORDER BY ecp.post_id desc
         limit #{limit}
     </select>
@@ -43,6 +51,14 @@
             FROM external_post_image epi
             WHERE ecp.post_id = epi.post_id
         )
+        <choose>
+            <when test="nsfw != 0">
+                AND ecp.nsfw = #{nsfw}
+            </when>
+            <otherwise>
+                AND ecp.nsfw = 0
+            </otherwise>
+        </choose>
         AND post_created_at is not null
     </select>
 </mapper>

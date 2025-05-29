@@ -149,7 +149,7 @@
             <img th:src="@{/images/favicon/favicon.png}" alt="로고" style="height: 30px; margin-right: 3px;">
             Urrrm...
         </a>
-        <div class="d-flex mx-auto search-input">
+        <div class="d-flex mx-auto search-input" th:unless="${#httpServletRequest.requestURI == '/imgArchive'}">
             <input id="search-input" class="form-control me-2" type="search" placeholder="검색어를 입력하세요..." aria-label="Search">
             <button id="search-button" class="btn btn-outline-secondary" type="submit"><i class="ri-search-line"></i></button>
         </div>

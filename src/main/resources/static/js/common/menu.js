@@ -6,7 +6,9 @@
     const menu = {
         init : function() {
             menu.requestSubjects();
-            menu.searchPosts();
+            if (!window.location.pathname.includes('/imgArchive')) {
+                menu.searchPosts();
+            }
         },
         // 주제 요청
         requestSubjects : function() {

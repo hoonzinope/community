@@ -277,6 +277,33 @@
             background-color: rgba(0, 0, 0, 0.4);
             z-index: 1040;
         }
+
+        /* 카테고리 탭 스타일 */
+        .category-tabs {
+            max-width: 1080px;
+            margin: 20px auto 0;
+            padding: 0 15px;
+        }
+        .nav-tabs {
+            border-bottom: none;
+            gap: 10px;
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            background: white;
+            color: #666;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .nav-tabs .nav-link:hover {
+            background: #f0f0f0;
+        }
+        .nav-tabs .nav-link.active {
+            background: #2c3e50;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -284,6 +311,17 @@
 <nav th:replace="common/top_menu :: nav"></nav>
 <div class="container mt-5 pt-4">
     <div class="row mt-4">
+        <!-- 카테고리 탭 -->
+        <div class="category-tabs">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <button class="nav-link active" data-category="normal">전체</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-category="nsfw">nsfw</button>
+                </li>
+            </ul>
+        </div>
 <!-- Masonry Gallery -->
         <div id="imgMasonry" class="masonry-container">
         </div>
