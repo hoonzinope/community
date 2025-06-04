@@ -62,7 +62,7 @@ public class PostDAO {
     public boolean isExistPost(long post_seq) {
         // 게시물 존재 여부 확인
         PostPagingDTO post = postMapper.getPost(post_seq);
-        return post.getPost_seq() == post_seq;
+        return post != null;
     }
 
     public boolean isPostByUser(long post_seq, long user_seq) {
