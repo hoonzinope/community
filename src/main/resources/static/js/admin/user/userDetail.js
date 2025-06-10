@@ -139,8 +139,6 @@
         }
     }
 
-
-    // TODO : request user post
     const userPost = {
         user_seq: null,
         limit : 5,
@@ -172,23 +170,99 @@
                     }
                 })
                 .then(data => {
-                    console.log(data);
                     this.setUserPost(data);
+                    this.setUserPostPagination(data);
                 })
                 .catch(error => {
                     console.error("Error fetching user post:", error);
                 });
         },
         setUserPost: function (data) {
-            // TODO : set user post
+            console.log(data);
+            let postListTbody = document.getElementById("post_list");
+            postListTbody.innerHTML = ""; // Clear existing rows
+
+            let postList = data.postList;
+            if (postList.length === 0) {
+                postListTbody.innerHTML = "<tr><td colspan='5'>작성한 게시글이 없습니다.</td></tr>";
+                return;
+            }
+
+            postList.forEach((post) => {
+                let tr = document.createElement("tr");
+                let status = post.delete_flag === "false" ? "삭제" : "활성";
+                let statusBadge = post.delete_flag === "false" ? "bg-danger" : "bg-success";
+                tr.innerHTML = `
+                    <td>${post.title}</td>
+                    <td><span class="badge bg-secondary">${post.category}</span></td>
+                    <td>${post.view_count}</td>
+                    <td>${post.insert_ts.split("T")[0]}</td>
+                    <td><span class="badge ${statusBadge}">${status}</td>
+                `;
+                tr.addEventListener("click", function () {
+                    location.href = "/admin/post/detail/" + post.post_seq;
+                });
+                postListTbody.appendChild(tr);
+            });
+        },
+        setUserPostPagination: function (data) {
+            let currentPage = data.currentPage;
+            let pageSize = data.pageSize;
+            let totalCount = data.totalCount;
+            let totalPage = data.totalPage;
+
+            $("#pagination-nav").twbsPagination('destroy');
+            $("#pagination-nav").twbsPagination({
+                first : null,
+                last : null,
+                prev : "<i class='ri-arrow-left-line'></i>",
+                next : "<i class='ri-arrow-right-line'></i>",
+                totalPages: totalPage,
+                visiblePages: 5,
+                startPage: currentPage,
+                initiateStartPageClick: false,
+                onPageClick: function (event, page) {
+                    userPost.offset = (page - 1) * pageSize;
+                    userPost.getUserPost();
+                }
+            });
         }
     }
 
     // TODO : request user comment
     const userComment = {
         user_seq: null,
+        limit : 5,
+        offset : 0,
+        sortType : "comment_seq",
         init: function (userSeq) {
             this.user_seq = userSeq;
+        },
+        getUserComment: function () {
+            let url = "/admin/user/readComment";
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    user_seq: this.user_seq
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Network response was not ok.");
+                }
+            })
+            .then(data => {
+                console.log(data);
+                // this.setUserComment(data);
+            })
+            .catch(error => {
+                console.error("Error fetching user comment:", error);
+            });
         }
     }
 })();
