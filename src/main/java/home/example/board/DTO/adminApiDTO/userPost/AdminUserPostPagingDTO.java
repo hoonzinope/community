@@ -1,4 +1,4 @@
-package home.example.board.DTO.adminApiDTO.post;
+package home.example.board.DTO.adminApiDTO.userPost;
 
 import lombok.Data;
 

@@ -1,8 +1,8 @@
 package home.example.board.controller.api.admin.user;
 
 import home.example.board.DTO.CustomUserDetail;
-import home.example.board.DTO.adminApiDTO.post.UserPostReadAdminRequestDTO;
-import home.example.board.DTO.adminApiDTO.post.UserPostReadAdminResponseDTO;
+import home.example.board.DTO.adminApiDTO.userPost.UserPostReadAdminRequestDTO;
+import home.example.board.DTO.adminApiDTO.userPost.UserPostReadAdminResponseDTO;
 import home.example.board.service.admin.user.UserAdminReadPostService;
 import home.example.board.utils.CheckAdminUserUtils;
 import lombok.extern.slf4j.Slf4j;

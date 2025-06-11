@@ -7,8 +7,8 @@
 <mapper namespace="home.example.board.repository.admin.UserAdminPostMapper">
 
     <select id="getPostByUserSeq"
-            parameterType="home.example.board.DTO.adminApiDTO.post.UserPostReadAdminRequestDTO"
-            resultType="home.example.board.DTO.adminApiDTO.post.AdminUserPostPagingDTO">
+            parameterType="home.example.board.DTO.adminApiDTO.userPost.UserPostReadAdminRequestDTO"
+            resultType="home.example.board.DTO.adminApiDTO.userPost.AdminUserPostPagingDTO">
             SELECT
                 p.post_seq,
                 p.title,
@@ -44,7 +44,7 @@
     </select>
 
     <select id="getPostCountByUserSeq"
-            parameterType="home.example.board.DTO.adminApiDTO.post.UserPostReadAdminRequestDTO"
+            parameterType="home.example.board.DTO.adminApiDTO.userPost.UserPostReadAdminRequestDTO"
             resultType="int">
             SELECT COUNT(*)
             FROM post

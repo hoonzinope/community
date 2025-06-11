@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- mapper DTD 선언 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- SQL Mapping -->
+<mapper namespace="home.example.board.repository.admin.UserAdminCommentMapper">
+
+    <select id="getCommentByUserSeq"
+            parameterType="home.example.board.DTO.adminApiDTO.userComment.UserCommentReadRequestDTO"
+            resultType="home.example.board.DTO.adminApiDTO.userComment.AdminUserCommentPagingDTO">
+            SELECT
+                c.comment_seq,
+                (select p.title from post p where p.post_seq = c.post_seq) as post_title,
+                c.content,
+                c.insert_ts
+            FROM comment c
+            WHERE c.user_seq = #{user_seq}
+            <choose>
+                <when test="sortType == 'comment_seq'">
+                    ORDER BY c.comment_seq DESC
+                </when>
+                <when test="sortType == 'post_seq'">
+                    ORDER BY c.post_seq DESC
+                </when>
+                <otherwise>
+                    ORDER BY c.comment_seq DESC
+                </otherwise>
+            </choose>
+            LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="getCommentCountByUserSeq"
+            parameterType="home.example.board.DTO.adminApiDTO.userComment.UserCommentReadRequestDTO"
+            resultType="int">
+            SELECT COUNT(*)
+            FROM post
+            WHERE user_seq = #{user_seq}
+    </select>
+</mapper>

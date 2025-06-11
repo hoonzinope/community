@@ -1,7 +1,7 @@
 package home.example.board.dao.admin.user;
 
-import home.example.board.DTO.adminApiDTO.post.UserPostReadAdminRequestDTO;
-import home.example.board.DTO.adminApiDTO.post.AdminUserPostPagingDTO;
+import home.example.board.DTO.adminApiDTO.userPost.UserPostReadAdminRequestDTO;
+import home.example.board.DTO.adminApiDTO.userPost.AdminUserPostPagingDTO;
 import home.example.board.repository.admin.UserAdminPostMapper;
 import org.springframework.stereotype.Service;
 

@@ -1,10 +1,9 @@
 package home.example.board.controller.api.admin.user;
 
-import home.example.board.DTO.adminApiDTO.post.UserCommentReadRequestDTO;
-import home.example.board.DTO.adminApiDTO.post.UserCommentReadResponseDTO;
+import home.example.board.DTO.adminApiDTO.userComment.UserCommentReadRequestDTO;
+import home.example.board.DTO.adminApiDTO.userComment.UserCommentReadResponseDTO;
 import home.example.board.service.admin.user.UserAdminReadCommentService;
 import lombok.extern.slf4j.Slf4j;
-import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +18,6 @@ public class UserAdminReadCommentAPI {
     public UserAdminReadCommentAPI(UserAdminReadCommentService userAdminReadCommentService) {
         this.userAdminReadCommentService = userAdminReadCommentService;
     }
-    // TODO: Implement the logic to read user comments
     @PostMapping("/admin/user/readComment")
     public ResponseEntity<UserCommentReadResponseDTO> getUserComment(
             @RequestBody UserCommentReadRequestDTO userCommentReadRequestDTO

@@ -1,7 +1,7 @@
 package home.example.board.repository.admin;
 
-import home.example.board.DTO.adminApiDTO.post.UserPostReadAdminRequestDTO;
-import home.example.board.DTO.adminApiDTO.post.AdminUserPostPagingDTO;
+import home.example.board.DTO.adminApiDTO.userPost.UserPostReadAdminRequestDTO;
+import home.example.board.DTO.adminApiDTO.userPost.AdminUserPostPagingDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
