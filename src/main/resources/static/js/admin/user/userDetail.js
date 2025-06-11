@@ -191,8 +191,8 @@
 
             postList.forEach((post) => {
                 let tr = document.createElement("tr");
-                let status = post.delete_flag === "false" ? "삭제" : "활성";
-                let statusBadge = post.delete_flag === "false" ? "bg-danger" : "bg-success";
+                let status = !post.delete_flag ? "삭제" : "활성";
+                let statusBadge = !post.delete_flag ? "bg-danger" : "bg-success";
                 tr.innerHTML = `
                     <td>${post.title}</td>
                     <td><span class="badge bg-secondary">${post.category}</span></td>
