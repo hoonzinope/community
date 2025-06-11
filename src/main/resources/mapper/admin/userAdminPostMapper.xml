@@ -7,27 +7,44 @@
 <mapper namespace="home.example.board.repository.admin.UserAdminPostMapper">
 
     <select id="getPostByUserSeq"
-            parameterType="home.example.board.DTO.adminApiDTO.UserPostReadAdminRequestDTO"
-            resultType="home.example.board.domain.Post">
-            SELECT *
-            FROM post
-            WHERE user_seq = #{user_seq}
+            parameterType="home.example.board.DTO.adminApiDTO.userPost.UserPostReadAdminRequestDTO"
+            resultType="home.example.board.DTO.adminApiDTO.userPost.AdminUserPostPagingDTO">
+            SELECT
+                p.post_seq,
+                p.title,
+                p.content,
+                p.insert_ts,
+                p.update_ts,
+                p.view_count,
+                p.user_seq,
+                (select user_nickname from user where user.user_seq = p.user_seq) as user_nickname,
+                s.subject_seq,
+                s.subject_name as category,
+                (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "LIKE") as like_count,
+                (select count(*) from post_like pl where pl.post_seq = p.post_seq and pl.like_type = "DISLIKE") as dislike_count,
+                (select count(*) from comment c where c.post_seq = p.post_seq) as comment_count,
+                p.delete_flag,
+                p.delete_ts
+            FROM post p
+            JOIN
+                subject s ON p.subject_seq = s.subject_seq
+            WHERE p.user_seq = #{user_seq}
             <choose>
                 <when test="sortType == 'post_seq'">
-                    ORDER BY post_seq DESC
+                    ORDER BY p.post_seq DESC
                 </when>
                 <when test="sortType == 'view_count'">
-                    ORDER BY view_count DESC
+                    ORDER BY p.view_count DESC
                 </when>
                 <otherwise>
-                    ORDER BY post_seq DESC
+                    ORDER BY p.post_seq DESC
                 </otherwise>
             </choose>
             LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <select id="getPostCountByUserSeq"
-            parameterType="home.example.board.DTO.adminApiDTO.UserPostReadAdminRequestDTO"
+            parameterType="home.example.board.DTO.adminApiDTO.userPost.UserPostReadAdminRequestDTO"
             resultType="int">
             SELECT COUNT(*)
             FROM post

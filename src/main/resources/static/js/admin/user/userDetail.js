@@ -139,8 +139,6 @@
         }
     }
 
-
-    // TODO : request user post
     const userPost = {
         user_seq: null,
         limit : 5,
@@ -149,6 +147,7 @@
         init: function (userSeq) {
             this.user_seq = userSeq;
             this.getUserPost();
+            this.addSelectOption();
         },
         getUserPost: function () {
             let url = "/admin/user/readPost";
@@ -172,23 +171,176 @@
                     }
                 })
                 .then(data => {
-                    console.log(data);
                     this.setUserPost(data);
+                    this.setUserPostPagination(data);
                 })
                 .catch(error => {
                     console.error("Error fetching user post:", error);
                 });
         },
         setUserPost: function (data) {
-            // TODO : set user post
+            console.log(data);
+            let postListTbody = document.getElementById("post_list");
+            postListTbody.innerHTML = ""; // Clear existing rows
+
+            let postList = data.postList;
+            if (postList.length === 0) {
+                postListTbody.innerHTML = "<tr><td colspan='5'>작성한 게시글이 없습니다.</td></tr>";
+                return;
+            }
+
+            postList.forEach((post) => {
+                let tr = document.createElement("tr");
+                let status = !post.delete_flag ? "삭제" : "활성";
+                let statusBadge = !post.delete_flag ? "bg-danger" : "bg-success";
+                tr.innerHTML = `
+                    <td>${post.title}</td>
+                    <td><span class="badge bg-secondary">${post.category}</span></td>
+                    <td>${post.view_count}</td>
+                    <td>${post.insert_ts.split("T")[0]}</td>
+                    <td><span class="badge ${statusBadge}">${status}</td>
+                `;
+                tr.addEventListener("click", function () {
+                    location.href = "/admin/post/detail/" + post.post_seq;
+                });
+                postListTbody.appendChild(tr);
+            });
+        },
+        setUserPostPagination: function (data) {
+            let currentPage = data.currentPage;
+            let pageSize = data.pageSize;
+            let totalCount = data.totalCount;
+            let totalPage = data.totalPage;
+
+            $("#pagination-nav").twbsPagination('destroy');
+            $("#pagination-nav").twbsPagination({
+                first : null,
+                last : null,
+                prev : "<i class='ri-arrow-left-line'></i>",
+                next : "<i class='ri-arrow-right-line'></i>",
+                totalPages: totalPage,
+                visiblePages: 5,
+                startPage: currentPage,
+                initiateStartPageClick: false,
+                onPageClick: function (event, page) {
+                    userPost.offset = (page - 1) * pageSize;
+                    userPost.getUserPost();
+                }
+            });
+        },
+        addSelectOption : function() {
+            let select = document.getElementById("post_sort_select");
+            select.addEventListener("change", function (event) {
+                userPost.sortType = event.target.value;
+                userPost.offset = 0; // Reset offset to 0 when changing sort type
+                userPost.getUserPost();
+            })
         }
     }
 
-    // TODO : request user comment
     const userComment = {
         user_seq: null,
+        limit : 5,
+        offset : 0,
+        sortType : "comment_seq",
         init: function (userSeq) {
             this.user_seq = userSeq;
+            this.getUserComment();
+            this.addSelectOption();
+        },
+        getUserComment: function () {
+            let url = "/admin/user/readComment";
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    user_seq: this.user_seq,
+                    limit: this.limit,
+                    offset: this.offset,
+                    sortType: this.sortType
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Network response was not ok.");
+                }
+            })
+            .then(data => {
+                console.log(data);
+                userComment.setUserComment(data);
+                userComment.setUserCommentPagination(data);
+            })
+            .catch(error => {
+                console.error("Error fetching user comment:", error);
+            });
+        },
+        setUserComment : function (data) {
+            let commentListDiv = document.getElementById("comment_list");
+            commentListDiv.innerHTML = ""; // Clear existing comments
+
+            let commentList = data.commentList;
+            if (commentList.length === 0) {
+                commentListDiv.innerHTML = "<p>작성한 댓글이 없습니다.</p>";
+                return;
+            }
+
+            commentList.forEach((comment) => {
+                let seq = comment.comment_seq;
+                let postTitle = comment.post_title || "알 수 없음";
+                let content = comment.content ?
+                    (comment.content.length > 30 ? comment.content.substring(0, 30) + "..." : comment.content) : "내용 없음";
+                let date = comment.insert_ts ? comment.insert_ts.split("T")[0] : "알 수 없음";
+
+                let commentDiv = document.createElement("div");
+                commentDiv.className = "comment-item";
+                commentDiv.innerHTML = `
+                    <a href="/admin/comments/${seq}" 
+                    class="list-group-item list-group-item-action">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                          <div class="small text-muted mb-1">게시글: ${postTitle}</div>
+                          <div>${content}</div>
+                        </div>
+                        <div class="text-muted small">${date}</div>
+                      </div>
+                    </a>
+                `;
+                commentListDiv.appendChild(commentDiv);
+            });
+        },
+        setUserCommentPagination: function (data) {
+            let currentPage = data.currentPage;
+            let pageSize = data.pageSize;
+            let totalCount = data.totalCount;
+            let totalPage = data.totalPage;
+
+            $("#comment-pagination-nav").twbsPagination('destroy');
+            $("#comment-pagination-nav").twbsPagination({
+                first : null,
+                last : null,
+                prev : "<i class='ri-arrow-left-line'></i>",
+                next : "<i class='ri-arrow-right-line'></i>",
+                totalPages: totalPage,
+                visiblePages: 5,
+                startPage: currentPage,
+                initiateStartPageClick: false,
+                onPageClick: function (event, page) {
+                    userComment.offset = (page - 1) * pageSize;
+                    userComment.getUserComment();
+                }
+            });
+        },
+        addSelectOption : function() {
+            let select = document.getElementById("comment_sort_select");
+            select.addEventListener("change", function (event) {
+                userComment.sortType = event.target.value;
+                userComment.offset = 0; // Reset offset to 0 when changing sort type
+                userComment.getUserComment();
+            });
         }
     }
 })();

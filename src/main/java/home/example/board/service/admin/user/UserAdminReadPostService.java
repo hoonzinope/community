@@ -1,9 +1,9 @@
 package home.example.board.service.admin.user;
 
-import home.example.board.DTO.adminApiDTO.UserPostReadAdminRequestDTO;
-import home.example.board.DTO.adminApiDTO.UserPostReadAdminResponseDTO;
+import home.example.board.DTO.adminApiDTO.userPost.UserPostReadAdminRequestDTO;
+import home.example.board.DTO.adminApiDTO.userPost.UserPostReadAdminResponseDTO;
+import home.example.board.DTO.adminApiDTO.userPost.AdminUserPostPagingDTO;
 import home.example.board.dao.admin.user.UserPostAdminDAO;
-import home.example.board.domain.Post;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class UserAdminReadPostService {
     public UserPostReadAdminResponseDTO getUserPost(
             UserPostReadAdminRequestDTO userPostReadAdminRequestDTO) {
         try {
-            List<Post> postList = userPostAdminDAO.getUserPostPaging(userPostReadAdminRequestDTO);
+            List<AdminUserPostPagingDTO> postList = userPostAdminDAO.getUserPostPaging(userPostReadAdminRequestDTO);
             int totalCount = userPostAdminDAO.getUserPostCount(userPostReadAdminRequestDTO);
             return UserPostReadAdminResponseDTO.builder()
                     .postList(postList)

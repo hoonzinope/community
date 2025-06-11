@@ -1,6 +1,5 @@
-package home.example.board.DTO.adminApiDTO;
+package home.example.board.DTO.adminApiDTO.userComment;
 
-import home.example.board.domain.Post;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,8 +7,8 @@ import java.util.List;
 
 @Data
 @Builder
-public class UserPostReadAdminResponseDTO {
-    private List<Post> postList;
+public class UserCommentReadResponseDTO {
+    private List<?> commentList;
     private int totalCount;
     private int totalPage;
     private int currentPage;

@@ -1,7 +1,7 @@
 package home.example.board.dao.admin.user;
 
-import home.example.board.DTO.adminApiDTO.UserPostReadAdminRequestDTO;
-import home.example.board.domain.Post;
+import home.example.board.DTO.adminApiDTO.userPost.UserPostReadAdminRequestDTO;
+import home.example.board.DTO.adminApiDTO.userPost.AdminUserPostPagingDTO;
 import home.example.board.repository.admin.UserAdminPostMapper;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ public class UserPostAdminDAO {
         this.userAdminPostMapper = userAdminPostMapper;
     }
 
-    public List<Post> getUserPostPaging(
+    public List<AdminUserPostPagingDTO> getUserPostPaging(
             UserPostReadAdminRequestDTO userPostReadAdminRequestDTO) {
         return userAdminPostMapper.getPostByUserSeq(userPostReadAdminRequestDTO);
     }
